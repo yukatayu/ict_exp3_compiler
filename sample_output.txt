@@ -1,0 +1,33 @@
+LDA Y
+CMA
+INC
+STA Y
+ / > while loop Main
+WH1Main,
+ / while (
+LDA X
+CIL
+CLA
+CIL
+SZA
+WH3Main
+WH2Main
+ / ) {
+WH2Main,
+LDA X
+STA R
+LDA Q
+INC
+STA Q
+LDA X
+ADD Y
+INC
+STA X
+ / }
+WH3Main,
+ / < end of while loop Main
+X, DEC 55
+Y, DEC 17
+Q, DEC -1
+R, DEC 0
+
