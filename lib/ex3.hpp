@@ -71,6 +71,7 @@ namespace EX3{
 		StatementList(std::initializer_list<Statement_impl*> statements);
 		StatementList(std::vector<Statement> statements);
 		std::string make();
+		Statement stat(std::string label = "");
 	};
 
 	class Const : public Statement_impl {
@@ -78,6 +79,14 @@ namespace EX3{
 		std::string stat_;
 	public:
 		Const(std::string stat);
+		std::string make_impl() override;
+	};
+
+	class Goto : public Statement_impl {
+	private:
+		std::string target_name_;
+	public:
+		Goto(std::string label);
 		std::string make_impl() override;
 	};
 
@@ -101,6 +110,21 @@ namespace EX3{
 		While(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false);
 		While(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false);
 		While(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false);
+		std::string make_impl() override;
+	};
+
+	class If : public Statement_impl {
+	private:
+		std::string name_;
+		StatementList stats_cond_;
+		StatementList stats_;
+		bool invert_;
+		void init(std::string name, StatementList stats_cond, StatementList stats, bool invert);
+	public:
+		If(std::string name, StatementList stats_cond, StatementList stats, bool invert = false);
+		If(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false);
+		If(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false);
+		If(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false);
 		std::string make_impl() override;
 	};
 

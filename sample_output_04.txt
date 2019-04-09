@@ -1,0 +1,257 @@
+ / > while loop MainLoop
+XWH1MainLoop,
+ / while (
+LDA N
+SZA
+BUN XWH2MainLoop
+BUN XWH3MainLoop
+ / ) {
+XWH2MainLoop,
+ / > beginning of CP
+CP,
+LDA IINIT
+STA I
+LDA IINIT
+CMA
+INC
+STA I
+LDA I2INIT
+STA I
+ / > while loop CPLoop
+XWH1CPLoop,
+ / while (
+LDA N
+STA NC1
+LDA I2
+STA NC2
+LDA NC1
+STA T1
+LDA NC2
+STA T2
+ / > while loop CmpLoop
+XWH1CmpLoop,
+ / while (
+LDA T1
+STA TFLAG
+ / > if CmpT1
+ / if (
+LDA T1
+SZA
+BUN XIF1CmpT1
+BUN XIF2CmpT1
+ / ) {
+XIF1CmpT1,
+LDA T2
+STA TFLAG
+ / }
+XIF2CmpT1,
+ / < end of if CmpT1
+LDA TFLAG
+SZA
+BUN XWH2CmpLoop
+BUN XWH3CmpLoop
+ / ) {
+XWH2CmpLoop,
+LDA T1
+CLE
+CIL
+STA T1
+CLA
+CIR
+STA T3
+LDA T2
+CLE
+CIL
+STA T2
+CLA
+CIR
+STA T4
+ / > if t3pt4is1
+ / if (
+LDA T3
+ADD T4
+INC
+STA T3
+LDA T3
+ADD M1
+INC
+STA T3
+LDA T3
+SZA
+BUN XIF2t3pt4is1
+BUN XIF1t3pt4is1
+ / ) {
+XIF1t3pt4is1,
+LDA T4
+STA CMPRES
+BUN EndCp1Cp2
+ / }
+XIF2t3pt4is1,
+ / < end of if t3pt4is1
+BUN XWH1CmpLoop
+ / }
+XWH3CmpLoop,
+ / < end of while loop CmpLoop
+EndCp1Cp2,
+LDA CMPRES
+SZA
+BUN XWH3CPLoop
+BUN XWH2CPLoop
+ / ) {
+XWH2CPLoop,
+LDA N
+STA NC1
+LDA N
+STA NC2
+LDA NC1
+ADD M
+INC
+STA NC1
+ / > while loop CPLoop2
+XWH1CPLoop2,
+ / while (
+LDA NC1
+STA T1
+LDA NC2
+STA T2
+ / > while loop CmpLoop
+XWH1CmpLoop,
+ / while (
+LDA T1
+STA TFLAG
+ / > if CmpT1
+ / if (
+LDA T1
+SZA
+BUN XIF1CmpT1
+BUN XIF2CmpT1
+ / ) {
+XIF1CmpT1,
+LDA T2
+STA TFLAG
+ / }
+XIF2CmpT1,
+ / < end of if CmpT1
+LDA TFLAG
+SZA
+BUN XWH2CmpLoop
+BUN XWH3CmpLoop
+ / ) {
+XWH2CmpLoop,
+LDA T1
+CLE
+CIL
+STA T1
+CLA
+CIR
+STA T3
+LDA T2
+CLE
+CIL
+STA T2
+CLA
+CIR
+STA T4
+ / > if t3pt4is1
+ / if (
+LDA T3
+ADD T4
+INC
+STA T3
+LDA T3
+ADD M1
+INC
+STA T3
+LDA T3
+SZA
+BUN XIF2t3pt4is1
+BUN XIF1t3pt4is1
+ / ) {
+XIF1t3pt4is1,
+LDA T4
+STA CMPRES
+BUN EndCp1Cp2
+ / }
+XIF2t3pt4is1,
+ / < end of if t3pt4is1
+BUN XWH1CmpLoop
+ / }
+XWH3CmpLoop,
+ / < end of while loop CmpLoop
+EndCp1Cp2,
+LDA CMPRES
+SZA
+BUN XWH2CPLoop2
+BUN XWH3CPLoop2
+ / ) {
+XWH2CPLoop2,
+LDA NC1
+STA NC2
+LDA NC1
+ADD M
+INC
+STA NC1
+BUN XWH1CPLoop2
+ / }
+XWH3CPLoop2,
+ / < end of while loop CPLoop2
+ / > if CPBreak
+ / if (
+LDA NC2
+SZA
+BUN XIF1CPBreak
+BUN XIF2CPBreak
+ / ) {
+XIF1CPBreak,
+BUN L1
+ / }
+XIF2CPBreak,
+ / < end of if CPBreak
+LDA I
+CLE
+CIL
+STA T1
+LDA T1
+INC
+STA T1
+LDA I2
+ADD T2
+INC
+STA I2
+LDA I
+INC
+STA I
+LDA M
+ADD M1
+INC
+STA M
+BUN XWH1CPLoop
+ / }
+XWH3CPLoop,
+ / < end of while loop CPLoop
+HLT
+ / < end of CP
+LDA N
+ADD M1
+INC
+STA N
+BUN XWH1MainLoop
+ / }
+XWH3MainLoop,
+ / < end of while loop MainLoop
+N, DEC 65535
+NC1, DEC 0
+NC2, DEC 0
+M1, DEC -1
+IINIT, DEC 2
+I2INIT, DEC 4
+I, DEC 0
+M, DEC 0
+I2, DEC 0
+T1, DEC 0
+T2, DEC 0
+T3, DEC 0
+T4, DEC 0
+TFLAG, DEC 0
+CMPRES, DEC 0
+

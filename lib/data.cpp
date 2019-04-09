@@ -105,7 +105,6 @@ namespace EX3{
 				"LDA " + name_ + "\n"
 				"CLE\n"
 				"CIL\n"
-				"INC\n"
 			}
 		};
 	}
@@ -117,7 +116,6 @@ namespace EX3{
 				"LDA " + name_ + "\n"
 				"CLE\n"
 				"CIR\n"
-				"INC\n"
 			}
 		};
 	}
