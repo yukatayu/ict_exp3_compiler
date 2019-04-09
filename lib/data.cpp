@@ -1,5 +1,6 @@
 #include <ex3.hpp>
 #include <iostream>
+#include <exception>
 
 namespace EX3{
 
@@ -8,7 +9,12 @@ namespace EX3{
 	}
 
 	std::string Data::make_impl(){
-		std::string res = name() + ", ";
+		std::string res;
+		if(name().empty())
+			res += "    ";
+		else
+			res += name() + ", ";
+
 		switch(type_){
 			case DataType::DataType_INT:
 				res += "DEC " + std::to_string(dec_);
@@ -40,6 +46,14 @@ namespace EX3{
 		, type_ { DataType::DataType_PTR }
 		, ref_ { data.name() }
 	{
+	}
+
+	Statement Data::load(){
+		return Statement{
+			new Const{
+				"LDA " + name_ + "\n"
+			}
+		};
 	}
 
 	Statement Data::stat(){
@@ -80,6 +94,30 @@ namespace EX3{
 				"LDA " + name_ + "\n"
 				"INC\n"
 				"STA " + name_ + "\n"
+			}
+		};
+	}
+
+	Statement Data::operator<<(int i){
+		if(i != 1) throw std::runtime_error("not implemented in " __FILE__ " at " + std::to_string(__LINE__));
+		return Statement{
+			new Const{
+				"LDA " + name_ + "\n"
+				"CLE\n"
+				"CIL\n"
+				"INC\n"
+			}
+		};
+	}
+
+	Statement Data::operator>>(int i){
+		if(i != 1) throw std::runtime_error("not implemented in " __FILE__ " at " + std::to_string(__LINE__));
+		return Statement{
+			new Const{
+				"LDA " + name_ + "\n"
+				"CLE\n"
+				"CIR\n"
+				"INC\n"
 			}
 		};
 	}

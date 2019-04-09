@@ -51,11 +51,14 @@ namespace EX3{
 		Data(DataType_Tag_CHAR type, std::string name, char data);
 		Data(DataType_Tag_PTR type, std::string name, Data data);
 		Statement stat();
+		Statement load();
 		Data operator*();
 		Statement operator+(Data d);
 		Statement operator+();
 		Statement operator++();	// 前置
 		Statement operator-();
+		Statement operator<<(int i);
+		Statement operator>>(int i);
 		Statement operator=(Statement);
 	};
 
