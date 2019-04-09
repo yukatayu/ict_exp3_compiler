@@ -1,97 +1,102 @@
-#include <parser.hpp>
+#include <ex3.hpp>
 
 #include <optional>
 #include <string>
 #include <vector>
-#include <memory>
 
 namespace EX3{
 
-
-enum class DataType{
-	DataType_INT,
-	DataType_CHAR,
-	DataType_PTR
-};
-
-enum DataType_Tag_INT{
-	INT
-};
-enum DataType_Tag_CHAR{
-	CHAR
-};
-enum DataType_Tag_PTR{
-	PTR
-};
-
-class Data{
-private:
-	DataType type_;
-
-	int dec_;
-	char chr_;
-	std::string ref_;
-
-	std::string name_;
-
-public:
-	std::string name(){
-		return name_;
-	}
-
-	std::string make(){
-		std::string res = name() + ", ";
-		switch(type_){
-			case DataType::DataType_INT:
-				res += "DEC " + dec_;
-				break;
-			case DataType::DataType_CHAR:
-				res += "CHR " + chr_;
-				break;
-			case DataType::DataType_PTR:
-				res += "SYM " + ref_;
-				break;
-		}
+	// Statement_impl
+	std::string Statement_impl::make(){
+		std::string res = make_impl();
+		if(!res.empty() && res.back() != '\n')
+			res += "\n";
 		return res;
 	}
 
-	Data(DataType_Tag_PTR type, std::string name, int data)
-		: name_ { name }
-		, type_ { DataType::DataType_INT }
-		, dec_ { data }
-	{
+	// Const
+	Const::Const(std::string stat)
+		: stat_ (stat)
+	{ }
+	
+	std::string Const::make_impl(){
+		return stat_;
 	}
-	Data(DataType_Tag_CHAR type, std::string name, char data)
-		: name_ { name }
-		, type_ { DataType::DataType_CHAR }
-		, chr_ { data }
-	{
+
+	// Negative
+	Negative::Negative(Data d){
+		target_name_ = d.name();
 	}
-	Data(DataType_Tag_PTR type, std::string name, Data data)
-		: name_ { name }
-		, type_ { DataType::DataType_PTR }
-		, ref_ { data.name() }
-	{
+	std::string Negative::make_impl() {
+		return
+			"LDA " + target_name_ + "\n"
+			"CIL\n"
+			"CLA\n"
+			"CIL\n"
+		;
 	}
-};
 
-struct Statement_impl{
-	virtual std::string make() = 0;
-};
+	void While::init(std::string name, StatementList stats_cond, StatementList stats, bool invert){
+		name_ = name;
+		stats_cond_ = stats_cond;
+		stats_ = stats;
+		invert_ = invert;
+	}
 
-using Statement = std::shared_ptr<Statement_impl>;
+	// While
+	While::While(std::string name, StatementList stats_cond, StatementList stats, bool invert){
+		init(name, stats_cond, stats, invert);
+	}
+	While::While(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert){
+		init(name, stats_cond, stats, invert);
+	}
+	While::While(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert){
+		init(name, stats_cond, stats, invert);
+	}
+	While::While(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert){
+		init(name, stats_cond, stats, invert);
+	}
 
-struct StatementList {
-	std::vector<Statement> statements_;
-	StatementList(){}
-	StatementList(std::initializer_list<Statement> statements)
+	std::string While::make_impl() {
+		std::string res;
+		std::string wh1 = "WH1" + name_;
+		std::string wh2 = "WH2" + name_;
+		std::string wh3 = "WH3" + name_;
+		res += " / > while loop " + name_ + "\n";
+		res += wh1 + "," + "\n";
+		res += " / while (\n";
+		res += stats_cond_.make();
+		res += "SZA\n";
+		res += (invert_ ? wh3 : wh2) + "\n";
+		res += (invert_ ? wh2 : wh3) + "\n";
+		res += " / ) {\n";
+		res += wh2 + "," + "\n";
+		res += stats_.make();
+		res += " / }\n";
+		res += wh3 + "," + "\n";
+		res += " / < end of while loop " + name_ + "\n";
+		return res;
+	}
+
+	StatementList::StatementList(std::vector<Statement> statements)
 		: statements_(statements)
+	{ }
+
+	StatementList::StatementList(std::initializer_list<Statement> statements)
+		: statements_(statements)
+	{ }
+
+	StatementList::StatementList(std::initializer_list<Statement_impl*> statements)
 	{
+		for(auto s : statements)
+			statements_.emplace_back(s);
 	}
-};
 
-struct While{
-};
-
+	std::string StatementList::make(){
+		std::string res;
+		for(const auto& s : statements_)
+			res += s->make();
+		return res;
+	}
 
 }

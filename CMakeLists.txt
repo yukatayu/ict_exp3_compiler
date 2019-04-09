@@ -4,6 +4,8 @@ project(cpp_external_processes CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_CXX_FLAGS "-g")
+
 add_subdirectory(lib)
 
 add_executable(run main.cpp)
