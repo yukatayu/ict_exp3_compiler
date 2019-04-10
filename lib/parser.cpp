@@ -5,6 +5,7 @@
 #include <vector>
 
 namespace EX3{
+	using helper::indent;
 
 	// Statement_impl
 	std::string Statement_impl::make(){
@@ -71,18 +72,18 @@ namespace EX3{
 		std::string if1 = "XIF1" + name_;
 		std::string if2 = "XIF2" + name_;
 		//std::string if3 = "XIF3" + name_;
-		res += " / > if " + name_ + "\n";
+		res += "\n / > if " + name_ + "\n";
 		res += " / if (\n";
-		res += stats_cond_.make();
+		res += indent(stats_cond_.make());
 		res += "SZA\n";
 		res += "BUN " + (invert_ ? if2 : if1) + "\n";
 		res += "BUN " + (invert_ ? if1 : if2) + "\n";
 		res += " / ) {\n";
 		res += if1 + "," + "\n";
-		res += stats_.make();
+		res += indent(stats_.make());
 		res += " / }\n";
 		res += if2 + "," + "\n";
-		res += " / < end of if " + name_ + "\n";
+		res += " / < end of if " + name_ + "\n\n";
 		return res;
 	}
 
@@ -112,20 +113,20 @@ namespace EX3{
 		std::string wh1 = "XWH1" + name_;
 		std::string wh2 = "XWH2" + name_;
 		std::string wh3 = "XWH3" + name_;
-		res += " / > while loop " + name_ + "\n";
+		res += "\n / > while loop " + name_ + "\n";
 		res += wh1 + "," + "\n";
 		res += " / while (\n";
-		res += stats_cond_.make();
+		res += indent(stats_cond_.make());
 		res += "SZA\n";
 		res += "BUN " + (invert_ ? wh3 : wh2) + "\n";
 		res += "BUN " + (invert_ ? wh2 : wh3) + "\n";
 		res += " / ) {\n";
 		res += wh2 + "," + "\n";
-		res += stats_.make();
+		res += indent(stats_.make());
 		res += "BUN " + wh1 + "\n";
 		res += " / }\n";
 		res += wh3 + "," + "\n";
-		res += " / < end of while loop " + name_ + "\n";
+		res += " / < end of while loop " + name_ + "\n\n";
 		return res;
 	}
 
@@ -153,7 +154,7 @@ namespace EX3{
 	Statement StatementList::stat(std::string label, std::string placeholder){
 		std::string res;
 		if(!label.empty())
-			res += " / > beginning of " + label + "\n"
+			res += "\n / > beginning of " + label + "\n"
 				+ label + ",\n";
 		std::string mk = make();
 		if(!placeholder.empty()){
@@ -163,9 +164,9 @@ namespace EX3{
 				pos += placeholder.length();
 			}
 		}
-		res += mk;
+		res += indent(mk);
 		if(!label.empty())
-			res += " / < end of " + label + "\n";
+			res += " / < end of " + label + "\n\n";
 		return Statement{
 			new Const(res)
 		};
