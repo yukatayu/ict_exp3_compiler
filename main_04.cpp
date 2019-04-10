@@ -14,7 +14,7 @@ int main(){
 
 	// Note: Always i < 256
 	Data i(INT, "I", 0);
-	Data mi(INT, "M", 0);
+	Data mi(INT, "MI", 0);
 	// Note: i^2 < 65536
 	Data i2(INT, "I2", 0);
 
@@ -26,25 +26,38 @@ int main(){
 	Data flag(INT, "TFLAG", 0);
 	Data cmp_res(INT, "CMPRES", 0);
 
-	Statement GetE{
+	Statement Zero{
 		new Const(
 			"CLA\n"
-			"CIR\n"
 		)
 	};
 
+	Statement GetE{
+		new Const(
+			"CLA\n"
+			"CIL\n"
+		)
+	};
+
+	/*
+	StatementList cmpNc1Nc2_ = {
+		t1 = -Nc2,
+		t1 = t1 + Nc1,
+		cmp_res = Statement{ new Negative(t1) }
+	};
+	*/
 	StatementList cmpNc1Nc2 = {
 		t1 = +Nc1,
 		t2 = +Nc2,
 		Statement{
-			new While("CmpLoop",{
+			new While("CmpLoop__TOKEN__",{
 				flag = +t1,
 				Statement{
-					new If("CmpT1",{
+					new If("CmpT1__TOKEN__",{
 						t1.load()
 					},{
 						flag = +t2
-					}, false)
+					}, true)
 				},
 				flag.load()
 			},{
@@ -53,33 +66,34 @@ int main(){
 				t2 = (t2 << 1),
 				t4 = GetE,
 				Statement{
-					new If("t3pt4is1", {
+					new If("t3pt4is1__TOKEN__", {
 						t3 = t3 + t4,
 						t3 = t3 + m1,
 						t3.load()
 					}, {
 						cmp_res = +t4,
 						Statement{
-							new Goto("EndCp1Cp2")
+							new Goto("EndCp1Cp2__TOKEN__")
 						}
 					}, true)
 				}
 			})
 		},
+		cmp_res = Zero,
 		Statement{
-			new Const("EndCp1Cp2,")
+			new Const("EndCp1Cp2__TOKEN__,")
 		}
 	};
 
 	StatementList checkPrime = {
 		i = +i_init,
-		i = -i_init,
-		i = +i2_init,
+		mi = -i_init,
+		i2 = +i2_init,
 		Statement{
 			new While("CPLoop", {
 				Nc1 = +N,
 				Nc2 = +i2,
-				cmpNc1Nc2.stat(),
+				cmpNc1Nc2.stat("cnn0", "__TOKEN__"),
 				cmp_res.load()
 			}, {
 				Nc1 = +N,
@@ -87,8 +101,9 @@ int main(){
 				Nc1 = Nc1 + mi,
 				Statement{
 					new While("CPLoop2", {
-						cmpNc1Nc2.stat(),
-						cmp_res.load()
+						cmpNc1Nc2.stat("cnn1", "__TOKEN__"),
+						cmp_res.load(),
+						//Statement{ new Negative(Nc1) },
 					}, {
 						Nc2 = +Nc1,
 						Nc1 = Nc1 + mi
@@ -99,11 +114,11 @@ int main(){
 						Nc2.load()
 					},{
 						new Goto("L1")
-					}, false)
+					}, true)
 				},
 				t1 = i << 1,
 				++t1,
-				i2 = i2 + t2,
+				i2 = i2 + t1,
 				++i,
 				mi = mi + m1
 			}, true)
@@ -112,13 +127,19 @@ int main(){
 	};
 
 	StatementList program = {
+		Statement{ new Const("ORG 10 / Entry Point") },
 		Statement{
 			new While("MainLoop", {
 				N.load()
 			}, {
 				checkPrime.stat("CP"),
+				Statement{ new Const("L1,") },
 				N = N + m1
 			})
+		},
+		Statement{new Const("HLT")},
+		Statement{
+			new Const("\n\n")
 		},
 		N.stat(),
 		Nc1.stat(),
@@ -134,7 +155,8 @@ int main(){
 		t3.stat(),
 		t4.stat(),
 		flag.stat(),
-		cmp_res.stat()
+		cmp_res.stat(),
+		Statement{ new Const("END") }
 	};
 
 	std::string res = program.make();

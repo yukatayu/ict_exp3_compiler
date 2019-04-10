@@ -11,6 +11,7 @@ int main(){
 	Data R(INT, "R", 0);
 
 	StatementList program{
+		Statement{ new Const("ORG 10 / Entry Point") },
 		Y = -Y,
 		Statement{
 			new While("Main", {
@@ -21,10 +22,12 @@ int main(){
 				X = X + Y
 			}, true)
 		},
+		Statement{ new Const("HLT") },
 		X.stat(),
 		Y.stat(),
 		Q.stat(),
 		R.stat(),
+		Statement{ new Const("END") }
 	};
 
 	std::string res = program.make();

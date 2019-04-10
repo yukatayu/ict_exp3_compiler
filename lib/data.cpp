@@ -75,7 +75,6 @@ namespace EX3{
 			new Const{
 				"LDA " + name_ + "\n"
 				"ADD " + d.name() + "\n"
-				"INC\n"
 			}
 		};
 	}

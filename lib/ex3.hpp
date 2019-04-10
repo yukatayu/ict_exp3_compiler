@@ -71,7 +71,7 @@ namespace EX3{
 		StatementList(std::initializer_list<Statement_impl*> statements);
 		StatementList(std::vector<Statement> statements);
 		std::string make();
-		Statement stat(std::string label = "");
+		Statement stat(std::string label = "", std::string placeholder = "");
 	};
 
 	class Const : public Statement_impl {

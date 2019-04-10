@@ -150,12 +150,20 @@ namespace EX3{
 		return res;
 	}
 
-	Statement StatementList::stat(std::string label){
+	Statement StatementList::stat(std::string label, std::string placeholder){
 		std::string res;
 		if(!label.empty())
 			res += " / > beginning of " + label + "\n"
 				+ label + ",\n";
-		res += make();
+		std::string mk = make();
+		if(!placeholder.empty()){
+			size_t pos = 0;
+			while((pos = mk.find(placeholder, pos)) != std::string::npos){
+				mk.replace(pos, placeholder.length(), label);
+				pos += placeholder.length();
+			}
+		}
+		res += mk;
 		if(!label.empty())
 			res += " / < end of " + label + "\n";
 		return Statement{
