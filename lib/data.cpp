@@ -97,6 +97,18 @@ namespace EX3{
 		};
 	}
 
+	Statement Data::operator--(){
+		return Statement{
+			new Const{
+				"LDA " + name_ + "\n"
+				"CMA\n"
+				"INC\n"
+				"CMA\n"
+				"STA " + name_ + "\n"
+			}
+		};
+	}
+
 	Statement Data::operator<<(int i){
 		if(i != 1) throw std::runtime_error("not implemented in " __FILE__ " at " + std::to_string(__LINE__));
 		return Statement{

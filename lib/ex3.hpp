@@ -56,6 +56,7 @@ namespace EX3{
 		Statement operator+(Data d);
 		Statement operator+();
 		Statement operator++();	// 前置
+		Statement operator--();	// 前置
 		Statement operator-();
 		Statement operator<<(int i);
 		Statement operator>>(int i);

@@ -8,7 +8,6 @@ int main(){
 	Data Nc1(INT, "NC1", 0);
 	Data Nc2(INT, "NC2", 0);
 
-	Data m1(INT, "M1", -1);
 	Data i_init(INT, "IINIT", 2);
 	Data i2_init(INT, "I2INIT", 4);
 
@@ -68,7 +67,7 @@ int main(){
 				Statement{
 					new If("t3pt4is1__TOKEN__", {
 						t3 = t3 + t4,
-						t3 = t3 + m1,
+						--t3,
 						t3.load()
 					}, {
 						cmp_res = +t4,
@@ -120,7 +119,7 @@ int main(){
 				++t1,
 				i2 = i2 + t1,
 				++i,
-				mi = mi + m1
+				--mi
 			}, true)
 		},
 		Statement{new Const("HLT")}
@@ -134,7 +133,7 @@ int main(){
 			}, {
 				checkPrime.stat("CP"),
 				Statement{ new Const("L1,") },
-				N = N + m1
+				--N
 			})
 		},
 		Statement{new Const("HLT")},
@@ -144,7 +143,6 @@ int main(){
 		N.stat(),
 		Nc1.stat(),
 		Nc2.stat(),
-		m1.stat(),
 		i_init.stat(),
 		i2_init.stat(),
 		i.stat(),
