@@ -129,4 +129,9 @@ namespace EX3{
 		std::string make_impl() override;
 	};
 
+	namespace helper{
+		std::vector<std::string> split(std::string str, char delim, bool skipEmpty = false);
+		std::string indent(std::string str, int width = 4);
+	}
+
 }
