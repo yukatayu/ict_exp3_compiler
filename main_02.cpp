@@ -10,13 +10,24 @@ int main(){
 	Data Y(INT, "Y", 17);
 	Data Q(INT, "Q", -1);
 	Data R(INT, "R", 0);
+	Data cmp_res(INT, "CMPRES", 10);
+
+	// X >= Y
+	StatementList cmpXY = {
+		t = -R,
+		Statement{ new Const("CLE\n") },
+		t + X,
+		cmp_res = GetE,
+	};
 
 	StatementList program{
 		begin,
 		Y = -Y,
 		Statement{
 			new While("Main", {
-				new Negative(X)
+				cmpXY.stat("CMP"),
+				cmp_res.load()
+				//new Negative(X)
 			}, {
 				R = +X,
 				++Q,
@@ -28,6 +39,8 @@ int main(){
 		Y.stat(),
 		Q.stat(),
 		R.stat(),
+		t.stat(),
+		cmp_res.stat(),
 		end
 	};
 

@@ -43,51 +43,16 @@ int main(){
 	Data check_char_lower_m_A_m10(INT, "CHKCHARLMAM10", -55);
 
 	Data t(INT, "TEMP", 0);
-	Data t1(INT, "TEMP1", 0);
-	Data t2(INT, "TEMP2", 0);
-	Data t3(INT, "TEMP3", 0);
-	Data t4(INT, "TEMP4", 0);
+	Data tc(INT, "TEMPCMP", 0);
 	Data flag(INT, "TFLAG", 0);
 	Data cmp_res(INT, "CMPRES", 0);
 
-
+	// X >= R
 	StatementList cmpXR = {
-		t1 = +X,
-		t2 = +R,
-		Statement{
-			new While("CmpLoop__TOKEN__",{
-				flag = +t1,
-				Statement{
-					new If("CmpT1__TOKEN__",{
-						t1.load()
-					},{
-						flag = +t2
-					}, true)
-				},
-				flag.load()
-			},{
-				t1 = (t1 << 1),
-				t3 = GetE,
-				t2 = (t2 << 1),
-				t4 = GetE,
-				Statement{
-					new If("t3pt4is1__TOKEN__", {
-						t3 = t3 + t4,
-						--t3,
-						t3.load()
-					}, {
-						cmp_res = +t4,
-						Statement{
-							new Goto("EndCp1Cp2__TOKEN__")
-						}
-					}, true)
-				}
-			})
-		},
-		cmp_res = Zero,
-		Statement{
-			new Const("EndCp1Cp2__TOKEN__,")
-		}
+		t = -R,
+		Statement{ new Const("CLE\n") },
+		t + X,
+		cmp_res = GetE,
 	};
 
 	StatementList show{
@@ -107,7 +72,7 @@ int main(){
 						R = +X,
 						X = X + dec_minus,
 						++Q
-					})
+					}, true)
 				},
 
 				result_num = +Q,
@@ -249,10 +214,7 @@ int main(){
 		check_char_lower_m_A_m10.stat(),
 
 		t.stat(),
-		t1.stat(),
-		t2.stat(),
-		t3.stat(),
-		t4.stat(),
+		tc.stat(),
 		flag.stat(),
 		cmp_res.stat(),
 

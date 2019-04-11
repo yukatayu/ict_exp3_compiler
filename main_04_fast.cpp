@@ -23,58 +23,16 @@ int main(){
 	Data i_ptr(INT, "IPTR", 0);
 
 	// Temporary
-	Data t1(INT, "T1", 0);
-	Data t2(INT, "T2", 0);
-	Data t3(INT, "T3", 0);
-	Data t4(INT, "T4", 0);
+	Data t(INT, "TEMP", 0);
 	Data flag(INT, "TFLAG", 0);
 	Data cmp_res(INT, "CMPRES", 0);
 
-	/*
-	StatementList cmpNc1Nc2_ = {
-		t1 = -Nc2,
-		t1 = t1 + Nc1,
-		cmp_res = Statement{ new Negative(t1) }
-	};
-	*/
-
+	// Nc1 >= Nc2
 	StatementList cmpNc1Nc2 = {
-		t1 = +Nc1,
-		t2 = +Nc2,
-		Statement{
-			new While("CmpLoop__TOKEN__",{
-				flag = +t1,
-				Statement{
-					new If("CmpT1__TOKEN__",{
-						t1.load()
-					},{
-						flag = +t2
-					}, true)
-				},
-				flag.load()
-			},{
-				t1 = (t1 << 1),
-				t3 = GetE,
-				t2 = (t2 << 1),
-				t4 = GetE,
-				Statement{
-					new If("t3pt4is1__TOKEN__", {
-						t3 = t3 + t4,
-						--t3,
-						t3.load()
-					}, {
-						cmp_res = +t4,
-						Statement{
-							new Goto("EndCp1Cp2__TOKEN__")
-						}
-					}, true)
-				}
-			})
-		},
-		cmp_res = Zero,
-		Statement{
-			new Const("EndCp1Cp2__TOKEN__,")
-		}
+		t = -Nc2,
+		Statement{ new Const("CLE\n") },
+		t + Nc1,
+		cmp_res = GetE,
 	};
 
 	StatementList checkPrime = {
@@ -104,8 +62,6 @@ int main(){
 						i_ptr = (i_ptr<<1)
 					}, true)
 				},
-				//i_shift = (i_shift>>1),
-				//i_ptr = (i_ptr>>1),
 
 				Statement{
 					new While("CPMain", {
@@ -121,28 +77,16 @@ int main(){
 								cmpNc1Nc2.stat("cnn3", "__TOKEN__"),
 								cmp_res.load()
 							}, {
-								t4 = -i_shift,
-								n_tmp = n_tmp + t4,
+								t = -i_shift,
+								n_tmp = n_tmp + t,
 								//i_res = i_res + i_shift,
-							}, true)
+							})
 						},
 						i_shift = (i_shift >> 1),
 						i_ptr = (i_ptr >> 1)
-					}, true)
-				},
-
-				/*Nc1 = Nc1 + mi,
-				Statement{
-					new While("CPLoop2", {
-						cmpNc1Nc2.stat("cnn1", "__TOKEN__"),
-						cmp_res.load(),
-						//Statement{ new Negative(Nc1) },
-					}, {
-						Nc2 = +Nc1,
-						Nc1 = Nc1 + mi
 					})
 				},
-				*/
+
 				Nc2 = +n_tmp,
 				Statement{
 					new If("CPBreak", {
@@ -151,12 +95,12 @@ int main(){
 						new Goto("L1")
 					}, true)
 				},
-				t1 = i << 1,
-				++t1,
-				i2 = i2 + t1,
+				t = i << 1,
+				++t,
+				i2 = i2 + t,
 				++i,
 				--mi
-			}, true)
+			})
 		},
 		halt
 	};
@@ -184,10 +128,7 @@ int main(){
 		i.stat(),
 		mi.stat(),
 		i2.stat(),
-		t1.stat(),
-		t2.stat(),
-		t3.stat(),
-		t4.stat(),
+		t.stat(),
 		i_shift.stat(),
 		i_ptr.stat(),
 		n_tmp.stat(),
