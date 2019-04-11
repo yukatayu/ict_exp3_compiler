@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "-g")
 add_subdirectory(lib)
 
 add_executable(run_02 main_02.cpp)
-add_executable(run_02_fast main_02_fast.cpp)
+add_executable(run_03 main_03.cpp)
 add_executable(run_04 main_04.cpp)
 add_executable(run_04_fast main_04_fast.cpp)
 
@@ -18,7 +18,7 @@ include_directories(
 )
 
 target_link_libraries (run_02 ict_exp3_parser)
-target_link_libraries (run_02_fast ict_exp3_parser)
+target_link_libraries (run_03 ict_exp3_parser)
 target_link_libraries (run_04 ict_exp3_parser)
 target_link_libraries (run_04_fast ict_exp3_parser)
 
