@@ -110,7 +110,7 @@ int main(){
 				--mi
 			}, true)
 		},
-		Statement{new Const("HLT")}
+		halt
 	};
 
 	StatementList program = {
@@ -124,7 +124,7 @@ int main(){
 				--N
 			})
 		},
-		Statement{new Const("HLT")},
+		halt,
 		Statement{
 			new Const("\n\n")
 		},

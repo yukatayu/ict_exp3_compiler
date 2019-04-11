@@ -262,7 +262,7 @@ XWH2MainLoop,
         XWH3CPLoop,
          / < end of while loop CPLoop
 
-        HLT
+        _M_, HLT
      / < end of CP
 
     L1,
@@ -276,7 +276,7 @@ BUN XWH1MainLoop
 XWH3MainLoop,
  / < end of while loop MainLoop
 
-HLT
+_M_, HLT
 
 
 N, DEC 65535

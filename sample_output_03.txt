@@ -217,7 +217,7 @@ XWH2Main,
 
                 CLA
                 STA RESULTPTR I
-                HLT
+                _M_, HLT
              / < end of SHOW
 
          / }
@@ -265,7 +265,7 @@ XWH2Main,
                 BUN XIF2checkAF1AF1
                  / ) {
                 XIF1checkAF1AF1,
-                    HLT
+                    _M_, HLT
                  / }
                 XIF2checkAF1AF1,
                  / < end of if checkAF1AF1
@@ -285,7 +285,7 @@ XWH2Main,
                 BUN XIF2checkAF2AF1
                  / ) {
                 XIF1checkAF2AF1,
-                    HLT
+                    _M_, HLT
                  / }
                 XIF2checkAF2AF1,
                  / < end of if checkAF2AF1
@@ -340,7 +340,7 @@ XWH2Main,
                 BUN XIF2checkAF1AF2
                  / ) {
                 XIF1checkAF1AF2,
-                    HLT
+                    _M_, HLT
                  / }
                 XIF2checkAF1AF2,
                  / < end of if checkAF1AF2
@@ -360,7 +360,7 @@ XWH2Main,
                 BUN XIF2checkAF2AF2
                  / ) {
                 XIF1checkAF2AF2,
-                    HLT
+                    _M_, HLT
                  / }
                 XIF2checkAF2AF2,
                  / < end of if checkAF2AF2
@@ -405,7 +405,7 @@ BUN XWH1Main
 XWH3Main,
  / < end of while loop Main
 
-HLT
+_M_, HLT
 X, DEC 0
 Q, DEC 0
 R, DEC 0

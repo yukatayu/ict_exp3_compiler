@@ -23,7 +23,7 @@ int main(){
 				X = X + Y
 			}, true)
 		},
-		Statement{ new Const("HLT") },
+		halt,
 		X.stat(),
 		Y.stat(),
 		Q.stat(),

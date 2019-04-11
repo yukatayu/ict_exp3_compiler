@@ -134,7 +134,7 @@ namespace EX3{
 		std::string indent(std::string str, int width = 4);
 
 		static Statement begin { new Const("ORG 10 / Entry Point") };
-		static Statement halt  { new Const("HLT") };
+		static Statement halt  { new Const("_M_, HLT") };
 		static Statement end   { new Const("END") };
 		static Statement Zero{
 			new Const(

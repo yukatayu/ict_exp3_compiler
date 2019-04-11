@@ -211,7 +211,7 @@ int main(){
 				++data_ptr
 			})
 		},
-		Statement{ new Const("HLT") },
+		halt,
 		X.stat(),
 		Q.stat(),
 		R.stat(),

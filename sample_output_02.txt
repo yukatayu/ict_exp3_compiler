@@ -29,7 +29,7 @@ BUN XWH1Main
 XWH3Main,
  / < end of while loop Main
 
-HLT
+_M_, HLT
 X, DEC 55
 Y, DEC 17
 Q, DEC -1
