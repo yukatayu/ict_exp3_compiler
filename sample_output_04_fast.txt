@@ -24,42 +24,23 @@ XWH2MainLoop,
          / > while loop CPLoop
         XWH1CPLoop,
          / while (
-            LDA N
-            STA NC1
+            CLA
+            INC
+            STA TEMP2
             LDA I2
-            STA NC2
-
-             / > beginning of cnn0
-            cnn0,
-                CLA
-                INC
-                STA CMPRES
-
-                 / > if Cmpcnn0
-                 / if (
-                    LDA NC2
-                SZA
-                BUN XIF1Cmpcnn0
-                BUN XIF2Cmpcnn0
-                 / ) {
-                XIF1Cmpcnn0,
-                    LDA NC2
-                    CMA
-                    INC
-                    STA TEMP
-                    CLE
-                    LDA TEMP
-                    ADD NC1
-                    CLA
-                    CIL
-                    STA CMPRES
-                 / }
-                XIF2Cmpcnn0,
-                 / < end of if Cmpcnn0
-
-             / < end of cnn0
-
-            LDA CMPRES
+            CMA
+            STA TEMP1
+            LDA TEMP1
+            ADD TEMP2
+            STA TEMP1
+            CLA
+            CIL
+            STA TEMP2
+            LDA TEMP1
+            ADD N
+            CLA
+            CIL
+            ADD TEMP2
         SZA
         BUN XWH2CPLoop
         BUN XWH3CPLoop
@@ -108,42 +89,23 @@ XWH2MainLoop,
              / > while loop CPMain
             XWH1CPMain,
              / while (
-                LDA ISH
-                STA NC1
+                CLA
+                INC
+                STA TEMP2
                 LDA I
-                STA NC2
-
-                 / > beginning of cnn2
-                cnn2,
-                    CLA
-                    INC
-                    STA CMPRES
-
-                     / > if Cmpcnn2
-                     / if (
-                        LDA NC2
-                    SZA
-                    BUN XIF1Cmpcnn2
-                    BUN XIF2Cmpcnn2
-                     / ) {
-                    XIF1Cmpcnn2,
-                        LDA NC2
-                        CMA
-                        INC
-                        STA TEMP
-                        CLE
-                        LDA TEMP
-                        ADD NC1
-                        CLA
-                        CIL
-                        STA CMPRES
-                     / }
-                    XIF2Cmpcnn2,
-                     / < end of if Cmpcnn2
-
-                 / < end of cnn2
-
-                LDA CMPRES
+                CMA
+                STA TEMP1
+                LDA TEMP1
+                ADD TEMP2
+                STA TEMP1
+                CLA
+                CIL
+                STA TEMP2
+                LDA TEMP1
+                ADD ISH
+                CLA
+                CIL
+                ADD TEMP2
             SZA
             BUN XWH2CPMain
             BUN XWH3CPMain
@@ -152,42 +114,23 @@ XWH2MainLoop,
 
                  / > if DivCmp
                  / if (
-                    LDA ITMP
-                    STA NC1
+                    CLA
+                    INC
+                    STA TEMP2
                     LDA ISH
-                    STA NC2
-
-                     / > beginning of cnn3
-                    cnn3,
-                        CLA
-                        INC
-                        STA CMPRES
-
-                         / > if Cmpcnn3
-                         / if (
-                            LDA NC2
-                        SZA
-                        BUN XIF1Cmpcnn3
-                        BUN XIF2Cmpcnn3
-                         / ) {
-                        XIF1Cmpcnn3,
-                            LDA NC2
-                            CMA
-                            INC
-                            STA TEMP
-                            CLE
-                            LDA TEMP
-                            ADD NC1
-                            CLA
-                            CIL
-                            STA CMPRES
-                         / }
-                        XIF2Cmpcnn3,
-                         / < end of if Cmpcnn3
-
-                     / < end of cnn3
-
-                    LDA CMPRES
+                    CMA
+                    STA TEMP1
+                    LDA TEMP1
+                    ADD TEMP2
+                    STA TEMP1
+                    CLA
+                    CIL
+                    STA TEMP2
+                    LDA TEMP1
+                    ADD ITMP
+                    CLA
+                    CIL
+                    ADD TEMP2
                 SZA
                 BUN XIF1DivCmp
                 BUN XIF2DivCmp
@@ -196,9 +139,9 @@ XWH2MainLoop,
                     LDA ISH
                     CMA
                     INC
-                    STA TEMP
+                    STA TEMP1
                     LDA ITMP
-                    ADD TEMP
+                    ADD TEMP1
                     STA ITMP
                  / }
                 XIF2DivCmp,
@@ -236,12 +179,12 @@ XWH2MainLoop,
             LDA I
             CLE
             CIL
-            STA TEMP
-            LDA TEMP
+            STA TEMP1
+            LDA TEMP1
             INC
-            STA TEMP
+            STA TEMP1
             LDA I2
-            ADD TEMP
+            ADD TEMP1
             STA I2
             LDA I
             INC
@@ -281,11 +224,11 @@ I2INIT, DEC 4
 I, DEC 0
 MI, DEC 0
 I2, DEC 0
-TEMP, DEC 0
+TEMP1, DEC 0
+TEMP2, DEC 0
 ISH, DEC 0
 IPTR, DEC 0
 ITMP, DEC 0
 TFLAG, DEC 0
-CMPRES, DEC 0
 END
 

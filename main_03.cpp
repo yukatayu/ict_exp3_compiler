@@ -42,23 +42,11 @@ int main(){
 	Data check_char_lower_m_A(INT, "CHKCHARLMA", -65);
 	Data check_char_lower_m_A_m10(INT, "CHKCHARLMAM10", -55);
 
-	Data t(INT, "TEMP", 0);
+	Data t1(INT, "TEMP1", 0);
+	Data t2(INT, "TEMP2", 0);
 	Data tc(INT, "TEMPCMP", 0);
 	Data flag(INT, "TFLAG", 0);
 	Data cmp_res(INT, "CMPRES", 0);
-
-	// X >= R
-	StatementList cmpXR = {
-		cmp_res = One,
-		Statement{ new If("Cmp__TOKEN__", {
-			R.load(),
-		}, {
-			t = -R,
-			Statement{ new Const("CLE\n") },
-			t + X,
-			cmp_res = GetE,
-		})}
-	};
 
 	StatementList show{
 		Statement{
@@ -71,8 +59,7 @@ int main(){
 				X = X + dec_minus,
 				Statement{
 					new While("ShowSub", {
-						cmpXR.stat("cmpXR"),
-						cmp_res.load()
+						new MoreEq(X, R, t1, t2)
 					}, {
 						R = +X,
 						X = X + dec_minus,
@@ -93,8 +80,8 @@ int main(){
 						result_ptr3 = +result_ptr,
 						Statement{
 							new While("ShowResShift", {
-								t = -result_ptr_init,
-								t + result_ptr2
+								t1 = -result_ptr_init,
+								t1 + result_ptr2
 							}, {
 								*result_ptr2 = +*result_ptr3,
 								--result_ptr2,
@@ -111,19 +98,19 @@ int main(){
 	};
 
 	StatementList checkAF{
-		t = -check_char,
-		t = t + check_char_upper_F,
+		t1 = -check_char,
+		t1 = t1 + check_char_upper_F,
 		Statement{
 			new If("checkAF1__TOKEN__", {
-				new Negative(t)
+				new Negative(t1)
 			}, {
 				halt
 			})
 		},
-		t = check_char + check_char_lower_m_A,
+		t1 = check_char + check_char_lower_m_A,
 		Statement{
 			new If("checkAF2__TOKEN__", {
-				new Negative(t)
+				new Negative(t1)
 			}, {
 				halt
 			})
@@ -141,26 +128,26 @@ int main(){
 			}, true)
 		},
 
-		t = -check_char,
-		t = t + check_char_upper,
+		t1 = -check_char,
+		t1 = t1 + check_char_upper,
 		Statement{
 			new If("check1", {
-				new Negative(t)
+				new Negative(t1)
 			}, {
 				checkAF.stat("AF1", "__TOKEN__")
 			})
 		},
 
-		t = -check_char_lower,
-		t = t + check_char,
+		t1 = -check_char_lower,
+		t1 = t1 + check_char,
 		Statement{
 			new If("check2", {
-					new Negative(t)
+					new Negative(t1)
 			}, {
 				checkAF.stat("AF2", "__TOKEN__")
 			})
 		},
-		check_char = +t
+		check_char = +t1
 	};
 
 
@@ -168,7 +155,7 @@ int main(){
 		begin,
 		Statement{
 			new While("Main", {
-				dec.load()  // infinity loop
+				One,  // infinity loop
 			}, {
 				check_char = +*data_ptr,
 				check.stat("Check"),
@@ -182,6 +169,7 @@ int main(){
 			})
 		},
 		halt,
+
 		X.stat(),
 		Q.stat(),
 		R.stat(),
@@ -218,7 +206,8 @@ int main(){
 		check_char_lower_m_A.stat(),
 		check_char_lower_m_A_m10.stat(),
 
-		t.stat(),
+		t1.stat(),
+		t2.stat(),
 		tc.stat(),
 		flag.stat(),
 		cmp_res.stat(),

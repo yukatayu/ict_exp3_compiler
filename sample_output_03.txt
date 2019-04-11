@@ -3,7 +3,8 @@ ORG 10 / Entry Point
  / > while loop Main
 XWH1Main,
  / while (
-    LDA DECNUM
+    CLA
+    INC
 SZA
 BUN XWH2Main
 BUN XWH3Main
@@ -49,38 +50,23 @@ XWH2Main,
                      / > while loop ShowSub
                     XWH1ShowSub,
                      / while (
-
-                         / > beginning of cmpXR
-                        cmpXR,
-                            CLA
-                            INC
-                            STA CMPRES
-
-                             / > if Cmp__TOKEN__
-                             / if (
-                                LDA R
-                            SZA
-                            BUN XIF1Cmp__TOKEN__
-                            BUN XIF2Cmp__TOKEN__
-                             / ) {
-                            XIF1Cmp__TOKEN__,
-                                LDA R
-                                CMA
-                                INC
-                                STA TEMP
-                                CLE
-                                LDA TEMP
-                                ADD X
-                                CLA
-                                CIL
-                                STA CMPRES
-                             / }
-                            XIF2Cmp__TOKEN__,
-                             / < end of if Cmp__TOKEN__
-
-                         / < end of cmpXR
-
-                        LDA CMPRES
+                        CLA
+                        INC
+                        STA TEMP2
+                        LDA R
+                        CMA
+                        STA TEMP1
+                        LDA TEMP1
+                        ADD TEMP2
+                        STA TEMP1
+                        CLA
+                        CIL
+                        STA TEMP2
+                        LDA TEMP1
+                        ADD X
+                        CLA
+                        CIL
+                        ADD TEMP2
                     SZA
                     BUN XWH3ShowSub
                     BUN XWH2ShowSub
@@ -127,8 +113,8 @@ XWH2Main,
                             LDA RESULTPTRINIT
                             CMA
                             INC
-                            STA TEMP
-                            LDA TEMP
+                            STA TEMP1
+                            LDA TEMP1
                             ADD RESULTPTR2
                         SZA
                         BUN XWH2ShowResShift
@@ -176,14 +162,14 @@ XWH2Main,
         LDA CHKCHAR
         CMA
         INC
-        STA TEMP
-        LDA TEMP
+        STA TEMP1
+        LDA TEMP1
         ADD CHKCHARU
-        STA TEMP
+        STA TEMP1
 
          / > if check1
          / if (
-            LDA TEMP
+            LDA TEMP1
             CIL
             CLA
             CIL
@@ -198,14 +184,14 @@ XWH2Main,
                 LDA CHKCHAR
                 CMA
                 INC
-                STA TEMP
-                LDA TEMP
+                STA TEMP1
+                LDA TEMP1
                 ADD CHKCHARUF
-                STA TEMP
+                STA TEMP1
 
                  / > if checkAF1AF1
                  / if (
-                    LDA TEMP
+                    LDA TEMP1
                     CIL
                     CLA
                     CIL
@@ -221,11 +207,11 @@ XWH2Main,
 
                 LDA CHKCHAR
                 ADD CHKCHARLMA
-                STA TEMP
+                STA TEMP1
 
                  / > if checkAF2AF1
                  / if (
-                    LDA TEMP
+                    LDA TEMP1
                     CIL
                     CLA
                     CIL
@@ -251,14 +237,14 @@ XWH2Main,
         LDA CHKCHARL
         CMA
         INC
-        STA TEMP
-        LDA TEMP
+        STA TEMP1
+        LDA TEMP1
         ADD CHKCHAR
-        STA TEMP
+        STA TEMP1
 
          / > if check2
          / if (
-            LDA TEMP
+            LDA TEMP1
             CIL
             CLA
             CIL
@@ -273,14 +259,14 @@ XWH2Main,
                 LDA CHKCHAR
                 CMA
                 INC
-                STA TEMP
-                LDA TEMP
+                STA TEMP1
+                LDA TEMP1
                 ADD CHKCHARUF
-                STA TEMP
+                STA TEMP1
 
                  / > if checkAF1AF2
                  / if (
-                    LDA TEMP
+                    LDA TEMP1
                     CIL
                     CLA
                     CIL
@@ -296,11 +282,11 @@ XWH2Main,
 
                 LDA CHKCHAR
                 ADD CHKCHARLMA
-                STA TEMP
+                STA TEMP1
 
                  / > if checkAF2AF2
                  / if (
-                    LDA TEMP
+                    LDA TEMP1
                     CIL
                     CLA
                     CIL
@@ -323,7 +309,7 @@ XWH2Main,
         XIF2check2,
          / < end of if check2
 
-        LDA TEMP
+        LDA TEMP1
         STA CHKCHAR
      / < end of Check
 
@@ -384,7 +370,8 @@ CHKCHARL, CHR 0
 CHKCHARUF, DEC 70
 CHKCHARLMA, DEC -65
 CHKCHARLMAM10, DEC -55
-TEMP, DEC 0
+TEMP1, DEC 0
+TEMP2, DEC 0
 TEMPCMP, DEC 0
 TFLAG, DEC 0
 CMPRES, DEC 0

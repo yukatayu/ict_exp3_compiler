@@ -32,6 +32,28 @@ namespace EX3{
 		return "BUN " + target_name_ + "\n";
 	}
 
+	// ACC = (target1 >= target2)
+	MoreEq::MoreEq(Data target1, Data target2, Data tmp, Data tmp2)
+		: target1_(target1)
+		, target2_(target2)
+		, tmp_(tmp)
+		, tmp2_(tmp2)
+	{ }
+	std::string MoreEq::make_impl() {
+		StatementList cmp12 = {
+			tmp2_ = helper::One,
+
+			tmp_ = ~target2_,
+			tmp_ = tmp_ + tmp2_,
+			tmp2_ = helper::GetE,
+
+			tmp_ + target1_,
+			helper::GetE,
+			Statement{ new Const("ADD " + tmp2_.name()) }
+		};
+		return cmp12.make();
+	}
+
 	// Negative
 	Negative::Negative(Data d){
 		target_name_ = d.name();

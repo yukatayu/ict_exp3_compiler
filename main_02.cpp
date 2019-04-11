@@ -5,34 +5,19 @@ int main(){
 	using namespace EX3;
 	using namespace helper;
 
-	Data t(INT, "t", 0);
+	Data t1(INT, "T1", 0);
+	Data t2(INT, "T2", 0);
 	Data X(INT, "X", 55);
 	Data Y(INT, "Y", 17);
 	Data Q(INT, "Q", -1);
 	Data R(INT, "R", 0);
-	Data cmp_res(INT, "CMPRES", 10);
-
-	// X >= Y
-	StatementList cmpXY = {
-		cmp_res = One,
-		Statement{ new If("Cmp__TOKEN__", {
-			Y.load(),
-		}, {
-			t = -Y,
-			Statement{ new Const("CLE\n") },
-			t + X,
-			cmp_res = GetE,
-		})}
-	};
 
 	StatementList program{
 		begin,
 		Y = -Y,
 		Statement{
 			new While("Main", {
-				cmpXY.stat("CMP"),
-				cmp_res.load()
-				//new Negative(X)
+				new MoreEq(X, Y, t1, t2)
 			}, {
 				R = +X,
 				++Q,
@@ -40,12 +25,13 @@ int main(){
 			}, true)
 		},
 		halt,
+
 		X.stat(),
 		Y.stat(),
 		Q.stat(),
 		R.stat(),
-		t.stat(),
-		cmp_res.stat(),
+		t1.stat(),
+		t2.stat(),
 		end
 	};
 

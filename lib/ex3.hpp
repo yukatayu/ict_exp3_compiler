@@ -36,17 +36,20 @@ namespace EX3{
 
 		int dec_;
 		char chr_;
+		bool used_;
 		std::string ref_;
 
 		std::string name_;
 		void set_ref();
 
 	public:
+		void use();
 		std::string name();
 		std::string make_impl() override;
 
-		Data(const Data&) = default;
-		Data(Data&&) = default;
+		Data(const Data&);
+		Data(Data&&);
+		~Data();
 		Data(DataType_Tag_INT type, std::string name, int data);
 		Data(DataType_Tag_CHAR type, std::string name, char data);
 		Data(DataType_Tag_PTR type, std::string name, Data data);
@@ -57,6 +60,7 @@ namespace EX3{
 		Statement operator+();
 		Statement operator++();	// 前置
 		Statement operator--();	// 前置
+		Statement operator~();
 		Statement operator-();
 		Statement operator<<(int i);
 		Statement operator>>(int i);
@@ -88,6 +92,18 @@ namespace EX3{
 		std::string target_name_;
 	public:
 		Goto(std::string label);
+		std::string make_impl() override;
+	};
+
+	// ACC = (target1 >= target2)
+	class MoreEq : public Statement_impl {
+	private:
+		Data tmp_;
+		Data tmp2_;
+		Data target1_;
+		Data target2_;
+	public:
+		MoreEq(Data target1, Data target2, Data tmp, Data tmp2);
 		std::string make_impl() override;
 	};
 
