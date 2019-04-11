@@ -9,8 +9,8 @@ int main(){
 	Data t2(INT, "T2", 0);
 	Data X(INT, "X", 55);
 	Data Y(INT, "Y", 17);
-	Data Q(INT, "Q", -1);
-	Data R(INT, "R", 0);
+	Data Q(INT, "Q", -1, MaybeUnused);
+	Data R(INT, "R", 0, MaybeUnused);
 
 	StatementList program{
 		begin,

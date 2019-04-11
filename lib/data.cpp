@@ -29,25 +29,28 @@ namespace EX3{
 		return res + "\n";
 	}
 
-	Data::Data(DataType_Tag_INT type, std::string name, int data)
+	Data::Data(DataType_Tag_INT type, std::string name, int data, DataUsageCheck check)
 		: name_ { name }
 		, type_ { DataType::DataType_INT }
 		, dec_ { data }
 		, used_ { false }
+		, check_ { check }
 	{
 	}
-	Data::Data(DataType_Tag_CHAR type, std::string name, char data)
+	Data::Data(DataType_Tag_CHAR type, std::string name, char data, DataUsageCheck check)
 		: name_ { name }
 		, type_ { DataType::DataType_CHAR }
 		, chr_ { data }
 		, used_ { false }
+		, check_ { check }
 	{
 	}
-	Data::Data(DataType_Tag_PTR type, std::string name, Data data)
+	Data::Data(DataType_Tag_PTR type, std::string name, Data data, DataUsageCheck check)
 		: name_ { name }
 		, type_ { DataType::DataType_PTR }
 		, ref_ { data.name() }
 		, used_ { false }
+		, check_ { check }
 	{
 	}
 
@@ -72,7 +75,7 @@ namespace EX3{
 	}
 
 	Data::~Data(){
-		if(!name_.empty() && !used_){
+		if(!name_.empty() && !used_ && check_ == DataUsageCheck::EnableCheck){
 			// standard error output
 			std::cerr << "\e[93m[warning]\e[0mData " << name_ << " has never used" << std::endl;
 		}

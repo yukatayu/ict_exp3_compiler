@@ -11,6 +11,11 @@ namespace EX3{
 		DataType_PTR
 	};
 
+	enum DataUsageCheck{
+		EnableCheck,
+		MaybeUnused
+	};
+
 	enum DataType_Tag_INT{
 		INT = 10
 	};
@@ -37,6 +42,7 @@ namespace EX3{
 		int dec_;
 		char chr_;
 		bool used_;
+		DataUsageCheck check_;
 		std::string ref_;
 
 		std::string name_;
@@ -50,9 +56,9 @@ namespace EX3{
 		Data(const Data&);
 		Data(Data&&);
 		~Data();
-		Data(DataType_Tag_INT type, std::string name, int data);
-		Data(DataType_Tag_CHAR type, std::string name, char data);
-		Data(DataType_Tag_PTR type, std::string name, Data data);
+		Data(DataType_Tag_INT type, std::string name, int data, DataUsageCheck check = EnableCheck);
+		Data(DataType_Tag_CHAR type, std::string name, char data, DataUsageCheck check = EnableCheck);
+		Data(DataType_Tag_PTR type, std::string name, Data data, DataUsageCheck check = EnableCheck);
 		Statement stat();
 		Statement load();
 		Data operator*();

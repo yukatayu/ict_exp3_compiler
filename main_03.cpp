@@ -14,7 +14,7 @@ int main(){
 	Data data_ptr_init(PTR, "DATAPTRINIT", data0);
 	Data data_ptr(PTR, "DATAPTR", data0);
 
-	Data result0(CHAR, "RESULT", 'E');
+	Data result0(CHAR, "RESULT", 'E', MaybeUnused);
 	Data result1(CHAR, "", 'R');
 	Data result2(CHAR, "", 'R');
 	Data result3(CHAR, "", 'O');
