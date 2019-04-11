@@ -132,6 +132,22 @@ namespace EX3{
 	namespace helper{
 		std::vector<std::string> split(std::string str, char delim, bool skipEmpty = false);
 		std::string indent(std::string str, int width = 4);
+
+		static Statement begin { new Const("ORG 10 / Entry Point") };
+		static Statement halt  { new Const("HLT") };
+		static Statement end   { new Const("END") };
+		static Statement Zero{
+			new Const(
+				"CLA\n"
+			)
+		};
+
+		static Statement GetE{
+			new Const(
+				"CLA\n"
+				"CIL\n"
+			)
+		};
 	}
 
 }

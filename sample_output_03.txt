@@ -1,0 +1,446 @@
+ORG 10 / Entry Point
+
+ / > while loop Main
+XWH1Main,
+ / while (
+    LDA DECNUM
+SZA
+BUN XWH2Main
+BUN XWH3Main
+ / ) {
+XWH2Main,
+    LDA DATAPTR I
+    STA CHKCHAR
+
+     / > beginning of Check
+    Check,
+
+         / > if check0
+         / if (
+            LDA CHKCHAR
+        SZA
+        BUN XIF2check0
+        BUN XIF1check0
+         / ) {
+        XIF1check0,
+
+             / > beginning of SHOW
+            SHOW,
+
+                 / > while loop ShowMain
+                XWH1ShowMain,
+                 / while (
+                    LDA RESULTNUM
+                SZA
+                BUN XWH2ShowMain
+                BUN XWH3ShowMain
+                 / ) {
+                XWH2ShowMain,
+                    CLA
+                    STA Q
+                    LDA RESULTNUM
+                    STA R
+                    LDA RESULTNUM
+                    STA X
+                    LDA X
+                    ADD DECMINUS
+                    STA X
+
+                     / > while loop ShowSub
+                    XWH1ShowSub,
+                     / while (
+
+                         / > beginning of cmpXR
+                        cmpXR,
+                            LDA X
+                            STA TEMP1
+                            LDA R
+                            STA TEMP2
+
+                             / > while loop CmpLoop__TOKEN__
+                            XWH1CmpLoop__TOKEN__,
+                             / while (
+                                LDA TEMP1
+                                STA TFLAG
+
+                                 / > if CmpT1__TOKEN__
+                                 / if (
+                                    LDA TEMP1
+                                SZA
+                                BUN XIF2CmpT1__TOKEN__
+                                BUN XIF1CmpT1__TOKEN__
+                                 / ) {
+                                XIF1CmpT1__TOKEN__,
+                                    LDA TEMP2
+                                    STA TFLAG
+                                 / }
+                                XIF2CmpT1__TOKEN__,
+                                 / < end of if CmpT1__TOKEN__
+
+                                LDA TFLAG
+                            SZA
+                            BUN XWH2CmpLoop__TOKEN__
+                            BUN XWH3CmpLoop__TOKEN__
+                             / ) {
+                            XWH2CmpLoop__TOKEN__,
+                                LDA TEMP1
+                                CLE
+                                CIL
+                                STA TEMP1
+                                CLA
+                                CIL
+                                STA TEMP3
+                                LDA TEMP2
+                                CLE
+                                CIL
+                                STA TEMP2
+                                CLA
+                                CIL
+                                STA TEMP4
+
+                                 / > if t3pt4is1__TOKEN__
+                                 / if (
+                                    LDA TEMP3
+                                    ADD TEMP4
+                                    STA TEMP3
+                                    LDA TEMP3
+                                    CMA
+                                    INC
+                                    CMA
+                                    STA TEMP3
+                                    LDA TEMP3
+                                SZA
+                                BUN XIF2t3pt4is1__TOKEN__
+                                BUN XIF1t3pt4is1__TOKEN__
+                                 / ) {
+                                XIF1t3pt4is1__TOKEN__,
+                                    LDA TEMP4
+                                    STA CMPRES
+                                    BUN EndCp1Cp2__TOKEN__
+                                 / }
+                                XIF2t3pt4is1__TOKEN__,
+                                 / < end of if t3pt4is1__TOKEN__
+
+                            BUN XWH1CmpLoop__TOKEN__
+                             / }
+                            XWH3CmpLoop__TOKEN__,
+                             / < end of while loop CmpLoop__TOKEN__
+
+                            CLA
+                            STA CMPRES
+                            EndCp1Cp2__TOKEN__,
+                         / < end of cmpXR
+
+                        LDA CMPRES
+                    SZA
+                    BUN XWH2ShowSub
+                    BUN XWH3ShowSub
+                     / ) {
+                    XWH2ShowSub,
+                        LDA X
+                        STA R
+                        LDA X
+                        ADD DECMINUS
+                        STA X
+                        LDA Q
+                        INC
+                        STA Q
+                    BUN XWH1ShowSub
+                     / }
+                    XWH3ShowSub,
+                     / < end of while loop ShowSub
+
+                    LDA Q
+                    STA RESULTNUM
+                    LDA R
+                    ADD CHKCHARL
+                    STA RESULTPTRINIT I
+
+                     / > if ShowRes
+                     / if (
+                        LDA RESULTNUM
+                    SZA
+                    BUN XIF1ShowRes
+                    BUN XIF2ShowRes
+                     / ) {
+                    XIF1ShowRes,
+                        LDA RESULTPTR
+                        STA RESULTPTR2
+                        LDA RESULTPTR2
+                        INC
+                        STA RESULTPTR2
+                        LDA RESULTPTR
+                        STA RESULTPTR3
+
+                         / > while loop ShowResShift
+                        XWH1ShowResShift,
+                         / while (
+                            LDA RESULTPTRINIT
+                            CMA
+                            INC
+                            STA TEMP
+                            LDA TEMP
+                            ADD RESULTPTR2
+                        SZA
+                        BUN XWH2ShowResShift
+                        BUN XWH3ShowResShift
+                         / ) {
+                        XWH2ShowResShift,
+                            LDA RESULTPTR3 I
+                            STA RESULTPTR2 I
+                            LDA RESULTPTR2
+                            CMA
+                            INC
+                            CMA
+                            STA RESULTPTR2
+                            LDA RESULTPTR3
+                            CMA
+                            INC
+                            CMA
+                            STA RESULTPTR3
+                        BUN XWH1ShowResShift
+                         / }
+                        XWH3ShowResShift,
+                         / < end of while loop ShowResShift
+
+                     / }
+                    XIF2ShowRes,
+                     / < end of if ShowRes
+
+                    LDA RESULTPTR
+                    INC
+                    STA RESULTPTR
+                BUN XWH1ShowMain
+                 / }
+                XWH3ShowMain,
+                 / < end of while loop ShowMain
+
+                CLA
+                STA RESULTPTR I
+                HLT
+             / < end of SHOW
+
+         / }
+        XIF2check0,
+         / < end of if check0
+
+        LDA CHKCHAR
+        CMA
+        INC
+        STA TEMP
+        LDA TEMP
+        ADD CHKCHARU
+        STA TEMP
+
+         / > if check1
+         / if (
+            LDA TEMP
+            CIL
+            CLA
+            CIL
+        SZA
+        BUN XIF1check1
+        BUN XIF2check1
+         / ) {
+        XIF1check1,
+
+             / > beginning of AF1
+            AF1,
+                LDA CHKCHAR
+                CMA
+                INC
+                STA TEMP
+                LDA TEMP
+                ADD CHKCHARUF
+                STA TEMP
+
+                 / > if checkAF1AF1
+                 / if (
+                    LDA TEMP
+                    CIL
+                    CLA
+                    CIL
+                SZA
+                BUN XIF1checkAF1AF1
+                BUN XIF2checkAF1AF1
+                 / ) {
+                XIF1checkAF1AF1,
+                    HLT
+                 / }
+                XIF2checkAF1AF1,
+                 / < end of if checkAF1AF1
+
+                LDA CHKCHAR
+                ADD CHKCHARLMA
+                STA TEMP
+
+                 / > if checkAF2AF1
+                 / if (
+                    LDA TEMP
+                    CIL
+                    CLA
+                    CIL
+                SZA
+                BUN XIF1checkAF2AF1
+                BUN XIF2checkAF2AF1
+                 / ) {
+                XIF1checkAF2AF1,
+                    HLT
+                 / }
+                XIF2checkAF2AF1,
+                 / < end of if checkAF2AF1
+
+                LDA CHKCHAR
+                ADD CHKCHARLMAM10
+                STA CHKCHAR
+             / < end of AF1
+
+         / }
+        XIF2check1,
+         / < end of if check1
+
+        LDA CHKCHARL
+        CMA
+        INC
+        STA TEMP
+        LDA TEMP
+        ADD CHKCHAR
+        STA TEMP
+
+         / > if check2
+         / if (
+            LDA TEMP
+            CIL
+            CLA
+            CIL
+        SZA
+        BUN XIF1check2
+        BUN XIF2check2
+         / ) {
+        XIF1check2,
+
+             / > beginning of AF2
+            AF2,
+                LDA CHKCHAR
+                CMA
+                INC
+                STA TEMP
+                LDA TEMP
+                ADD CHKCHARUF
+                STA TEMP
+
+                 / > if checkAF1AF2
+                 / if (
+                    LDA TEMP
+                    CIL
+                    CLA
+                    CIL
+                SZA
+                BUN XIF1checkAF1AF2
+                BUN XIF2checkAF1AF2
+                 / ) {
+                XIF1checkAF1AF2,
+                    HLT
+                 / }
+                XIF2checkAF1AF2,
+                 / < end of if checkAF1AF2
+
+                LDA CHKCHAR
+                ADD CHKCHARLMA
+                STA TEMP
+
+                 / > if checkAF2AF2
+                 / if (
+                    LDA TEMP
+                    CIL
+                    CLA
+                    CIL
+                SZA
+                BUN XIF1checkAF2AF2
+                BUN XIF2checkAF2AF2
+                 / ) {
+                XIF1checkAF2AF2,
+                    HLT
+                 / }
+                XIF2checkAF2AF2,
+                 / < end of if checkAF2AF2
+
+                LDA CHKCHAR
+                ADD CHKCHARLMAM10
+                STA CHKCHAR
+             / < end of AF2
+
+         / }
+        XIF2check2,
+         / < end of if check2
+
+        LDA TEMP
+        STA CHKCHAR
+     / < end of Check
+
+    LDA RESULTNUM
+    CLE
+    CIL
+    STA RESULTNUM
+    LDA RESULTNUM
+    CLE
+    CIL
+    STA RESULTNUM
+    LDA RESULTNUM
+    CLE
+    CIL
+    STA RESULTNUM
+    LDA RESULTNUM
+    CLE
+    CIL
+    STA RESULTNUM
+    LDA RESULTNUM
+    ADD CHKCHAR
+    STA RESULTNUM
+    LDA DATAPTR
+    INC
+    STA DATAPTR
+BUN XWH1Main
+ / }
+XWH3Main,
+ / < end of while loop Main
+
+HLT
+X, DEC 0
+Q, DEC 0
+R, DEC 0
+DATA, CHR 3
+    CHR 0
+    CHR 3
+    CHR 9
+    DEC 0
+DATAPTRINIT, SYM DATA
+DATAPTR, SYM DATA
+RESULT, CHR E
+    CHR R
+    CHR R
+    CHR O
+    CHR R
+    DEC 0
+RESULTPTRINIT, SYM RESULT
+RESULTPTR, SYM RESULT
+RESULTPTR2, SYM RESULT
+RESULTPTR3, SYM RESULT
+RESULTNUM, DEC 0
+DECNUM, DEC 10
+DECMINUS, DEC -10
+CHKCHAR, DEC 0
+CHKCHARU, CHR 9
+CHKCHARL, CHR 0
+CHKCHARUF, DEC 70
+CHKCHARLMA, DEC -65
+CHKCHARLMAM10, DEC -55
+TEMP, DEC 0
+TEMP1, DEC 0
+TEMP2, DEC 0
+TEMP3, DEC 0
+TEMP4, DEC 0
+TFLAG, DEC 0
+CMPRES, DEC 0
+END
+

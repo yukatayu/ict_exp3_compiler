@@ -3,6 +3,7 @@
 
 int main(){
 	using namespace EX3;
+	using namespace helper;
 
 	Data t(INT, "t", 10);
 	Data X(INT, "X", 55);
@@ -11,7 +12,7 @@ int main(){
 	Data R(INT, "R", 0);
 
 	StatementList program{
-		Statement{ new Const("ORG 10 / Entry Point") },
+		begin,
 		Y = -Y,
 		Statement{
 			new While("Main", {
@@ -27,7 +28,7 @@ int main(){
 		Y.stat(),
 		Q.stat(),
 		R.stat(),
-		Statement{ new Const("END") }
+		end
 	};
 
 	std::string res = program.make();

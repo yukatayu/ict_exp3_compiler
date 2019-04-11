@@ -3,6 +3,7 @@
 
 int main(){
 	using namespace EX3;
+	using namespace helper;
 
 	Data N(INT, "N", 65535);
 	Data Nc1(INT, "NC1", 0);
@@ -29,24 +30,13 @@ int main(){
 	Data flag(INT, "TFLAG", 0);
 	Data cmp_res(INT, "CMPRES", 0);
 
-	Statement Zero{
-		new Const(
-			"CLA\n"
-		)
-	};
-
-	Statement GetE{
-		new Const(
-			"CLA\n"
-			"CIL\n"
-		)
-	};
-
+	/*
 	StatementList cmpNc1Nc2_ = {
 		t1 = -Nc2,
 		t1 = t1 + Nc1,
 		cmp_res = Statement{ new Negative(t1) }
 	};
+	*/
 
 	StatementList cmpNc1Nc2 = {
 		t1 = +Nc1,
@@ -172,7 +162,7 @@ int main(){
 	};
 
 	StatementList program = {
-		Statement{ new Const("ORG 10 / Entry Point") },
+		begin,
 		Statement{
 			new While("MainLoop", {
 				N.load()
@@ -203,7 +193,7 @@ int main(){
 		n_tmp.stat(),
 		flag.stat(),
 		cmp_res.stat(),
-		Statement{ new Const("END") }
+		end,
 	};
 
 	std::string res = program.make();
