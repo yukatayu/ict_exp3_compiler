@@ -3,30 +3,32 @@ LDA Y
 CMA
 INC
 STA Y
+
  / > while loop Main
 XWH1Main,
  / while (
-LDA X
-CIL
-CLA
-CIL
+    LDA X
+    CIL
+    CLA
+    CIL
 SZA
 BUN XWH3Main
 BUN XWH2Main
  / ) {
 XWH2Main,
-LDA X
-STA R
-LDA Q
-INC
-STA Q
-LDA X
-ADD Y
-STA X
+    LDA X
+    STA R
+    LDA Q
+    INC
+    STA Q
+    LDA X
+    ADD Y
+    STA X
 BUN XWH1Main
  / }
 XWH3Main,
  / < end of while loop Main
+
 HLT
 X, DEC 55
 Y, DEC 17

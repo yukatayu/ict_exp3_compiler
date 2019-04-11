@@ -1,255 +1,281 @@
 ORG 10 / Entry Point
+
  / > while loop MainLoop
 XWH1MainLoop,
  / while (
-LDA N
+    LDA N
 SZA
 BUN XWH2MainLoop
 BUN XWH3MainLoop
  / ) {
 XWH2MainLoop,
- / > beginning of CP
-CP,
-LDA IINIT
-STA I
-LDA IINIT
-CMA
-INC
-STA MI
-LDA I2INIT
-STA I2
- / > while loop CPLoop
-XWH1CPLoop,
- / while (
-LDA N
-STA NC1
-LDA I2
-STA NC2
- / > beginning of cnn0
-cnn0,
-LDA NC1
-STA T1
-LDA NC2
-STA T2
- / > while loop CmpLoopcnn0
-XWH1CmpLoopcnn0,
- / while (
-LDA T1
-STA TFLAG
- / > if CmpT1cnn0
- / if (
-LDA T1
-SZA
-BUN XIF2CmpT1cnn0
-BUN XIF1CmpT1cnn0
- / ) {
-XIF1CmpT1cnn0,
-LDA T2
-STA TFLAG
- / }
-XIF2CmpT1cnn0,
- / < end of if CmpT1cnn0
-LDA TFLAG
-SZA
-BUN XWH2CmpLoopcnn0
-BUN XWH3CmpLoopcnn0
- / ) {
-XWH2CmpLoopcnn0,
-LDA T1
-CLE
-CIL
-STA T1
-CLA
-CIL
-STA T3
-LDA T2
-CLE
-CIL
-STA T2
-CLA
-CIL
-STA T4
- / > if t3pt4is1cnn0
- / if (
-LDA T3
-ADD T4
-STA T3
-LDA T3
-CMA
-INC
-CMA
-STA T3
-LDA T3
-SZA
-BUN XIF2t3pt4is1cnn0
-BUN XIF1t3pt4is1cnn0
- / ) {
-XIF1t3pt4is1cnn0,
-LDA T4
-STA CMPRES
-BUN EndCp1Cp2cnn0
- / }
-XIF2t3pt4is1cnn0,
- / < end of if t3pt4is1cnn0
-BUN XWH1CmpLoopcnn0
- / }
-XWH3CmpLoopcnn0,
- / < end of while loop CmpLoopcnn0
-CLA
-STA CMPRES
-EndCp1Cp2cnn0,
- / < end of cnn0
-LDA CMPRES
-SZA
-BUN XWH3CPLoop
-BUN XWH2CPLoop
- / ) {
-XWH2CPLoop,
-LDA N
-STA NC1
-LDA N
-STA NC2
-LDA NC1
-ADD MI
-STA NC1
- / > while loop CPLoop2
-XWH1CPLoop2,
- / while (
- / > beginning of cnn1
-cnn1,
-LDA NC1
-STA T1
-LDA NC2
-STA T2
- / > while loop CmpLoopcnn1
-XWH1CmpLoopcnn1,
- / while (
-LDA T1
-STA TFLAG
- / > if CmpT1cnn1
- / if (
-LDA T1
-SZA
-BUN XIF2CmpT1cnn1
-BUN XIF1CmpT1cnn1
- / ) {
-XIF1CmpT1cnn1,
-LDA T2
-STA TFLAG
- / }
-XIF2CmpT1cnn1,
- / < end of if CmpT1cnn1
-LDA TFLAG
-SZA
-BUN XWH2CmpLoopcnn1
-BUN XWH3CmpLoopcnn1
- / ) {
-XWH2CmpLoopcnn1,
-LDA T1
-CLE
-CIL
-STA T1
-CLA
-CIL
-STA T3
-LDA T2
-CLE
-CIL
-STA T2
-CLA
-CIL
-STA T4
- / > if t3pt4is1cnn1
- / if (
-LDA T3
-ADD T4
-STA T3
-LDA T3
-CMA
-INC
-CMA
-STA T3
-LDA T3
-SZA
-BUN XIF2t3pt4is1cnn1
-BUN XIF1t3pt4is1cnn1
- / ) {
-XIF1t3pt4is1cnn1,
-LDA T4
-STA CMPRES
-BUN EndCp1Cp2cnn1
- / }
-XIF2t3pt4is1cnn1,
- / < end of if t3pt4is1cnn1
-BUN XWH1CmpLoopcnn1
- / }
-XWH3CmpLoopcnn1,
- / < end of while loop CmpLoopcnn1
-CLA
-STA CMPRES
-EndCp1Cp2cnn1,
- / < end of cnn1
-LDA CMPRES
-SZA
-BUN XWH2CPLoop2
-BUN XWH3CPLoop2
- / ) {
-XWH2CPLoop2,
-LDA NC1
-STA NC2
-LDA NC1
-ADD MI
-STA NC1
-BUN XWH1CPLoop2
- / }
-XWH3CPLoop2,
- / < end of while loop CPLoop2
- / > if CPBreak
- / if (
-LDA NC2
-SZA
-BUN XIF2CPBreak
-BUN XIF1CPBreak
- / ) {
-XIF1CPBreak,
-BUN L1
- / }
-XIF2CPBreak,
- / < end of if CPBreak
-LDA I
-CLE
-CIL
-STA T1
-LDA T1
-INC
-STA T1
-LDA I2
-ADD T1
-STA I2
-LDA I
-INC
-STA I
-LDA MI
-CMA
-INC
-CMA
-STA MI
-BUN XWH1CPLoop
- / }
-XWH3CPLoop,
- / < end of while loop CPLoop
-HLT
- / < end of CP
-L1,
-LDA N
-CMA
-INC
-CMA
-STA N
+
+     / > beginning of CP
+    CP,
+        LDA IINIT
+        STA I
+        LDA IINIT
+        CMA
+        INC
+        STA MI
+        LDA I2INIT
+        STA I2
+
+         / > while loop CPLoop
+        XWH1CPLoop,
+         / while (
+            LDA N
+            STA NC1
+            LDA I2
+            STA NC2
+
+             / > beginning of cnn0
+            cnn0,
+                LDA NC1
+                STA T1
+                LDA NC2
+                STA T2
+
+                 / > while loop CmpLoopcnn0
+                XWH1CmpLoopcnn0,
+                 / while (
+                    LDA T1
+                    STA TFLAG
+
+                     / > if CmpT1cnn0
+                     / if (
+                        LDA T1
+                    SZA
+                    BUN XIF2CmpT1cnn0
+                    BUN XIF1CmpT1cnn0
+                     / ) {
+                    XIF1CmpT1cnn0,
+                        LDA T2
+                        STA TFLAG
+                     / }
+                    XIF2CmpT1cnn0,
+                     / < end of if CmpT1cnn0
+
+                    LDA TFLAG
+                SZA
+                BUN XWH2CmpLoopcnn0
+                BUN XWH3CmpLoopcnn0
+                 / ) {
+                XWH2CmpLoopcnn0,
+                    LDA T1
+                    CLE
+                    CIL
+                    STA T1
+                    CLA
+                    CIL
+                    STA T3
+                    LDA T2
+                    CLE
+                    CIL
+                    STA T2
+                    CLA
+                    CIL
+                    STA T4
+
+                     / > if t3pt4is1cnn0
+                     / if (
+                        LDA T3
+                        ADD T4
+                        STA T3
+                        LDA T3
+                        CMA
+                        INC
+                        CMA
+                        STA T3
+                        LDA T3
+                    SZA
+                    BUN XIF2t3pt4is1cnn0
+                    BUN XIF1t3pt4is1cnn0
+                     / ) {
+                    XIF1t3pt4is1cnn0,
+                        LDA T4
+                        STA CMPRES
+                        BUN EndCp1Cp2cnn0
+                     / }
+                    XIF2t3pt4is1cnn0,
+                     / < end of if t3pt4is1cnn0
+
+                BUN XWH1CmpLoopcnn0
+                 / }
+                XWH3CmpLoopcnn0,
+                 / < end of while loop CmpLoopcnn0
+
+                CLA
+                STA CMPRES
+                EndCp1Cp2cnn0,
+             / < end of cnn0
+
+            LDA CMPRES
+        SZA
+        BUN XWH3CPLoop
+        BUN XWH2CPLoop
+         / ) {
+        XWH2CPLoop,
+            LDA N
+            STA NC1
+            LDA N
+            STA NC2
+            LDA NC1
+            ADD MI
+            STA NC1
+
+             / > while loop CPLoop2
+            XWH1CPLoop2,
+             / while (
+
+                 / > beginning of cnn1
+                cnn1,
+                    LDA NC1
+                    STA T1
+                    LDA NC2
+                    STA T2
+
+                     / > while loop CmpLoopcnn1
+                    XWH1CmpLoopcnn1,
+                     / while (
+                        LDA T1
+                        STA TFLAG
+
+                         / > if CmpT1cnn1
+                         / if (
+                            LDA T1
+                        SZA
+                        BUN XIF2CmpT1cnn1
+                        BUN XIF1CmpT1cnn1
+                         / ) {
+                        XIF1CmpT1cnn1,
+                            LDA T2
+                            STA TFLAG
+                         / }
+                        XIF2CmpT1cnn1,
+                         / < end of if CmpT1cnn1
+
+                        LDA TFLAG
+                    SZA
+                    BUN XWH2CmpLoopcnn1
+                    BUN XWH3CmpLoopcnn1
+                     / ) {
+                    XWH2CmpLoopcnn1,
+                        LDA T1
+                        CLE
+                        CIL
+                        STA T1
+                        CLA
+                        CIL
+                        STA T3
+                        LDA T2
+                        CLE
+                        CIL
+                        STA T2
+                        CLA
+                        CIL
+                        STA T4
+
+                         / > if t3pt4is1cnn1
+                         / if (
+                            LDA T3
+                            ADD T4
+                            STA T3
+                            LDA T3
+                            CMA
+                            INC
+                            CMA
+                            STA T3
+                            LDA T3
+                        SZA
+                        BUN XIF2t3pt4is1cnn1
+                        BUN XIF1t3pt4is1cnn1
+                         / ) {
+                        XIF1t3pt4is1cnn1,
+                            LDA T4
+                            STA CMPRES
+                            BUN EndCp1Cp2cnn1
+                         / }
+                        XIF2t3pt4is1cnn1,
+                         / < end of if t3pt4is1cnn1
+
+                    BUN XWH1CmpLoopcnn1
+                     / }
+                    XWH3CmpLoopcnn1,
+                     / < end of while loop CmpLoopcnn1
+
+                    CLA
+                    STA CMPRES
+                    EndCp1Cp2cnn1,
+                 / < end of cnn1
+
+                LDA CMPRES
+            SZA
+            BUN XWH2CPLoop2
+            BUN XWH3CPLoop2
+             / ) {
+            XWH2CPLoop2,
+                LDA NC1
+                STA NC2
+                LDA NC1
+                ADD MI
+                STA NC1
+            BUN XWH1CPLoop2
+             / }
+            XWH3CPLoop2,
+             / < end of while loop CPLoop2
+
+
+             / > if CPBreak
+             / if (
+                LDA NC2
+            SZA
+            BUN XIF2CPBreak
+            BUN XIF1CPBreak
+             / ) {
+            XIF1CPBreak,
+                BUN L1
+             / }
+            XIF2CPBreak,
+             / < end of if CPBreak
+
+            LDA I
+            CLE
+            CIL
+            STA T1
+            LDA T1
+            INC
+            STA T1
+            LDA I2
+            ADD T1
+            STA I2
+            LDA I
+            INC
+            STA I
+            LDA MI
+            CMA
+            INC
+            CMA
+            STA MI
+        BUN XWH1CPLoop
+         / }
+        XWH3CPLoop,
+         / < end of while loop CPLoop
+
+        HLT
+     / < end of CP
+
+    L1,
+    LDA N
+    CMA
+    INC
+    CMA
+    STA N
 BUN XWH1MainLoop
  / }
 XWH3MainLoop,
  / < end of while loop MainLoop
+
 HLT
 
 
