@@ -7,10 +7,38 @@ STA Y
  / > while loop Main
 XWH1Main,
  / while (
-    LDA X
-    CIL
-    CLA
-    CIL
+
+     / > beginning of CMP
+    CMP,
+        CLA
+        INC
+        STA CMPRES
+
+         / > if Cmp__TOKEN__
+         / if (
+            LDA Y
+        SZA
+        BUN XIF1Cmp__TOKEN__
+        BUN XIF2Cmp__TOKEN__
+         / ) {
+        XIF1Cmp__TOKEN__,
+            LDA Y
+            CMA
+            INC
+            STA t
+            CLE
+            LDA t
+            ADD X
+            CLA
+            CIL
+            STA CMPRES
+         / }
+        XIF2Cmp__TOKEN__,
+         / < end of if Cmp__TOKEN__
+
+     / < end of CMP
+
+    LDA CMPRES
 SZA
 BUN XWH3Main
 BUN XWH2Main
@@ -34,5 +62,7 @@ X, DEC 55
 Y, DEC 17
 Q, DEC -1
 R, DEC 0
+t, DEC 0
+CMPRES, DEC 10
 END
 

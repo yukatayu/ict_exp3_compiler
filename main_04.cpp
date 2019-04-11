@@ -19,6 +19,7 @@ int main(){
 	Data i2(INT, "I2", 0);
 
 	// Temporary
+	Data t(INT, "CMPTMP", 0);
 	Data t1(INT, "T1", 0);
 	Data t2(INT, "T2", 0);
 	Data t3(INT, "T3", 0);
@@ -26,14 +27,25 @@ int main(){
 	Data flag(INT, "TFLAG", 0);
 	Data cmp_res(INT, "CMPRES", 0);
 
-	/*
-	StatementList cmpNc1Nc2_ = {
+	StatementList cmpNc1Nc2__ = {
 		t1 = -Nc2,
 		t1 = t1 + Nc1,
 		cmp_res = Statement{ new Negative(t1) }
 	};
-	*/
+
 	StatementList cmpNc1Nc2 = {
+		cmp_res = One,
+		Statement{ new If("Cmp__TOKEN__", {
+			Nc2.load(),
+		}, {
+			t = -Nc2,
+			Statement{ new Const("CLE\n") },
+			t + Nc1,
+			cmp_res = GetE,
+		})}
+	};
+
+	StatementList cmpNc1Nc2_ = {
 		t1 = +Nc1,
 		t2 = +Nc2,
 		Statement{
@@ -69,7 +81,8 @@ int main(){
 		cmp_res = Zero,
 		Statement{
 			new Const("EndCp1Cp2__TOKEN__,")
-		}
+		},
+		--cmp_res
 	};
 
 	StatementList checkPrime = {
@@ -94,7 +107,7 @@ int main(){
 					}, {
 						Nc2 = +Nc1,
 						Nc1 = Nc1 + mi
-					})
+					}, true)
 				},
 				Statement{
 					new If("CPBreak", {
@@ -108,7 +121,7 @@ int main(){
 				i2 = i2 + t1,
 				++i,
 				--mi
-			}, true)
+			})
 		},
 		halt
 	};
@@ -136,6 +149,7 @@ int main(){
 		i.stat(),
 		mi.stat(),
 		i2.stat(),
+		t.stat(),
 		t1.stat(),
 		t2.stat(),
 		t3.stat(),

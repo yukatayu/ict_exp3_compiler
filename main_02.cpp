@@ -5,7 +5,7 @@ int main(){
 	using namespace EX3;
 	using namespace helper;
 
-	Data t(INT, "t", 10);
+	Data t(INT, "t", 0);
 	Data X(INT, "X", 55);
 	Data Y(INT, "Y", 17);
 	Data Q(INT, "Q", -1);
@@ -14,10 +14,15 @@ int main(){
 
 	// X >= Y
 	StatementList cmpXY = {
-		t = -R,
-		Statement{ new Const("CLE\n") },
-		t + X,
-		cmp_res = GetE,
+		cmp_res = One,
+		Statement{ new If("Cmp__TOKEN__", {
+			Y.load(),
+		}, {
+			t = -Y,
+			Statement{ new Const("CLE\n") },
+			t + X,
+			cmp_res = GetE,
+		})}
 	};
 
 	StatementList program{

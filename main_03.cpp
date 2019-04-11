@@ -49,10 +49,15 @@ int main(){
 
 	// X >= R
 	StatementList cmpXR = {
-		t = -R,
-		Statement{ new Const("CLE\n") },
-		t + X,
-		cmp_res = GetE,
+		cmp_res = One,
+		Statement{ new If("Cmp__TOKEN__", {
+			R.load(),
+		}, {
+			t = -R,
+			Statement{ new Const("CLE\n") },
+			t + X,
+			cmp_res = GetE,
+		})}
 	};
 
 	StatementList show{

@@ -28,11 +28,22 @@ int main(){
 	Data cmp_res(INT, "CMPRES", 0);
 
 	// Nc1 >= Nc2
-	StatementList cmpNc1Nc2 = {
+	/*StatementList cmpNc1Nc2 = {
 		t = -Nc2,
 		Statement{ new Const("CLE\n") },
 		t + Nc1,
-		cmp_res = GetE,
+		cmp_res = GetE
+	};*/
+	StatementList cmpNc1Nc2 = {
+		cmp_res = One,
+		Statement{ new If("Cmp__TOKEN__", {
+			Nc2.load(),
+		}, {
+			t = -Nc2,
+			Statement{ new Const("CLE\n") },
+			t + Nc1,
+			cmp_res = GetE,
+		})}
 	};
 
 	StatementList checkPrime = {

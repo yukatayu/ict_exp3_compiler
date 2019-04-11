@@ -52,89 +52,38 @@ XWH2Main,
 
                          / > beginning of cmpXR
                         cmpXR,
-                            LDA X
-                            STA TEMP1
-                            LDA R
-                            STA TEMP2
-
-                             / > while loop CmpLoop__TOKEN__
-                            XWH1CmpLoop__TOKEN__,
-                             / while (
-                                LDA TEMP1
-                                STA TFLAG
-
-                                 / > if CmpT1__TOKEN__
-                                 / if (
-                                    LDA TEMP1
-                                SZA
-                                BUN XIF2CmpT1__TOKEN__
-                                BUN XIF1CmpT1__TOKEN__
-                                 / ) {
-                                XIF1CmpT1__TOKEN__,
-                                    LDA TEMP2
-                                    STA TFLAG
-                                 / }
-                                XIF2CmpT1__TOKEN__,
-                                 / < end of if CmpT1__TOKEN__
-
-                                LDA TFLAG
-                            SZA
-                            BUN XWH2CmpLoop__TOKEN__
-                            BUN XWH3CmpLoop__TOKEN__
-                             / ) {
-                            XWH2CmpLoop__TOKEN__,
-                                LDA TEMP1
-                                CLE
-                                CIL
-                                STA TEMP1
-                                CLA
-                                CIL
-                                STA TEMP3
-                                LDA TEMP2
-                                CLE
-                                CIL
-                                STA TEMP2
-                                CLA
-                                CIL
-                                STA TEMP4
-
-                                 / > if t3pt4is1__TOKEN__
-                                 / if (
-                                    LDA TEMP3
-                                    ADD TEMP4
-                                    STA TEMP3
-                                    LDA TEMP3
-                                    CMA
-                                    INC
-                                    CMA
-                                    STA TEMP3
-                                    LDA TEMP3
-                                SZA
-                                BUN XIF2t3pt4is1__TOKEN__
-                                BUN XIF1t3pt4is1__TOKEN__
-                                 / ) {
-                                XIF1t3pt4is1__TOKEN__,
-                                    LDA TEMP4
-                                    STA CMPRES
-                                    BUN EndCp1Cp2__TOKEN__
-                                 / }
-                                XIF2t3pt4is1__TOKEN__,
-                                 / < end of if t3pt4is1__TOKEN__
-
-                            BUN XWH1CmpLoop__TOKEN__
-                             / }
-                            XWH3CmpLoop__TOKEN__,
-                             / < end of while loop CmpLoop__TOKEN__
-
                             CLA
+                            INC
                             STA CMPRES
-                            EndCp1Cp2__TOKEN__,
+
+                             / > if Cmp__TOKEN__
+                             / if (
+                                LDA R
+                            SZA
+                            BUN XIF1Cmp__TOKEN__
+                            BUN XIF2Cmp__TOKEN__
+                             / ) {
+                            XIF1Cmp__TOKEN__,
+                                LDA R
+                                CMA
+                                INC
+                                STA TEMP
+                                CLE
+                                LDA TEMP
+                                ADD X
+                                CLA
+                                CIL
+                                STA CMPRES
+                             / }
+                            XIF2Cmp__TOKEN__,
+                             / < end of if Cmp__TOKEN__
+
                          / < end of cmpXR
 
                         LDA CMPRES
                     SZA
-                    BUN XWH2ShowSub
                     BUN XWH3ShowSub
+                    BUN XWH2ShowSub
                      / ) {
                     XWH2ShowSub,
                         LDA X
@@ -436,10 +385,7 @@ CHKCHARUF, DEC 70
 CHKCHARLMA, DEC -65
 CHKCHARLMAM10, DEC -55
 TEMP, DEC 0
-TEMP1, DEC 0
-TEMP2, DEC 0
-TEMP3, DEC 0
-TEMP4, DEC 0
+TEMPCMP, DEC 0
 TFLAG, DEC 0
 CMPRES, DEC 0
 END

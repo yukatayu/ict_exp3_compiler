@@ -142,6 +142,13 @@ namespace EX3{
 			)
 		};
 
+		static Statement One{
+			new Const(
+				"CLA\n"
+				"INC\n"
+			)
+		};
+
 		static Statement GetE{
 			new Const(
 				"CLA\n"
