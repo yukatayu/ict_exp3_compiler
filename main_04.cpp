@@ -27,12 +27,6 @@ int main(){
 	Data flag(INT, "TFLAG", 0);
 	Data cmp_res(INT, "CMPRES", 0);
 
-	StatementList cmpNc1Nc2__ = {
-		t1 = -Nc2,
-		t1 = t1 + Nc1,
-		cmp_res = Statement{ new Negative(t1) }
-	};
-
 	StatementList cmpNc1Nc2 = {
 		cmp_res = One,
 		Statement{ new If("Cmp__TOKEN__", {
@@ -43,46 +37,6 @@ int main(){
 			t + Nc1,
 			cmp_res = GetE,
 		})}
-	};
-
-	StatementList cmpNc1Nc2_ = {
-		t1 = +Nc1,
-		t2 = +Nc2,
-		Statement{
-			new While("CmpLoop__TOKEN__",{
-				flag = +t1,
-				Statement{
-					new If("CmpT1__TOKEN__",{
-						t1.load()
-					},{
-						flag = +t2
-					}, true)
-				},
-				flag.load()
-			},{
-				t1 = (t1 << 1),
-				t3 = GetE,
-				t2 = (t2 << 1),
-				t4 = GetE,
-				Statement{
-					new If("t3pt4is1__TOKEN__", {
-						t3 = t3 + t4,
-						--t3,
-						t3.load()
-					}, {
-						cmp_res = +t4,
-						Statement{
-							new Goto("EndCp1Cp2__TOKEN__")
-						}
-					}, true)
-				}
-			})
-		},
-		cmp_res = Zero,
-		Statement{
-			new Const("EndCp1Cp2__TOKEN__,")
-		},
-		--cmp_res
 	};
 
 	StatementList checkPrime = {
