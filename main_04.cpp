@@ -30,9 +30,8 @@ int main(){
 			new While("CPLoop", {
 				new MoreEq(N, i2, t1, t2)
 			}, {
-				Nc1 = +N,
 				Nc2 = +N,
-				Nc1 = Nc1 + mi,
+				Nc1 = N + mi,
 				Statement{
 					new While("CPLoop2", {
 						new MoreEq(Nc1, Nc2, t1, t2)

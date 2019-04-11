@@ -47,10 +47,8 @@ XWH2MainLoop,
          / ) {
         XWH2CPLoop,
             LDA N
-            STA NC1
-            LDA N
             STA NC2
-            LDA NC1
+            LDA N
             ADD MI
             STA NC1
 

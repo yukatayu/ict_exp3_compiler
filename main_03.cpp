@@ -36,8 +36,8 @@ int main(){
 	Data check_char_upper(CHAR, "CHKCHARU", '9');
 	Data check_char_lower(CHAR, "CHKCHARL", '0');
 
-	Data check_char_upper_F(INT, "CHKCHARUF", 70);
-	Data check_char_lower_m_A(INT, "CHKCHARLMA", -65);
+	Data check_char_upper_F(INT, "CHKCHARUF", 70);  // 'F'
+	Data check_char_lower_m_A(INT, "CHKCHARLMA", -65);  // -'A'
 	Data check_char_lower_m_A_m10(INT, "CHKCHARLMAM10", -55);
 
 	Data t1(INT, "TEMP1", 0);
@@ -50,8 +50,7 @@ int main(){
 			}, {
 				Q = Zero,
 				R = +result_num,
-				X = +result_num,
-				X = X + dec_minus,
+				X = result_num + dec_minus,
 				Statement{
 					new While("ShowSub", {
 						new MoreEq(X, R, t1, t2)
@@ -70,9 +69,8 @@ int main(){
 					new If("ShowRes", {
 						result_num.load()
 					}, {
-						result_ptr2 = +result_ptr,
+						result_ptr3 = result_ptr2 = +result_ptr,
 						++result_ptr2,
-						result_ptr3 = +result_ptr,
 						Statement{
 							new While("ShowResShift", {
 								t1 = -result_ptr_init,

@@ -42,8 +42,6 @@ XWH2Main,
                     LDA RESULTNUM
                     STA R
                     LDA RESULTNUM
-                    STA X
-                    LDA X
                     ADD DECMINUS
                     STA X
 
@@ -101,11 +99,10 @@ XWH2Main,
                     XIF1ShowRes,
                         LDA RESULTPTR
                         STA RESULTPTR2
+                        STA RESULTPTR3
                         LDA RESULTPTR2
                         INC
                         STA RESULTPTR2
-                        LDA RESULTPTR
-                        STA RESULTPTR3
 
                          / > while loop ShowResShift
                         XWH1ShowResShift,
