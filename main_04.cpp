@@ -5,7 +5,7 @@ int main(){
 	using namespace EX3;
 	using namespace helper;
 
-	Data N(INT, "N", 9);
+	Data N(INT, "N", 65535);
 	Data Nc1(INT, "NC1", 0);
 	Data Nc2(INT, "NC2", 0);
 
@@ -21,8 +21,6 @@ int main(){
 	// Temporary
 	Data t1(INT, "CMPTMP1", 0);
 	Data t2(INT, "CMPTMP2", 0);
-	Data flag(INT, "TFLAG", 0);
-	Data cmp_res(INT, "CMPRES", 0);
 
 	StatementList checkPrime = {
 		i = +i_init,
@@ -85,8 +83,6 @@ int main(){
 		i2.stat(),
 		t1.stat(),
 		t2.stat(),
-		flag.stat(),
-		cmp_res.stat(),
 		end
 	};
 

@@ -11,7 +11,6 @@ int main(){
 	Data data3(CHAR, "",     '9');
 	Data data4(INT, "", 0);  // NULL
 
-	Data data_ptr_init(PTR, "DATAPTRINIT", data0);
 	Data data_ptr(PTR, "DATAPTR", data0);
 
 	Data result0(CHAR, "RESULT", 'E', MaybeUnused);
@@ -27,7 +26,6 @@ int main(){
 	Data result_ptr3(PTR, "RESULTPTR3", result0);
 
 	Data result_num(INT, "RESULTNUM", 0);
-	Data dec(INT, "DECNUM", 10);
 	Data dec_minus(INT, "DECMINUS", -10);
 
 	Data X(INT, "X", 0);
@@ -44,9 +42,6 @@ int main(){
 
 	Data t1(INT, "TEMP1", 0);
 	Data t2(INT, "TEMP2", 0);
-	Data tc(INT, "TEMPCMP", 0);
-	Data flag(INT, "TFLAG", 0);
-	Data cmp_res(INT, "CMPRES", 0);
 
 	StatementList show{
 		Statement{
@@ -179,7 +174,6 @@ int main(){
 		data2.stat(),
 		data3.stat(),
 		data4.stat(),
-		data_ptr_init.stat(),
 		data_ptr.stat(),
 
 		result0.stat(),
@@ -195,7 +189,6 @@ int main(){
 		result_ptr3.stat(),
 
 		result_num.stat(),
-		dec.stat(),
 		dec_minus.stat(),
 
 		check_char.stat(),
@@ -208,9 +201,6 @@ int main(){
 
 		t1.stat(),
 		t2.stat(),
-		tc.stat(),
-		flag.stat(),
-		cmp_res.stat(),
 
 		end
 	};

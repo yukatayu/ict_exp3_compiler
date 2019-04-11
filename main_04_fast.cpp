@@ -6,7 +6,6 @@ int main(){
 	using namespace helper;
 
 	Data N(INT, "N", 65535);
-	Data Nc1(INT, "NC1", 0);
 	Data Nc2(INT, "NC2", 0);
 
 	Data i_init(INT, "IINIT", 2);
@@ -25,7 +24,6 @@ int main(){
 	// Temporary
 	Data t1(INT, "TEMP1", 0);
 	Data t2(INT, "TEMP2", 0);
-	Data flag(INT, "TFLAG", 0);
 
 	StatementList checkPrime = {
 		i = +i_init,
@@ -35,7 +33,6 @@ int main(){
 			new While("CPLoop", {
 				new MoreEq(N, i2, t1, t2)
 			}, {
-				Nc1 = +N,
 				Nc2 = +N,
 
 				i_ptr = Zero,
@@ -104,7 +101,6 @@ int main(){
 			new Const("\n\n")
 		},
 		N.stat(),
-		Nc1.stat(),
 		Nc2.stat(),
 		i_init.stat(),
 		i2_init.stat(),
@@ -116,7 +112,6 @@ int main(){
 		i_shift.stat(),
 		i_ptr.stat(),
 		n_tmp.stat(),
-		flag.stat(),
 		end,
 	};
 

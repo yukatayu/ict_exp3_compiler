@@ -47,8 +47,6 @@ XWH2MainLoop,
          / ) {
         XWH2CPLoop,
             LDA N
-            STA NC1
-            LDA N
             STA NC2
             CLA
             STA IPTR
@@ -217,7 +215,6 @@ _M_, HLT
 
 
 N, DEC 65535
-NC1, DEC 0
 NC2, DEC 0
 IINIT, DEC 2
 I2INIT, DEC 4
@@ -229,6 +226,5 @@ TEMP2, DEC 0
 ISH, DEC 0
 IPTR, DEC 0
 ITMP, DEC 0
-TFLAG, DEC 0
 END
 
