@@ -59,6 +59,7 @@ int main(){
 
 	StatementList program = {
 		begin,
+
 		Statement{
 			new While("MainLoop", {
 				N.load()
@@ -72,16 +73,8 @@ int main(){
 		Statement{
 			new Const("\n\n")
 		},
-		N.stat(),
-		Nc1.stat(),
-		Nc2.stat(),
-		i_init.stat(),
-		i2_init.stat(),
-		i.stat(),
-		mi.stat(),
-		i2.stat(),
-		t1.stat(),
-		t2.stat(),
+
+		Data::stat_all(),
 		end
 	};
 

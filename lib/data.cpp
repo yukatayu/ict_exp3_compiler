@@ -4,6 +4,8 @@
 
 namespace EX3{
 
+	std::vector<Statement> Data::stats_all_;
+
 	std::string Data::name(){
 		return name_;
 	}
@@ -36,6 +38,7 @@ namespace EX3{
 		, used_ { false }
 		, check_ { check }
 	{
+		stats_all_.push_back(stat());
 	}
 	Data::Data(DataType_Tag_CHAR type, std::string name, char data, DataUsageCheck check)
 		: name_ { name }
@@ -44,6 +47,7 @@ namespace EX3{
 		, used_ { false }
 		, check_ { check }
 	{
+		stats_all_.push_back(stat());
 	}
 	Data::Data(DataType_Tag_PTR type, std::string name, Data data, DataUsageCheck check)
 		: name_ { name }
@@ -52,6 +56,7 @@ namespace EX3{
 		, used_ { false }
 		, check_ { check }
 	{
+		stats_all_.push_back(stat());
 	}
 
 	Data::Data(const Data& d){
@@ -95,6 +100,10 @@ namespace EX3{
 		// return Statement{new Data(*this), [](...){}};
 		//
 		return Statement{ new Const(make()) };
+	}
+
+	Statement Data::stat_all(){
+		return StatementList(stats_all_).stat();
 	}
 
 	void Data::use(){

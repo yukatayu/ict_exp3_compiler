@@ -146,6 +146,7 @@ int main(){
 
 	StatementList program{
 		begin,
+
 		Statement{
 			new While("Main", {
 				One,  // infinity loop
@@ -163,43 +164,7 @@ int main(){
 		},
 		halt,
 
-		X.stat(),
-		Q.stat(),
-		R.stat(),
-
-		data0.stat(),
-		data1.stat(),
-		data2.stat(),
-		data3.stat(),
-		data4.stat(),
-		data_ptr.stat(),
-
-		result0.stat(),
-		result1.stat(),
-		result2.stat(),
-		result3.stat(),
-		result4.stat(),
-		result5.stat(),
-
-		result_ptr_init.stat(),
-		result_ptr.stat(),
-		result_ptr2.stat(),
-		result_ptr3.stat(),
-
-		result_num.stat(),
-		dec_minus.stat(),
-
-		check_char.stat(),
-		check_char_upper.stat(),
-		check_char_lower.stat(),
-
-		check_char_upper_F.stat(),
-		check_char_lower_m_A.stat(),
-		check_char_lower_m_A_m10.stat(),
-
-		t1.stat(),
-		t2.stat(),
-
+		Data::stat_all(),
 		end
 	};
 

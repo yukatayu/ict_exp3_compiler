@@ -1,8 +1,8 @@
 ORG 10 / Entry Point
-LDA Y
+LDA B
 CMA
 INC
-STA Y
+STA B
 
  / > while loop Main
 XWH1Main,
@@ -10,7 +10,7 @@ XWH1Main,
     CLA
     INC
     STA T2
-    LDA Y
+    LDA B
     CMA
     STA T1
     LDA T1
@@ -20,7 +20,7 @@ XWH1Main,
     CIL
     STA T2
     LDA T1
-    ADD X
+    ADD A
     CLA
     CIL
     ADD T2
@@ -29,25 +29,25 @@ BUN XWH3Main
 BUN XWH2Main
  / ) {
 XWH2Main,
-    LDA X
+    LDA A
     STA R
     LDA Q
     INC
     STA Q
-    LDA X
-    ADD Y
-    STA X
+    LDA A
+    ADD B
+    STA A
 BUN XWH1Main
  / }
 XWH3Main,
  / < end of while loop Main
 
 _M_, HLT
-X, DEC 55
-Y, DEC 17
-Q, DEC -1
-R, DEC 0
-T1, DEC 0
-T2, DEC 0
+    T1, DEC 0
+    T2, DEC 0
+    A, DEC 55
+    B, DEC 17
+    Q, DEC -1
+    R, DEC 0
 END
 

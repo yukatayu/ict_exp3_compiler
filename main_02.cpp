@@ -7,31 +7,27 @@ int main(){
 
 	Data t1(INT, "T1", 0);
 	Data t2(INT, "T2", 0);
-	Data X(INT, "X", 55);
-	Data Y(INT, "Y", 17);
+	Data A(INT, "A", 55);
+	Data B(INT, "B", 17);
 	Data Q(INT, "Q", -1, MaybeUnused);
 	Data R(INT, "R", 0, MaybeUnused);
 
 	StatementList program{
 		begin,
-		Y = -Y,
+
+		B = -B,
 		Statement{
 			new While("Main", {
-				new MoreEq(X, Y, t1, t2)
+				new MoreEq(A, B, t1, t2)
 			}, {
-				R = +X,
+				R = +A,
 				++Q,
-				X = X + Y
+				A = A + B
 			}, true)
 		},
 		halt,
 
-		X.stat(),
-		Y.stat(),
-		Q.stat(),
-		R.stat(),
-		t1.stat(),
-		t2.stat(),
+		Data::stat_all(),
 		end
 	};
 

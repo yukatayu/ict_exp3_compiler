@@ -48,6 +48,8 @@ namespace EX3{
 		std::string name_;
 		void set_ref();
 
+		static std::vector<Statement> stats_all_;
+
 	public:
 		void use();
 		std::string name();
@@ -71,6 +73,7 @@ namespace EX3{
 		Statement operator<<(int i);
 		Statement operator>>(int i);
 		Statement operator=(Statement);
+		static Statement stat_all();
 	};
 
 	class StatementList {
