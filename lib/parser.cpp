@@ -49,7 +49,7 @@ namespace EX3{
 				"CME\n"
 			} },
 			tmp_ = helper::GetE,
-			// acc <- overflow
+			// acc <- overflow + tmp_
 			-target2_ + target1_,
 			helper::GetE + tmp_,
 		};
