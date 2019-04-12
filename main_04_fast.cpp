@@ -6,7 +6,6 @@ int main(){
 	using namespace helper;
 
 	Data N(INT, "N", 65535);
-	Data Nc2(INT, "NC2", 0);
 
 	Data i_init(INT, "IINIT", 2);
 	Data i2_init(INT, "I2INIT", 4);
@@ -19,11 +18,11 @@ int main(){
 	Data i2(INT, "I2", 0);
 
 	Data i_shift(INT, "ISH", 0);
-	Data i_ptr(INT, "IPTR", 0);
 
 	// Temporary
 	Data t1(INT, "TEMP1", 0);
 
+	// `N` が素数なら終了, さもなくば返却するサブルーチン
 	StatementList checkPrime = {
 		i = +i_init,
 		mi = -i_init,
@@ -32,22 +31,31 @@ int main(){
 			new While("CPLoop", {
 				new MoreEq(N, i2, t1)
 			}, {
-				Nc2 = +N,
-
-				i_ptr = Zero,
-				++i_ptr,
 				i_shift = +i,
 				n_tmp = +N,
-
+				// `i` が4以上の偶数ならcontinue
+				Statement {
+					new If("CPSkip1", {
+							i >> 2
+					}, {
+						i.load(),
+						Statement{ new Const{
+							"CIR\n"
+							"CME\n"
+							"SZE\n"
+							"BUN CPCont\n"
+						} }
+					})
+				},
+				// 最上位ビットが立つまで値を左シフトする
 				Statement{
 					new While("CPPre", {
 						new Negative(i_shift)
 					}, {
 						i_shift = (i_shift<<1),
-						i_ptr = (i_ptr<<1)
 					}, true)
 				},
-
+				// 割り算の筆算と同様に値を引いていく
 				Statement{
 					new While("CPMain", {
 						new MoreEq(i_shift, i, t1)
@@ -56,34 +64,34 @@ int main(){
 							new If("DivCmp", {
 								new MoreEq(n_tmp, i_shift, t1)
 							}, {
-								t1 = -i_shift,
-								n_tmp = n_tmp + t1,
-								//i_res = i_res + i_shift,
+								n_tmp = -i_shift +  n_tmp,
 							})
 						},
 						i_shift = (i_shift >> 1),
-						i_ptr = (i_ptr >> 1)
 					})
 				},
-
-				Nc2 = +n_tmp,
+				// 余りが0なら返却
 				Statement{
 					new If("CPBreak", {
-						Nc2.load()
+						n_tmp.load()
 					},{
 						new Goto("L1")
 					}, true)
 				},
-				t1 = i << 1,
-				++t1,
-				i2 = i2 + t1,
+
+				Statement{ new Const("CPCont,") },
+				// インクリメント
+				i2 = (i<<1) + i2,
+				++i2,
 				++i,
 				--mi
 			})
 		},
-		halt
+		halt,
+		Statement{ new Const("CPEnd,") }
 	};
 
+	// メインループ,  `N` を減らしながら検査していく
 	StatementList program = {
 		begin,
 

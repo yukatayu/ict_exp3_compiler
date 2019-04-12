@@ -30,6 +30,23 @@ int main(){
 			new While("CPLoop", {
 				new MoreEq(N, i2, t1)
 			}, {
+				// `i` が4以上の偶数ならcontinue
+				Statement {
+					new If("CPSkip1", {
+							i >> 2
+					}, {
+						i.load(),
+						Statement{
+							new Const(
+								"CIR\n"
+								"CME\n"
+								"SZE\n"
+								"BUN CPCont\n"
+							)
+						}
+					})
+				},
+
 				Nc2 = +N,
 				Nc1 = N + mi,
 				// アンダーフローしない限り `i` を引く事を繰り返す
@@ -49,6 +66,8 @@ int main(){
 						new Goto("CPEnd")
 					}, true)
 				},
+
+				Statement{ new Const("CPCont,") },
 				// インクリメント
 				i2 = (i<<1) + i2,
 				++i2,

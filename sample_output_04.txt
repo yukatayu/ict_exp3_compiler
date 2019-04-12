@@ -92,7 +92,7 @@ XWH2MainLoop,
             BUN XIF1CPBreak
              / ) {
             XIF1CPBreak,
-                BUN L1
+                BUN CPEnd
              / }
             XIF2CPBreak,
              / < end of if CPBreak
@@ -100,12 +100,10 @@ XWH2MainLoop,
             LDA I
             CLE
             CIL
-            STA CMPTMP1
-            LDA CMPTMP1
-            INC
-            STA CMPTMP1
+            ADD I2
+            STA I2
             LDA I2
-            ADD CMPTMP1
+            INC
             STA I2
             LDA I
             INC
@@ -121,6 +119,7 @@ XWH2MainLoop,
          / < end of while loop CPLoop
 
         _M_, HLT
+        CPEnd,
      / < end of CP
 
     L1,

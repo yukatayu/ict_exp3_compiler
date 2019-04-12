@@ -118,6 +118,14 @@ namespace EX3{
 		std::string make_impl() override;
 	};
 
+	class Continue : public Statement_impl {
+	private:
+		std::string name_;
+	public:
+		Continue(std::string name);
+		std::string make_impl() override;
+	};
+
 	class Negative : public Statement_impl {
 	private:
 		std::string target_name_;

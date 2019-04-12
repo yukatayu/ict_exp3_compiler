@@ -42,11 +42,13 @@ int main(){
 
 	Data t1(INT, "TEMP1", 0);
 
+	// `result_num` を10進数に変換する
 	StatementList show{
 		Statement{
 			new While("ShowMain", {
 				result_num.load()
 			}, {
+				// `result_num` を10で割る
 				Q = Zero,
 				R = +result_num,
 				X = result_num + dec_minus,
@@ -60,11 +62,14 @@ int main(){
 					}, true)
 				},
 
+				// 商を再代入
 				result_num = +Q,
 
+				// 余りに '0' を足したものを先頭に挿入
 				*result_ptr_init = R + check_char_lower,
 
 				Statement{
+					// まだ `result_num` が残っているなら文字列をシフト
 					new If("ShowRes", {
 						result_num.load()
 					}, {
@@ -84,10 +89,12 @@ int main(){
 				++result_ptr
 			})
 		},
+		// 末尾にNULL文字を挿入
 		*result_ptr = Zero,
 		halt
 	};
 
+	// 文字が A-F の範囲にあるかどうかを検査
 	StatementList checkAF{
 		t1 = -check_char + check_char_upper_F,
 		Statement{
@@ -108,7 +115,8 @@ int main(){
 		check_char = check_char + check_char_lower_m_A_m10
 	};
 
-
+	// 文字が 0-9 の範囲にあるかどうかを検査
+	// NULL文字を検出した場合、表示処理に飛ぶ
 	StatementList check{
 		Statement{
 			new If("check0", {
@@ -130,7 +138,7 @@ int main(){
 		t1 = -check_char_lower + check_char,
 		Statement{
 			new If("check2", {
-					new Negative(t1)
+				new Negative(t1)
 			}, {
 				checkAF.stat("AF2", "__TOKEN__")
 			})
@@ -138,7 +146,7 @@ int main(){
 		check_char = +t1
 	};
 
-
+	// プログラム全体
 	StatementList program{
 		begin,
 
@@ -146,6 +154,7 @@ int main(){
 			new While("Main", {
 				One,  // infinity loop
 			}, {
+				// 1文字ずつ取り出してcheck関数に渡す
 				check_char = +*data_ptr,
 				check.stat("Check"),
 
@@ -159,6 +168,7 @@ int main(){
 		end
 	};
 
+	// コンパイル
 	std::string res = program.make();
 	std::cout << res << std::endl;
 }

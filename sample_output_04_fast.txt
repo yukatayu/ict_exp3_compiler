@@ -44,17 +44,32 @@ XWH2MainLoop,
         BUN XWH3CPLoop
          / ) {
         XWH2CPLoop,
-            LDA N
-            STA NC2
-            CLA
-            STA IPTR
-            LDA IPTR
-            INC
-            STA IPTR
             LDA I
             STA ISH
             LDA N
             STA ITMP
+
+             / > if CPSkip1
+             / if (
+                LDA I
+                CLE
+                CIR
+                CLE
+                CIR
+            SZA
+            BUN XIF1CPSkip1
+            BUN XIF2CPSkip1
+             / ) {
+            XIF1CPSkip1,
+                LDA I
+                CIR
+                CME
+                SZE
+                BUN CPCont
+             / }
+            XIF2CPSkip1,
+             / < end of if CPSkip1
+
 
              / > while loop CPPre
             XWH1CPPre,
@@ -72,10 +87,6 @@ XWH2MainLoop,
                 CLE
                 CIL
                 STA ISH
-                LDA IPTR
-                CLE
-                CIL
-                STA IPTR
             BUN XWH1CPPre
              / }
             XWH3CPPre,
@@ -131,9 +142,7 @@ XWH2MainLoop,
                     LDA ISH
                     CMA
                     INC
-                    STA TEMP1
-                    LDA ITMP
-                    ADD TEMP1
+                    ADD ITMP
                     STA ITMP
                  / }
                 XIF2DivCmp,
@@ -143,21 +152,15 @@ XWH2MainLoop,
                 CLE
                 CIR
                 STA ISH
-                LDA IPTR
-                CLE
-                CIR
-                STA IPTR
             BUN XWH1CPMain
              / }
             XWH3CPMain,
              / < end of while loop CPMain
 
-            LDA ITMP
-            STA NC2
 
              / > if CPBreak
              / if (
-                LDA NC2
+                LDA ITMP
             SZA
             BUN XIF2CPBreak
             BUN XIF1CPBreak
@@ -168,15 +171,14 @@ XWH2MainLoop,
             XIF2CPBreak,
              / < end of if CPBreak
 
+            CPCont,
             LDA I
             CLE
             CIL
-            STA TEMP1
-            LDA TEMP1
-            INC
-            STA TEMP1
+            ADD I2
+            STA I2
             LDA I2
-            ADD TEMP1
+            INC
             STA I2
             LDA I
             INC
@@ -192,6 +194,7 @@ XWH2MainLoop,
          / < end of while loop CPLoop
 
         _M_, HLT
+        CPEnd,
      / < end of CP
 
     L1,
@@ -210,7 +213,6 @@ _M_, HLT
 
  / Data Segment
     N, DEC 65535
-    NC2, DEC 0
     IINIT, DEC 2
     I2INIT, DEC 4
     I, DEC 0
@@ -218,7 +220,6 @@ _M_, HLT
     MI, DEC 0
     I2, DEC 0
     ISH, DEC 0
-    IPTR, DEC 0
     TEMP1, DEC 0
 END
 

@@ -111,6 +111,17 @@ namespace EX3{
 		return res;
 	}
 
+	// Continue
+	// TODO: add Break
+	Continue::Continue(std::string name)
+		: name_(name)
+	{ }
+
+	std::string Continue::make_impl(){
+		std::string wh1 = "XWH1" + name_;
+		return "BUN " + wh1;
+	}
+
 	// While
 	void While::init(std::string name, StatementList stats_cond, StatementList stats, bool invert){
 		name_ = name;
