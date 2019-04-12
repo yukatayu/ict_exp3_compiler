@@ -72,8 +72,7 @@ int main(){
 						++result_ptr2,
 						Statement{
 							new While("ShowResShift", {
-								t1 = -result_ptr_init,
-								t1 + result_ptr2
+								-result_ptr_init + result_ptr2
 							}, {
 								*result_ptr2 = +*result_ptr3,
 								--result_ptr2,
@@ -90,8 +89,7 @@ int main(){
 	};
 
 	StatementList checkAF{
-		t1 = -check_char,
-		t1 = t1 + check_char_upper_F,
+		t1 = -check_char + check_char_upper_F,
 		Statement{
 			new If("checkAF1__TOKEN__", {
 				new Negative(t1)
@@ -120,8 +118,7 @@ int main(){
 			}, true)
 		},
 
-		t1 = -check_char,
-		t1 = t1 + check_char_upper,
+		t1 = -check_char + check_char_upper,
 		Statement{
 			new If("check1", {
 				new Negative(t1)
@@ -130,8 +127,7 @@ int main(){
 			})
 		},
 
-		t1 = -check_char_lower,
-		t1 = t1 + check_char,
+		t1 = -check_char_lower + check_char,
 		Statement{
 			new If("check2", {
 					new Negative(t1)

@@ -108,8 +108,6 @@ XWH2Main,
                             LDA RESULTPTRINIT
                             CMA
                             INC
-                            STA TEMP1
-                            LDA TEMP1
                             ADD RESULTPTR2
                         SZA
                         BUN XWH2ShowResShift
@@ -157,8 +155,6 @@ XWH2Main,
         LDA CHKCHAR
         CMA
         INC
-        STA TEMP1
-        LDA TEMP1
         ADD CHKCHARU
         STA TEMP1
 
@@ -179,8 +175,6 @@ XWH2Main,
                 LDA CHKCHAR
                 CMA
                 INC
-                STA TEMP1
-                LDA TEMP1
                 ADD CHKCHARUF
                 STA TEMP1
 
@@ -232,8 +226,6 @@ XWH2Main,
         LDA CHKCHARL
         CMA
         INC
-        STA TEMP1
-        LDA TEMP1
         ADD CHKCHAR
         STA TEMP1
 
@@ -254,8 +246,6 @@ XWH2Main,
                 LDA CHKCHAR
                 CMA
                 INC
-                STA TEMP1
-                LDA TEMP1
                 ADD CHKCHARUF
                 STA TEMP1
 
