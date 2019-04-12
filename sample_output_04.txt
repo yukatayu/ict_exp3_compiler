@@ -97,9 +97,9 @@ XWH2MainLoop,
             XIF2CPBreak,
              / < end of if CPBreak
 
-                LDA I
-                CLE
-                CIL
+            LDA I
+            CLE
+            CIL
             STA CMPTMP1
             LDA CMPTMP1
             INC
@@ -137,6 +137,7 @@ XWH3MainLoop,
 _M_, HLT
 
 
+ / Data Segment
     N, DEC 65535
     NC1, DEC 0
     NC2, DEC 0

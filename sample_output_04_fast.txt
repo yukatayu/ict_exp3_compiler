@@ -68,13 +68,13 @@ XWH2MainLoop,
             BUN XWH2CPPre
              / ) {
             XWH2CPPre,
-                    LDA ISH
-                    CLE
-                    CIL
+                LDA ISH
+                CLE
+                CIL
                 STA ISH
-                    LDA IPTR
-                    CLE
-                    CIL
+                LDA IPTR
+                CLE
+                CIL
                 STA IPTR
             BUN XWH1CPPre
              / }
@@ -139,13 +139,13 @@ XWH2MainLoop,
                 XIF2DivCmp,
                  / < end of if DivCmp
 
-                    LDA ISH
-                    CLE
-                    CIR
+                LDA ISH
+                CLE
+                CIR
                 STA ISH
-                    LDA IPTR
-                    CLE
-                    CIR
+                LDA IPTR
+                CLE
+                CIR
                 STA IPTR
             BUN XWH1CPMain
              / }
@@ -168,9 +168,9 @@ XWH2MainLoop,
             XIF2CPBreak,
              / < end of if CPBreak
 
-                LDA I
-                CLE
-                CIL
+            LDA I
+            CLE
+            CIL
             STA TEMP1
             LDA TEMP1
             INC
@@ -208,6 +208,7 @@ XWH3MainLoop,
 _M_, HLT
 
 
+ / Data Segment
     N, DEC 65535
     NC2, DEC 0
     IINIT, DEC 2

@@ -41,6 +41,7 @@ XWH3Main,
  / < end of while loop Main
 
 _M_, HLT
+ / Data Segment
     T1, DEC 0
     A, DEC 55
     B, DEC 17

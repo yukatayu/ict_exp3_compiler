@@ -103,7 +103,10 @@ namespace EX3{
 	}
 
 	Statement Data::stat_all(){
-		return StatementList(stats_all_).stat();
+		return { Statement { new Const{
+			" / Data Segment\n" + 
+			StatementList(stats_all_).stat()->make()
+		} } };
 	}
 
 	void Data::use(){
@@ -191,7 +194,7 @@ namespace EX3{
 				}
 			);
 
-		return StatementList(res).stat();
+		return Statement{ new Const{ StatementList(res).make() } };
 	}
 
 	Statement Data::operator>>(int i){
@@ -210,7 +213,7 @@ namespace EX3{
 				}
 			);
 
-		return StatementList(res).stat();
+		return Statement{ new Const{ StatementList(res).make() } };
 	}
 
 	Statement Data::operator~(){

@@ -298,15 +298,15 @@ XWH2Main,
         STA CHKCHAR
      / < end of Check
 
-        LDA RESULTNUM
-        CLE
-        CIL
-        CLE
-        CIL
-        CLE
-        CIL
-        CLE
-        CIL
+    LDA RESULTNUM
+    CLE
+    CIL
+    CLE
+    CIL
+    CLE
+    CIL
+    CLE
+    CIL
     ADD CHKCHAR
     STA RESULTNUM
     LDA DATAPTR
@@ -318,6 +318,7 @@ XWH3Main,
  / < end of while loop Main
 
 _M_, HLT
+ / Data Segment
     DATA, CHR 3
         CHR 0
         CHR 3
