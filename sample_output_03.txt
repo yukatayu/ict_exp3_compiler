@@ -298,23 +298,15 @@ XWH2Main,
         STA CHKCHAR
      / < end of Check
 
-    LDA RESULTNUM
-    CLE
-    CIL
-    STA RESULTNUM
-    LDA RESULTNUM
-    CLE
-    CIL
-    STA RESULTNUM
-    LDA RESULTNUM
-    CLE
-    CIL
-    STA RESULTNUM
-    LDA RESULTNUM
-    CLE
-    CIL
-    STA RESULTNUM
-    LDA RESULTNUM
+        LDA RESULTNUM
+        CLE
+        CIL
+        CLE
+        CIL
+        CLE
+        CIL
+        CLE
+        CIL
     ADD CHKCHAR
     STA RESULTNUM
     LDA DATAPTR

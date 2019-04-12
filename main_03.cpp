@@ -149,11 +149,7 @@ int main(){
 				check_char = +*data_ptr,
 				check.stat("Check"),
 
-				result_num = (result_num << 1),
-				result_num = (result_num << 1),
-				result_num = (result_num << 1),
-				result_num = (result_num << 1),
-				result_num = result_num + check_char,
+				result_num = (result_num << 4) + check_char,
 				++data_ptr
 			})
 		},

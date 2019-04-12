@@ -177,26 +177,40 @@ namespace EX3{
 
 	Statement Data::operator<<(int i){
 		use();
-		if(i != 1) throw std::runtime_error("not implemented in " __FILE__ " at " + std::to_string(__LINE__));
-		return Statement{
+		std::vector<Statement> res;
+		res.emplace_back(
 			new Const{
 				"LDA " + name_ + "\n"
-				"CLE\n"
-				"CIL\n"
 			}
-		};
+		);
+		while(i --> 0)
+			res.emplace_back(
+				new Const{
+					"CLE\n"
+					"CIL\n"
+				}
+			);
+
+		return StatementList(res).stat();
 	}
 
 	Statement Data::operator>>(int i){
 		use();
-		if(i != 1) throw std::runtime_error("not implemented in " __FILE__ " at " + std::to_string(__LINE__));
-		return Statement{
+		std::vector<Statement> res;
+		res.emplace_back(
 			new Const{
 				"LDA " + name_ + "\n"
-				"CLE\n"
-				"CIR\n"
 			}
-		};
+		);
+		while(i --> 0)
+			res.emplace_back(
+				new Const{
+					"CLE\n"
+					"CIR\n"
+				}
+			);
+
+		return StatementList(res).stat();
 	}
 
 	Statement Data::operator~(){

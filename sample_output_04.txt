@@ -97,9 +97,9 @@ XWH2MainLoop,
             XIF2CPBreak,
              / < end of if CPBreak
 
-            LDA I
-            CLE
-            CIL
+                LDA I
+                CLE
+                CIL
             STA CMPTMP1
             LDA CMPTMP1
             INC
