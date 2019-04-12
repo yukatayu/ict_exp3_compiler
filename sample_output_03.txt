@@ -48,23 +48,21 @@ XWH2Main,
                      / > while loop ShowSub
                     XWH1ShowSub,
                      / while (
-                        CLA
-                        INC
-                        STA TEMP2
                         LDA R
-                        CMA
-                        STA TEMP1
-                        LDA TEMP1
-                        ADD TEMP2
-                        STA TEMP1
+                        CLE
+                        CME
+                        SZA
+                        CME
                         CLA
                         CIL
-                        STA TEMP2
-                        LDA TEMP1
+                        STA TEMP1
+                        LDA R
+                        CMA
+                        INC
                         ADD X
                         CLA
                         CIL
-                        ADD TEMP2
+                        ADD TEMP1
                     SZA
                     BUN XWH3ShowSub
                     BUN XWH2ShowSub

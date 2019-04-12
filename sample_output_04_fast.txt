@@ -24,23 +24,21 @@ XWH2MainLoop,
          / > while loop CPLoop
         XWH1CPLoop,
          / while (
-            CLA
-            INC
-            STA TEMP2
             LDA I2
-            CMA
-            STA TEMP1
-            LDA TEMP1
-            ADD TEMP2
-            STA TEMP1
+            CLE
+            CME
+            SZA
+            CME
             CLA
             CIL
-            STA TEMP2
-            LDA TEMP1
+            STA TEMP1
+            LDA I2
+            CMA
+            INC
             ADD N
             CLA
             CIL
-            ADD TEMP2
+            ADD TEMP1
         SZA
         BUN XWH2CPLoop
         BUN XWH3CPLoop
@@ -87,23 +85,21 @@ XWH2MainLoop,
              / > while loop CPMain
             XWH1CPMain,
              / while (
-                CLA
-                INC
-                STA TEMP2
                 LDA I
-                CMA
-                STA TEMP1
-                LDA TEMP1
-                ADD TEMP2
-                STA TEMP1
+                CLE
+                CME
+                SZA
+                CME
                 CLA
                 CIL
-                STA TEMP2
-                LDA TEMP1
+                STA TEMP1
+                LDA I
+                CMA
+                INC
                 ADD ISH
                 CLA
                 CIL
-                ADD TEMP2
+                ADD TEMP1
             SZA
             BUN XWH2CPMain
             BUN XWH3CPMain
@@ -112,23 +108,21 @@ XWH2MainLoop,
 
                  / > if DivCmp
                  / if (
-                    CLA
-                    INC
-                    STA TEMP2
                     LDA ISH
-                    CMA
-                    STA TEMP1
-                    LDA TEMP1
-                    ADD TEMP2
-                    STA TEMP1
+                    CLE
+                    CME
+                    SZA
+                    CME
                     CLA
                     CIL
-                    STA TEMP2
-                    LDA TEMP1
+                    STA TEMP1
+                    LDA ISH
+                    CMA
+                    INC
                     ADD ITMP
                     CLA
                     CIL
-                    ADD TEMP2
+                    ADD TEMP1
                 SZA
                 BUN XIF1DivCmp
                 BUN XIF2DivCmp

@@ -132,6 +132,16 @@ namespace EX3{
 		};
 	}
 
+	Statement operator+(Statement st, Data d){
+		d.use();
+		return Statement{
+			new Const{
+				st->make() +
+				"ADD " + d.name() + "\n"
+			}
+		};
+	}
+
 	Statement Data::operator+(){
 		use();
 		return Statement{

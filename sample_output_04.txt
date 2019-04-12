@@ -24,23 +24,21 @@ XWH2MainLoop,
          / > while loop CPLoop
         XWH1CPLoop,
          / while (
-            CLA
-            INC
-            STA CMPTMP2
             LDA I2
-            CMA
-            STA CMPTMP1
-            LDA CMPTMP1
-            ADD CMPTMP2
-            STA CMPTMP1
+            CLE
+            CME
+            SZA
+            CME
             CLA
             CIL
-            STA CMPTMP2
-            LDA CMPTMP1
+            STA CMPTMP1
+            LDA I2
+            CMA
+            INC
             ADD N
             CLA
             CIL
-            ADD CMPTMP2
+            ADD CMPTMP1
         SZA
         BUN XWH2CPLoop
         BUN XWH3CPLoop
@@ -55,23 +53,21 @@ XWH2MainLoop,
              / > while loop CPLoop2
             XWH1CPLoop2,
              / while (
-                CLA
-                INC
-                STA CMPTMP2
                 LDA NC2
-                CMA
-                STA CMPTMP1
-                LDA CMPTMP1
-                ADD CMPTMP2
-                STA CMPTMP1
+                CLE
+                CME
+                SZA
+                CME
                 CLA
                 CIL
-                STA CMPTMP2
-                LDA CMPTMP1
+                STA CMPTMP1
+                LDA NC2
+                CMA
+                INC
                 ADD NC1
                 CLA
                 CIL
-                ADD CMPTMP2
+                ADD CMPTMP1
             SZA
             BUN XWH3CPLoop2
             BUN XWH2CPLoop2

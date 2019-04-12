@@ -28,13 +28,13 @@ int main(){
 		i2 = +i2_init,
 		Statement{
 			new While("CPLoop", {
-				new MoreEq(N, i2, t1, t2)
+				new MoreEq(N, i2, t1)
 			}, {
 				Nc2 = +N,
 				Nc1 = N + mi,
 				Statement{
 					new While("CPLoop2", {
-						new MoreEq(Nc1, Nc2, t1, t2)
+						new MoreEq(Nc1, Nc2, t1)
 					}, {
 						Nc2 = +Nc1,
 						Nc1 = Nc1 + mi

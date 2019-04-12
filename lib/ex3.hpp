@@ -76,6 +76,9 @@ namespace EX3{
 		static Statement stat_all();
 	};
 
+	Statement operator+(Statement st, Data d);
+
+
 	class StatementList {
 	private:
 		std::vector<Statement> statements_;
@@ -108,11 +111,10 @@ namespace EX3{
 	class MoreEq : public Statement_impl {
 	private:
 		Data tmp_;
-		Data tmp2_;
 		Data target1_;
 		Data target2_;
 	public:
-		MoreEq(Data target1, Data target2, Data tmp, Data tmp2);
+		MoreEq(Data target1, Data target2, Data tmp);
 		std::string make_impl() override;
 	};
 

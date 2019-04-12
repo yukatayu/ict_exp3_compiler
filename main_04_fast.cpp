@@ -31,7 +31,7 @@ int main(){
 		i2 = +i2_init,
 		Statement{
 			new While("CPLoop", {
-				new MoreEq(N, i2, t1, t2)
+				new MoreEq(N, i2, t1)
 			}, {
 				Nc2 = +N,
 
@@ -51,11 +51,11 @@ int main(){
 
 				Statement{
 					new While("CPMain", {
-						new MoreEq(i_shift, i, t1, t2)
+						new MoreEq(i_shift, i, t1)
 					}, {
 						Statement{
 							new If("DivCmp", {
-								new MoreEq(n_tmp, i_shift, t1, t2)
+								new MoreEq(n_tmp, i_shift, t1)
 							}, {
 								t1 = -i_shift,
 								n_tmp = n_tmp + t1,

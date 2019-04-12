@@ -53,7 +53,7 @@ int main(){
 				X = result_num + dec_minus,
 				Statement{
 					new While("ShowSub", {
-						new MoreEq(X, R, t1, t2)
+						new MoreEq(X, R, t1)
 					}, {
 						R = +X,
 						X = X + dec_minus,

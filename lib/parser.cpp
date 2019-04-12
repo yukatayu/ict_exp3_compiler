@@ -33,23 +33,25 @@ namespace EX3{
 	}
 
 	// ACC = (target1 >= target2)
-	MoreEq::MoreEq(Data target1, Data target2, Data tmp, Data tmp2)
+	MoreEq::MoreEq(Data target1, Data target2, Data tmp)
 		: target1_(target1)
 		, target2_(target2)
 		, tmp_(tmp)
-		, tmp2_(tmp2)
 	{ }
 	std::string MoreEq::make_impl() {
 		StatementList cmp12 = {
-			tmp2_ = helper::One,
-
-			tmp_ = ~target2_,
-			tmp_ = tmp_ + tmp2_,
-			tmp2_ = helper::GetE,
-
-			tmp_ + target1_,
-			helper::GetE,
-			Statement{ new Const("ADD " + tmp2_.name()) }
+			// tmp_ <- (target2_ == 0)
+			target2_.load(),
+			Statement{ new Const{
+				"CLE\n"
+				"CME\n"
+				"SZA\n"
+				"CME\n"
+			} },
+			tmp_ = helper::GetE,
+			// acc <- overflow
+			-target2_ + target1_,
+			helper::GetE + tmp_,
 		};
 		return cmp12.make();
 	}

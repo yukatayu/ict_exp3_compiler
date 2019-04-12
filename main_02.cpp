@@ -18,7 +18,7 @@ int main(){
 		B = -B,
 		Statement{
 			new While("Main", {
-				new MoreEq(A, B, t1, t2)
+				new MoreEq(A, B, t1)
 			}, {
 				R = +A,
 				++Q,
