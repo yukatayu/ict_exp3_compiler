@@ -42,7 +42,6 @@ XWH3Main,
 
 _M_, HLT
     T1, DEC 0
-    T2, DEC 0
     A, DEC 55
     B, DEC 17
     Q, DEC -1

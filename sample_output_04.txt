@@ -146,6 +146,5 @@ _M_, HLT
     MI, DEC 0
     I2, DEC 0
     CMPTMP1, DEC 0
-    CMPTMP2, DEC 0
 END
 

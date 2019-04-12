@@ -41,7 +41,6 @@ int main(){
 	Data check_char_lower_m_A_m10(INT, "CHKCHARLMAM10", -55);
 
 	Data t1(INT, "TEMP1", 0);
-	Data t2(INT, "TEMP2", 0);
 
 	StatementList show{
 		Statement{

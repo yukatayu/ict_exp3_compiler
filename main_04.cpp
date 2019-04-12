@@ -20,7 +20,6 @@ int main(){
 
 	// Temporary
 	Data t1(INT, "CMPTMP1", 0);
-	Data t2(INT, "CMPTMP2", 0);
 
 	StatementList checkPrime = {
 		i = +i_init,

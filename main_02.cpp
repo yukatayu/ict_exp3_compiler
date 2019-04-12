@@ -6,7 +6,6 @@ int main(){
 	using namespace helper;
 
 	Data t1(INT, "T1", 0);
-	Data t2(INT, "T2", 0);
 	Data A(INT, "A", 55);
 	Data B(INT, "B", 17);
 	Data Q(INT, "Q", -1, MaybeUnused);

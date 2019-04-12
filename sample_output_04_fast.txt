@@ -219,6 +219,5 @@ _M_, HLT
     ISH, DEC 0
     IPTR, DEC 0
     TEMP1, DEC 0
-    TEMP2, DEC 0
 END
 
