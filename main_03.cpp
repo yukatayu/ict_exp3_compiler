@@ -117,6 +117,7 @@ int main(){
 
 	// 文字が 0-9 の範囲にあるかどうかを検査
 	// NULL文字を検出した場合、表示処理に飛ぶ
+	// <1>
 	StatementList check{
 		Statement{
 			new If("check0", {
