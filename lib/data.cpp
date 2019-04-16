@@ -88,25 +88,21 @@ namespace EX3{
 
 	Statement Data::load(){
 		used_ = true;
-		return Statement{
-			new Const{
-				"LDA " + name_ + "\n"
-			}
-		};
+		return Const("LDA " + name_ + "\n");
 	}
 
 	Statement Data::stat(){
 		// this code below is undesirable due to copy contructor which set `used_` true
 		// return Statement{new Data(*this), [](...){}};
 		//
-		return Statement{ new Const(make()) };
+		return Const(make());
 	}
 
 	Statement Data::stat_all(){
-		return { Statement { new Const{
+		return Const(
 			" / Data Segment\n" + 
 			StatementList(stats_all_).stat()->make()
-		} } };
+		);
 	}
 
 	void Data::use(){
@@ -127,124 +123,108 @@ namespace EX3{
 
 	Statement Data::operator+(Data d){
 		use();
-		return Statement{
-			new Const{
-				"LDA " + name_ + "\n"
-				"ADD " + d.name() + "\n"
-			}
-		};
+		return Const(
+			"LDA " + name_ + "\n"
+			"ADD " + d.name() + "\n"
+		);
 	}
 
 	Statement operator+(Statement st, Data d){
 		d.use();
-		return Statement{
-			new Const{
-				st->make() +
-				"ADD " + d.name() + "\n"
-			}
-		};
+		return Const(
+			st->make() +
+			"ADD " + d.name() + "\n"
+		);
 	}
 
 	Statement Data::operator+(){
 		use();
-		return Statement{
-			new Const{
-				"LDA " + name_ + "\n"
-			}
-		};
+		return Const(
+			"LDA " + name_ + "\n"
+		);
 	}
 
 	Statement Data::operator++(){
 		use();
-		return Statement{
-			new Const{
-				"LDA " + name_ + "\n"
-				"INC\n"
-				"STA " + name_ + "\n"
-			}
-		};
+		return Const(
+			"LDA " + name_ + "\n"
+			"INC\n"
+			"STA " + name_ + "\n"
+		);
 	}
 
 	Statement Data::operator--(){
 		use();
-		return Statement{
-			new Const{
-				"LDA " + name_ + "\n"
-				"CMA\n"
-				"INC\n"
-				"CMA\n"
-				"STA " + name_ + "\n"
-			}
-		};
+		return Const(
+			"LDA " + name_ + "\n"
+			"CMA\n"
+			"INC\n"
+			"CMA\n"
+			"STA " + name_ + "\n"
+		);
 	}
 
 	Statement Data::operator<<(int i){
 		use();
 		std::vector<Statement> res;
 		res.emplace_back(
-			new Const{
+			Const(
 				"LDA " + name_ + "\n"
-			}
+			)
 		);
 		while(i --> 0)
 			res.emplace_back(
-				new Const{
+				Const(
 					"CLE\n"
 					"CIL\n"
-				}
+				)
 			);
 
-		return Statement{ new Const{ StatementList(res).make() } };
+		return Const( StatementList(res).make() );
 	}
 
 	Statement Data::operator>>(int i){
 		use();
 		std::vector<Statement> res;
 		res.emplace_back(
-			new Const{
+			Const(
 				"LDA " + name_ + "\n"
-			}
+			)
 		);
 		while(i --> 0)
 			res.emplace_back(
-				new Const{
+				Const(
 					"CLE\n"
 					"CIR\n"
-				}
+				)
 			);
 
-		return Statement{ new Const{ StatementList(res).make() } };
+		return Const( StatementList(res).make() );
 	}
 
 	Statement Data::operator~(){
 		use();
-		return Statement{
-			new Const{
-				"LDA " + name_ + "\n"
-				"CMA\n"
-			}
-		};
+		return Const(
+			"LDA " + name_ + "\n"
+			"CMA\n"
+		);
 	}
 
 	Statement Data::operator-(){
 		use();
-		return Statement{
-			new Const{
-				"LDA " + name_ + "\n"
-				"CMA\n"
-				"INC\n"
-			}
-		};
+		return Const(
+			"LDA " + name_ + "\n"
+			"CMA\n"
+			"INC\n"
+		);
 	}
 
 	Statement Data::operator=(Statement st){
 		// used_ = true;  // it is not "used" !
-		return Statement{
-			new Const{
-				st->make() +
-				"STA " + name_ + "\n"
-			}
-		};
+		return Const(
+			st->make() +
+			"STA " + name_ + "\n"
+		);
 	}
 
 }

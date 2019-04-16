@@ -16,33 +16,33 @@ namespace EX3{
 	}
 
 	// Const
-	Const::Const(std::string stat)
+	Const_impl::Const_impl(std::string stat)
 		: stat_ (stat)
 	{ }
 	
-	std::string Const::make_impl(){
+	std::string Const_impl::make_impl(){
 		return stat_;
 	}
 
 	// Goto
-	Goto::Goto(std::string label){
+	Goto_impl::Goto_impl(std::string label){
 		target_name_ = label;
 	}
-	std::string Goto::make_impl() {
+	std::string Goto_impl::make_impl() {
 		return "BUN " + target_name_ + "\n";
 	}
 
 	// ACC = (target1 >= target2)
-	MoreEq::MoreEq(Data target1, Data target2, Data tmp)
+	MoreEq_impl::MoreEq_impl(Data target1, Data target2, Data tmp)
 		: target1_(target1)
 		, target2_(target2)
 		, tmp_(tmp)
 	{ }
-	std::string MoreEq::make_impl() {
+	std::string MoreEq_impl::make_impl() {
 		StatementList cmp12 = {
 			// tmp_ <- (target2_ == 0)
 			target2_.load(),
-			Statement{ new Const{
+			Statement{ new Const_impl{
 				"CLE\n"
 				"CME\n"
 				"SZA\n"
@@ -57,10 +57,10 @@ namespace EX3{
 	}
 
 	// Negative
-	Negative::Negative(Data d){
+	Negative_impl::Negative_impl(Data d){
 		target_name_ = d.name();
 	}
-	std::string Negative::make_impl() {
+	std::string Negative_impl::make_impl() {
 		return
 			"LDA " + target_name_ + "\n"
 			"CIL\n"
@@ -70,28 +70,28 @@ namespace EX3{
 	}
 
 	// If
-	void If::init(std::string name, StatementList stats_cond, StatementList stats, bool invert){
+	void If_impl::init(std::string name, StatementList stats_cond, StatementList stats, bool invert){
 		name_ = name;
 		stats_cond_ = stats_cond;
 		stats_ = stats;
 		invert_ = invert;
 	}
 
-	If::If(std::string name, StatementList stats_cond, StatementList stats, bool invert){
+	If_impl::If_impl(std::string name, StatementList stats_cond, StatementList stats, bool invert){
 		init(name, stats_cond, stats, invert);
 	}
-	If::If(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert){
+	If_impl::If_impl(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert){
 		init(name, stats_cond, stats, invert);
 	}
-	If::If(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert){
+	If_impl::If_impl(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert){
 		init(name, stats_cond, stats, invert);
 	}
-	If::If(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert){
+	If_impl::If_impl(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert){
 		init(name, stats_cond, stats, invert);
 	}
 
 	//TODO: implement Else
-	std::string If::make_impl() {
+	std::string If_impl::make_impl() {
 		std::string res;
 		std::string if1 = "XIF1" + name_;
 		std::string if2 = "XIF2" + name_;
@@ -113,37 +113,37 @@ namespace EX3{
 
 	// Continue
 	// TODO: add Break
-	Continue::Continue(std::string name)
+	Continue_impl::Continue_impl(std::string name)
 		: name_(name)
 	{ }
 
-	std::string Continue::make_impl(){
+	std::string Continue_impl::make_impl(){
 		std::string wh1 = "XWH1" + name_;
 		return "BUN " + wh1;
 	}
 
 	// While
-	void While::init(std::string name, StatementList stats_cond, StatementList stats, bool invert){
+	void While_impl::init(std::string name, StatementList stats_cond, StatementList stats, bool invert){
 		name_ = name;
 		stats_cond_ = stats_cond;
 		stats_ = stats;
 		invert_ = invert;
 	}
 
-	While::While(std::string name, StatementList stats_cond, StatementList stats, bool invert){
+	While_impl::While_impl(std::string name, StatementList stats_cond, StatementList stats, bool invert){
 		init(name, stats_cond, stats, invert);
 	}
-	While::While(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert){
+	While_impl::While_impl(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert){
 		init(name, stats_cond, stats, invert);
 	}
-	While::While(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert){
+	While_impl::While_impl(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert){
 		init(name, stats_cond, stats, invert);
 	}
-	While::While(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert){
+	While_impl::While_impl(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert){
 		init(name, stats_cond, stats, invert);
 	}
 
-	std::string While::make_impl() {
+	std::string While_impl::make_impl() {
 		std::string res;
 		std::string wh1 = "XWH1" + name_;
 		std::string wh2 = "XWH2" + name_;
@@ -203,7 +203,7 @@ namespace EX3{
 		if(!label.empty())
 			res += " / < end of " + label + "\n\n";
 		return Statement{
-			new Const(res)
+			new Const_impl(res)
 		};
 	}
 

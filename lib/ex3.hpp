@@ -91,50 +91,50 @@ namespace EX3{
 		Statement stat(std::string label = "", std::string placeholder = "");
 	};
 
-	class Const : public Statement_impl {
+	class Const_impl : public Statement_impl {
 	private:
 		std::string stat_;
 	public:
-		Const(std::string stat);
+		Const_impl(std::string stat);
 		std::string make_impl() override;
 	};
 
-	class Goto : public Statement_impl {
+	class Goto_impl : public Statement_impl {
 	private:
 		std::string target_name_;
 	public:
-		Goto(std::string label);
+		Goto_impl(std::string label);
 		std::string make_impl() override;
 	};
 
 	// ACC = (target1 >= target2)
-	class MoreEq : public Statement_impl {
+	class MoreEq_impl : public Statement_impl {
 	private:
 		Data tmp_;
 		Data target1_;
 		Data target2_;
 	public:
-		MoreEq(Data target1, Data target2, Data tmp);
+		MoreEq_impl(Data target1, Data target2, Data tmp);
 		std::string make_impl() override;
 	};
 
-	class Continue : public Statement_impl {
+	class Continue_impl : public Statement_impl {
 	private:
 		std::string name_;
 	public:
-		Continue(std::string name);
+		Continue_impl(std::string name);
 		std::string make_impl() override;
 	};
 
-	class Negative : public Statement_impl {
+	class Negative_impl : public Statement_impl {
 	private:
 		std::string target_name_;
 	public:
-		Negative(Data d);
+		Negative_impl(Data d);
 		std::string make_impl() override;
 	};
 
-	class While : public Statement_impl {
+	class While_impl : public Statement_impl {
 	private:
 		std::string name_;
 		StatementList stats_cond_;
@@ -142,14 +142,14 @@ namespace EX3{
 		bool invert_;
 		void init(std::string name, StatementList stats_cond, StatementList stats, bool invert);
 	public:
-		While(std::string name, StatementList stats_cond, StatementList stats, bool invert = false);
-		While(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false);
-		While(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false);
-		While(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false);
+		While_impl(std::string name, StatementList stats_cond, StatementList stats, bool invert = false);
+		While_impl(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false);
+		While_impl(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false);
+		While_impl(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false);
 		std::string make_impl() override;
 	};
 
-	class If : public Statement_impl {
+	class If_impl : public Statement_impl {
 	private:
 		std::string name_;
 		StatementList stats_cond_;
@@ -157,35 +157,48 @@ namespace EX3{
 		bool invert_;
 		void init(std::string name, StatementList stats_cond, StatementList stats, bool invert);
 	public:
-		If(std::string name, StatementList stats_cond, StatementList stats, bool invert = false);
-		If(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false);
-		If(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false);
-		If(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false);
+		If_impl(std::string name, StatementList stats_cond, StatementList stats, bool invert = false);
+		If_impl(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false);
+		If_impl(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false);
+		If_impl(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false);
 		std::string make_impl() override;
 	};
+
+	// Generators (internal linkage)
+#define StatementGenerator(StatImpl) \
+	inline Statement StatImpl(auto... args){ \
+		return Statement { new StatImpl ## _impl (args...) }; \
+	};
+	StatementGenerator(Const)
+	StatementGenerator(Goto)
+	StatementGenerator(MoreEq)
+	StatementGenerator(Continue)
+	StatementGenerator(Negative)
+	StatementGenerator(While)
+	StatementGenerator(If)
 
 	namespace helper{
 		std::vector<std::string> split(std::string str, char delim, bool skipEmpty = false);
 		std::string indent(std::string str, int width = 4);
 
-		static Statement begin { new Const("ORG 10 / Entry Point") };
-		static Statement halt  { new Const("_M_, HLT") };
-		static Statement end   { new Const("END") };
+		static Statement begin { new Const_impl("ORG 10 / Entry Point") };
+		static Statement halt  { new Const_impl("_M_, HLT") };
+		static Statement end   { new Const_impl("END") };
 		static Statement Zero{
-			new Const(
+			new Const_impl(
 				"CLA\n"
 			)
 		};
 
 		static Statement One{
-			new Const(
+			new Const_impl(
 				"CLA\n"
 				"INC\n"
 			)
 		};
 
 		static Statement GetE{
-			new Const(
+			new Const_impl(
 				"CLA\n"
 				"CIL\n"
 			)
