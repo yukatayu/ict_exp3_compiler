@@ -86,11 +86,6 @@ namespace EX3{
 		}
 	}
 
-	Statement Data::load(){
-		used_ = true;
-		return Const("LDA " + name_ + "\n");
-	}
-
 	Statement Data::stat(){
 		// this code below is undesirable due to copy contructor which set `used_` true
 		// return Statement{new Data(*this), [](...){}};

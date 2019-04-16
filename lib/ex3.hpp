@@ -174,8 +174,32 @@ namespace EX3{
 	StatementGenerator(MoreEq)
 	StatementGenerator(Continue)
 	StatementGenerator(Negative)
-	StatementGenerator(While)
-	StatementGenerator(If)
+
+	inline Statement While(std::string name, StatementList stats_cond, StatementList stats, bool invert = false){
+			return Statement{ new While_impl{name, stats_cond, stats, invert} };
+	};
+	inline Statement While(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false){
+			return Statement{ new While_impl{name, stats_cond, stats, invert} };
+	}
+	inline Statement While(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false){
+			return Statement{ new While_impl{name, stats_cond, stats, invert} };
+	}
+	inline Statement While(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false){
+			return Statement{ new While_impl{name, stats_cond, stats, invert} };
+	}
+
+	inline Statement If(std::string name, StatementList stats_cond, StatementList stats, bool invert = false){
+		return Statement { new If_impl{name, stats_cond, stats, invert} };
+	}
+	inline Statement If(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false){
+		return Statement { new If_impl{name, stats_cond, stats, invert} };
+	}
+	inline Statement If(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false){
+		return Statement { new If_impl{name, stats_cond, stats, invert} };
+	}
+	inline Statement If(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false){
+		return Statement { new If_impl{name, stats_cond, stats, invert} };
+	}
 
 	namespace helper{
 		std::vector<std::string> split(std::string str, char delim, bool skipEmpty = false);

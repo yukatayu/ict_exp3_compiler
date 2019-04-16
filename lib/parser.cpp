@@ -41,7 +41,7 @@ namespace EX3{
 	std::string MoreEq_impl::make_impl() {
 		StatementList cmp12 = {
 			// tmp_ <- (target2_ == 0)
-			target2_.load(),
+			+target2_,
 			Statement{ new Const_impl{
 				"CLE\n"
 				"CME\n"

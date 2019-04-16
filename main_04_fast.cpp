@@ -27,87 +27,57 @@ int main(){
 		i = +i_init,
 		mi = -i_init,
 		i2 = +i2_init,
-		Statement{
-			new While("CPLoop", {
-				new MoreEq(N, i2, t1)
-			}, {
-				i_shift = +i,
-				n_tmp = +N,
-				// `i` が4以上の偶数ならcontinue
-				Statement {
-					new If("CPSkip1", {
-							i >> 2
-					}, {
-						i.load(),
-						Statement{ new Const{
-							"CIR\n"
-							"CME\n"
-							"SZE\n"
-							"BUN CPCont\n"
-						} }
-					})
-				},
-				// 最上位ビットが立つまで値を左シフトする
-				Statement{
-					new While("CPPre", {
-						new Negative(i_shift)
-					}, {
-						i_shift = (i_shift<<1),
-					}, true)
-				},
-				// 割り算の筆算と同様に値を引いていく
-				Statement{
-					new While("CPMain", {
-						new MoreEq(i_shift, i, t1)
-					}, {
-						Statement{
-							new If("DivCmp", {
-								new MoreEq(n_tmp, i_shift, t1)
-							}, {
-								n_tmp = -i_shift +  n_tmp,
-							})
-						},
-						i_shift = (i_shift >> 1),
-					})
-				},
-				// 余りが0なら返却
-				Statement{
-					new If("CPBreak", {
-						n_tmp.load()
-					},{
-						new Goto("L1")
-					}, true)
-				},
+		While("CPLoop", { MoreEq(N, i2, t1) }, {
+			i_shift = +i,
+			n_tmp = +N,
+			// `i` が4以上の偶数ならcontinue
+			If("CPSkip1", { i >> 2 }, {
+				+i,
+				Const(
+					"CIR\n"
+					"CME\n"
+					"SZE\n"
+					"BUN CPCont\n"
+				)
+			}),
+			// 最上位ビットが立つまで値を左シフトする
+			While("CPPre", { Negative(i_shift) }, {
+				i_shift = (i_shift<<1),
+			}, true),
+			// 割り算の筆算と同様に値を引いていく
+			While("CPMain", { MoreEq(i_shift, i, t1) }, {
+				If("DivCmp", { MoreEq(n_tmp, i_shift, t1) }, {
+					n_tmp = -i_shift +  n_tmp,
+				}),
+				i_shift = (i_shift >> 1)
+			}),
+			// 余りが0なら返却
+			If("CPBreak", { +n_tmp },{
+				Goto("L1")
+			}, true),
 
-				Statement{ new Const("CPCont,") },
-				// インクリメント
-				i2 = (i<<1) + i2,
-				++i2,
-				++i,
-				--mi
-			})
-		},
+			Const("CPCont,"),
+			// インクリメント
+			i2 = (i<<1) + i2,
+			++i2,
+			++i,
+			--mi
+		}),
 		halt,
-		Statement{ new Const("CPEnd,") }
+		Const("CPEnd,")
 	};
 
 	// メインループ,  `N` を減らしながら検査していく
 	StatementList program = {
 		begin,
 
-		Statement{
-			new While("MainLoop", {
-				N.load()
-			}, {
-				checkPrime.stat("CP"),
-				Statement{ new Const("L1,") },
-				--N
-			})
-		},
+		While("MainLoop", { +N }, {
+			checkPrime.stat("CP"),
+			Const("L1,"),
+			--N
+		}),
 		halt,
-		Statement{
-			new Const("\n\n")
-		},
+		Const("\n\n"),
 
 		Data::stat_all(),
 		end,

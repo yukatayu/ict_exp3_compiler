@@ -15,16 +15,12 @@ int main(){
 		begin,
 
 		B = -B,  // Bの符号を反転
-		Statement{
-			// AがBより大きい限り、引き続ける
-			new While("Main", {
-				new MoreEq(A, B, t1)
-			}, {
-				R = +A,
-				++Q,
-				A = A + B
-			}, true)
-		},
+		// AがBより大きい限り、引き続ける
+		While("Main", { MoreEq(A, B, t1) }, {
+			R = +A,
+			++Q,
+			A = A + B
+		}, true),
 		halt,
 
 		Data::stat_all(),

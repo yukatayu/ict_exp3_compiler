@@ -44,51 +44,37 @@ int main(){
 
 	// `result_num` を10進数に変換する
 	StatementList show{
-		Statement{
-			new While("ShowMain", {
-				result_num.load()
-			}, {
-				// `result_num` を10で割る
-				Q = Zero,
-				R = +result_num,
-				X = result_num + dec_minus,
-				Statement{
-					new While("ShowSub", {
-						new MoreEq(X, R, t1)
-					}, {
-						R = +X,
-						X = X + dec_minus,
-						++Q
-					}, true)
-				},
+		While("ShowMain", { +result_num }, {
+			// `result_num` を10で割る
+			Q = Zero,
+			R = +result_num,
+			X = result_num + dec_minus,
+			While("ShowSub", { MoreEq(X, R, t1) }, {
+				R = +X,
+				X = X + dec_minus,
+				++Q
+			}, true),
 
-				// 商を再代入
-				result_num = +Q,
+			// 商を再代入
+			result_num = +Q,
 
-				// 余りに '0' を足したものを先頭に挿入
-				*result_ptr_init = R + check_char_lower,
+			// 余りに '0' を足したものを先頭に挿入
+			*result_ptr_init = R + check_char_lower,
 
-				Statement{
-					// まだ `result_num` が残っているなら文字列をシフト
-					new If("ShowRes", {
-						result_num.load()
-					}, {
-						result_ptr3 = result_ptr2 = +result_ptr,
-						++result_ptr2,
-						Statement{
-							new While("ShowResShift", {
-								-result_ptr_init + result_ptr2
-							}, {
-								*result_ptr2 = +*result_ptr3,
-								--result_ptr2,
-								--result_ptr3
-							})
-						}
-					})
-				},
-				++result_ptr
-			})
-		},
+			// まだ `result_num` が残っているなら文字列をシフト
+			If("ShowRes", { +result_num }, {
+				result_ptr3 = result_ptr2 = +result_ptr,
+				++result_ptr2,
+				While("ShowResShift", {
+					-result_ptr_init + result_ptr2
+				}, {
+					*result_ptr2 = +*result_ptr3,
+					--result_ptr2,
+					--result_ptr3
+				})
+			}),
+			++result_ptr
+		}),
 		// 末尾にNULL文字を挿入
 		*result_ptr = Zero,
 		halt
@@ -97,21 +83,13 @@ int main(){
 	// 文字が A-F の範囲にあるかどうかを検査
 	StatementList checkAF{
 		t1 = -check_char + check_char_upper_F,
-		Statement{
-			new If("checkAF1__TOKEN__", {
-				new Negative(t1)
-			}, {
-				halt
-			})
-		},
+		If("checkAF1__TOKEN__", { Negative(t1) }, {
+			halt
+		}),
 		t1 = check_char + check_char_lower_m_A,
-		Statement{
-			new If("checkAF2__TOKEN__", {
-				new Negative(t1)
-			}, {
-				halt
-			})
-		},
+		If("checkAF2__TOKEN__", { Negative(t1) }, {
+			halt
+		}),
 		check_char = check_char + check_char_lower_m_A_m10
 	};
 
@@ -119,31 +97,19 @@ int main(){
 	// NULL文字を検出した場合、表示処理に飛ぶ
 	// <1>
 	StatementList check{
-		Statement{
-			new If("check0", {
-				check_char.load()
-			}, {
-				show.stat("SHOW")
-			}, true)
-		},
+		If("check0", { +check_char }, {
+			show.stat("SHOW")
+		}, true),
 
 		t1 = -check_char + check_char_upper,
-		Statement{
-			new If("check1", {
-				new Negative(t1)
-			}, {
-				checkAF.stat("AF1", "__TOKEN__")
-			})
-		},
+		If("check1", { Negative(t1) }, {
+			checkAF.stat("AF1", "__TOKEN__")
+		}),
 
 		t1 = -check_char_lower + check_char,
-		Statement{
-			new If("check2", {
-				new Negative(t1)
-			}, {
-				checkAF.stat("AF2", "__TOKEN__")
-			})
-		},
+		If("check2", { Negative(t1) }, {
+			checkAF.stat("AF2", "__TOKEN__")
+		}),
 		check_char = +t1
 	};
 
@@ -151,18 +117,14 @@ int main(){
 	StatementList program{
 		begin,
 
-		Statement{
-			new While("Main", {
-				One,  // infinity loop
-			}, {
-				// 1文字ずつ取り出してcheck関数に渡す
-				check_char = +*data_ptr,
-				check.stat("Check"),
+		While("Main", { One }, {  // Infinity Loop
+			// 1文字ずつ取り出してcheck関数に渡す
+			check_char = +*data_ptr,
+			check.stat("Check"),
 
-				result_num = (result_num << 4) + check_char,
-				++data_ptr
-			})
-		},
+			result_num = (result_num << 4) + check_char,
+			++data_ptr
+		}),
 		halt,
 
 		Data::stat_all(),
