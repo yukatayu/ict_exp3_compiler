@@ -219,6 +219,7 @@ XWH2Main,
                 STA CHKCHAR
              / < end of AF1
 
+            BUN CheckEnd
          / }
         XIF2check1,
          / < end of if check1
@@ -296,6 +297,7 @@ XWH2Main,
 
         LDA TEMP1
         STA CHKCHAR
+        CheckEnd,
      / < end of Check
 
     LDA RESULTNUM

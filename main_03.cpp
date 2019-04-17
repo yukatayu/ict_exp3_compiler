@@ -103,14 +103,16 @@ int main(){
 
 		t1 = -check_char + check_char_upper,
 		If("check1", { Negative(t1) }, {
-			checkAF.stat("AF1", "__TOKEN__")
+			checkAF.stat("AF1", "__TOKEN__"),
+			Goto("CheckEnd")
 		}),
 
 		t1 = -check_char_lower + check_char,
 		If("check2", { Negative(t1) }, {
 			checkAF.stat("AF2", "__TOKEN__")
 		}),
-		check_char = +t1
+		check_char = +t1,
+		Const("CheckEnd,")
 	};
 
 	// プログラム全体
