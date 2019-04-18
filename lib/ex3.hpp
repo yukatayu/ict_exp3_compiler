@@ -206,6 +206,13 @@ namespace EX3{
 		std::string indent(std::string str, int width = 4);
 
 		static Statement begin { new Const_impl("ORG 10 / Entry Point") };
+		inline Statement begin_interrupt(std::string goto_ptr, std::string res_ptr = "ST0") {
+			return Const(
+				"ORG 0 / Interrupt Entry Point\n"
+				+ res_ptr + ", HEX 0 / Interrupt Return Address\n"
+				"BUN " + goto_ptr
+			);
+		};
 		static Statement halt  { new Const_impl("_M_, HLT") };
 		static Statement end   { new Const_impl("END") };
 		static Statement Zero{
