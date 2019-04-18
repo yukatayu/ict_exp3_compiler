@@ -1,0 +1,73 @@
+ORG 0 / Interrupt Entry Point
+INT_RET, HEX 0 / Interrupt Return Address
+BUN INT_MAIN
+ORG 10 / Entry Point
+LDA MASKINIT
+IMK
+SIO
+ION
+
+ / > while loop MainLoop
+XWH1MainLoop,
+ / while (
+    CLA
+    INC
+SZA
+BUN XWH2MainLoop
+BUN XWH3MainLoop
+ / ) {
+XWH2MainLoop,
+BUN XWH1MainLoop
+ / }
+XWH3MainLoop,
+ / < end of while loop MainLoop
+
+_M_, HLT
+
+ / > beginning of INT_MAIN
+INT_MAIN,
+    STA ACCBAK
+    CLA
+    CIL
+    STA EBAK
+    CLA
+    STA OutFlag
+    SKI
+    BUN InterruptReturn
+    INP
+    STA INTmp
+    SKOBUN InterruptReturn
+    LDA INTmp
+    OUT
+    InterruptReturn,
+    LDA EBAK
+    CLE
+    CIR
+    LDA ACCBAK
+    ION
+    BUN INT_RET I
+ / < end of INT_MAIN
+
+ / Data Segment
+    ACCBAK, DEC 0
+    EBAK, DEC 0
+    MASKINIT, DEC 15
+    OutFlag, DEC 0
+    INTmp, DEC 0
+    N, DEC 65535
+    ASCII0, DEC 48
+    ASCIIENTER, DEC 10
+    DECVAL, DEC 10
+    DECVALP1, DEC 11
+    CPRET, DEC 0
+    IINIT, DEC 2
+    I2INIT, DEC 4
+    I, DEC 0
+    ITMP, DEC 0
+    MI, DEC 0
+    I2, DEC 0
+    ISH, DEC 0
+    TEMP1, DEC 0
+    TEMP2, DEC 0
+END
+

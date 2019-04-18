@@ -122,6 +122,15 @@ namespace EX3{
 		return "BUN " + wh1;
 	}
 
+	// Return
+	Return_impl::Return_impl(std::string target)
+		: target_(target)
+	{ }
+
+	std::string Return_impl::make_impl(){
+		return "BUN " + target_ + " I";
+	}
+
 	// While
 	void While_impl::init(std::string name, StatementList stats_cond, StatementList stats, bool invert){
 		name_ = name;

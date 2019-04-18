@@ -197,6 +197,33 @@ namespace EX3{
 		return Const( StatementList(res).make() );
 	}
 
+
+	Statement operator<<(Statement st, int i){
+		std::vector<Statement> res;
+		while(i --> 0)
+			res.emplace_back(
+				Const(
+					"CLE\n"
+					"CIL\n"
+				)
+			);
+
+		return Const( st->make() + StatementList(res).make() );
+	}
+
+	Statement operator>>(Statement st, int i){
+		std::vector<Statement> res;
+		while(i --> 0)
+			res.emplace_back(
+				Const(
+					"CLE\n"
+					"CIR\n"
+				)
+			);
+
+		return Const( st->make() + StatementList(res).make() );
+	}
+
 	Statement Data::operator~(){
 		use();
 		return Const(
@@ -222,5 +249,5 @@ namespace EX3{
 		);
 	}
 
-}
+	}
 

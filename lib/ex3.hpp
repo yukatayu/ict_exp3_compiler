@@ -77,6 +77,8 @@ namespace EX3{
 	};
 
 	Statement operator+(Statement st, Data d);
+	Statement operator<<(Statement st, int d);
+	Statement operator>>(Statement st, int d);
 
 
 	class StatementList {
@@ -95,7 +97,7 @@ namespace EX3{
 	private:
 		std::string stat_;
 	public:
-		Const_impl(std::string stat);
+		Const_impl(std::string stat = "");
 		std::string make_impl() override;
 	};
 
@@ -123,6 +125,14 @@ namespace EX3{
 		std::string name_;
 	public:
 		Continue_impl(std::string name);
+		std::string make_impl() override;
+	};
+
+	class Return_impl : public Statement_impl {
+	private:
+		std::string target_;
+	public:
+		Return_impl(std::string target);
 		std::string make_impl() override;
 	};
 
@@ -174,6 +184,7 @@ namespace EX3{
 	StatementGenerator(MoreEq)
 	StatementGenerator(Continue)
 	StatementGenerator(Negative)
+	StatementGenerator(Return)
 
 	inline Statement While(std::string name, StatementList stats_cond, StatementList stats, bool invert = false){
 			return Statement{ new While_impl{name, stats_cond, stats, invert} };
@@ -207,11 +218,11 @@ namespace EX3{
 
 		static Statement begin { new Const_impl("ORG 10 / Entry Point") };
 		inline Statement begin_interrupt(std::string goto_ptr, std::string res_ptr = "ST0") {
-			return Const(
+			return Statement{ new Const_impl(
 				"ORG 0 / Interrupt Entry Point\n"
 				+ res_ptr + ", HEX 0 / Interrupt Return Address\n"
 				"BUN " + goto_ptr
-			);
+			) };
 		};
 		static Statement halt  { new Const_impl("_M_, HLT") };
 		static Statement end   { new Const_impl("END") };

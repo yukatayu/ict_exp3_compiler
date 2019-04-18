@@ -1,0 +1,51 @@
+ORG 10 / Entry Point
+LDA B
+CMA
+INC
+STA B
+
+ / > while loop Main
+XWH1Main,
+ / while (
+    LDA B
+    CLE
+    CME
+    SZA
+    CME
+    CLA
+    CIL
+    STA T1
+    LDA B
+    CMA
+    INC
+    ADD A
+    CLA
+    CIL
+    ADD T1
+SZA
+BUN XWH3Main
+BUN XWH2Main
+ / ) {
+XWH2Main,
+    LDA A
+    STA R
+    LDA Q
+    INC
+    STA Q
+    LDA A
+    ADD B
+    STA A
+BUN XWH1Main
+ / }
+XWH3Main,
+ / < end of while loop Main
+
+_M_, HLT
+ / Data Segment
+    A, DEC 55
+    B, DEC 17
+    Q, DEC -1
+    R, DEC 0
+    T1, DEC 0
+END
+
