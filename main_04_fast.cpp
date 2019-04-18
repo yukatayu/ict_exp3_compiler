@@ -8,7 +8,9 @@ int main(){
 	Data AccBak(INT, "ACCBAK", 0);
 	Data EBak(INT, "EBAK", 0);
 	Data mask_init(INT, "MASKINIT", 15);
-	Data out_flag(INT, "OutFlag", 0);
+	Data out_trigger(INT, "OutFlag", 0);
+	Data out_digit(INT, "OutDigit", 0);
+	Data show_i(INT, "ShowIParam", 0);
 
 	Data IN_tmp(INT, "INTmp", 0);
 	Data N(INT, "N", 0);
@@ -16,7 +18,6 @@ int main(){
 	Data ascii_0(INT, "ASCII0", 48);
 	Data ascii_ent(INT, "ASCIIENTER", 10);
 	Data dec(INT, "DECVAL", 10);
-	Data decp1(INT, "DECVALP1", 11);
 
 	Data CPRet(INT, "CPRET", 0);
 
@@ -52,12 +53,10 @@ int main(){
 			// `i` が4以上の偶数ならcontinue
 			If("CPSkip1", { i >> 2 }, {
 				+i,
-				Const(
-					"CIR\n"
-					"CME\n"
-					"SZE\n"
-					"BUN CPCont\n"
-				)
+				"CIR"_asm,
+				"CME"_asm,
+				"SZE"_asm,
+				"BUN CPCont"_asm
 			}),
 			// 最上位ビットが立つまで値を左シフトする
 			While("CPPre", { Negative(i_shift) }, {
@@ -75,7 +74,7 @@ int main(){
 				Goto("CPEnd")
 			}, true),
 
-			Const("CPCont,"),
+			"CPCont,"_asm,
 			// インクリメント
 			i2 = (i<<1) + i2,
 			++i2,
@@ -83,12 +82,12 @@ int main(){
 			--mi
 		}),
 		CPRet = One,
-		Const("CPEnd,")
+		"CPEnd,"_asm
 	};
 
 	StatementList checkChar = {
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
-			out_flag = One,
+			out_trigger = One,
 			While("PrimeSearchLoop", { +N }, {
 				checkPrime.stat("CP"),
 				If("BreakCPRet", { +CPRet }, {
@@ -98,14 +97,75 @@ int main(){
 			}),
 		}, true),
 		t1 = -ascii_0 + IN_tmp,
-		//If("CheckCharCtrlD", {}, {}),
+		//If("CheckCharCtrlD", {}, {}),	//TODO: implement
 		If("CheckCharNum", { MoreEq(dec, t1, t2) }, {
 			If("CheckCharNumPosi", { Negative(t1) }, {
 				N = N << 1,
 				N = (N<<2) + N + t1
-				//N = +IN_tmp
 			}, true)
 		})
+	};
+
+	StatementList getDigitOne = {
+		out_digit = Zero,
+		If("GetDigitOutT", { +out_trigger }, {
+			out_trigger = Zero,
+			show_i = Zero,
+			Q = +N,
+			While("ShowSubDigit", { +Q }, {
+				R = +Q,
+				X = -dec + Q,
+				Q = Zero,
+				While("ShowSubSearch", { MoreEq(X, R, t1) }, {
+					R = +X,
+					X = -dec + X,
+					++Q
+				}, true),
+				++show_i,
+			}),
+		}),
+		//
+		i_shift = One,
+		i = +show_i,
+		Q = +N,
+		If("NothingToShow", { +i }, {
+			Zero,
+			Goto("GetDigitOutT_End")
+		}, true),
+	//
+	//+t2, "_B_,"_asm, +t2,
+	//+N, "_B_,"_asm, +N,
+	//+i, "_B_,"_asm, +i,
+	//
+		While("DispIShift", { --i }, {
+			i_shift = i_shift << 1,
+			i_shift = (i_shift<<2) + i_shift,
+		}),
+
+		X = -i_shift + N,
+		Q = Zero,
+		R = +N,
+		While("ShowSub", { MoreEq(X, R, t1) }, {
+			R = +X,
+			X = -i_shift + X,
+			++Q
+		}, true),
+		N = +R,
+		t2 = +Q,
+	//
+	//+i_shift, "_B_,"_asm, +i_shift,
+	//+t2, "_B_,"_asm, +t2,
+	//+N, "_B_,"_asm, +N,
+	//
+		/*i = +t2,
+		While("DispIShiftSub", { +i }, {
+			N = -i_shift + N,
+			--i
+		}),*/
+	//+N, "_B_,"_asm, +N,
+		--show_i,
+		t2 + ascii_0,
+		"GetDigitOutT_End,"_asm
 	};
 
 	StatementList interruptMain = {
@@ -114,52 +174,25 @@ int main(){
 		EBak = GetE,
 
 		// Reset Flag
-		out_flag = Zero,
+		out_trigger = Zero,
 
 		// Get Input
-		"SKI"_asm,
-		"BUN InterruptReturn"_asm,
-		IN_tmp = Const("INP"),
+		If("InputAvailable", { One }, {
+			"SKI"_asm,
+			"BUN InterruptReturn"_asm,
+			IN_tmp = Const("INP"),
 
-		checkChar.stat(),
+			checkChar.stat(),
+		}),
 
 		// Output
-		If("OutputFlag", { +out_flag }, {
+		If("OutputAvailable", { One }, {
 			"SKO"_asm,
 			"BUN InterruptReturn"_asm,
 
-			// divide
-			If("ShowN_NEq0", { +N }, {
-				Goto("InterruptReturn")
-			}, true),
-			While("ShowMain", { +N }, {
-				i = Zero,
-				Q = +N,
-				While("ShowSubDigit", { +Q }, {
-					R = t2 = +Q,
-					X = -dec + Q,
-					Q = Zero,
-					While("ShowSub", { MoreEq(X, R, t1) }, {
-						R = +X,
-						X = -dec + X,
-						++Q
-					}, true),
-					++i,
-				}),
-				i_shift = One,
-				While("DispIShift", { --i }, {
-					i_shift = i_shift << 1,
-					i_shift = (i_shift<<2) + i_shift,
-				}),
-				i = +t2,
-				While("DispIShiftSub", { +i }, {
-					N = -i_shift + N,
-					--i
-				}),
-				// 余りに '0' を足したものを先頭に挿入
-				t2 + ascii_0,
-				"OUT"_asm,
-			}),
+			While("ShowMain", { getDigitOne.stat("GetDigitOne") }, {
+				"OUT"_asm
+			})
 		}),
 
 		"InterruptReturn,"_asm,
@@ -170,7 +203,6 @@ int main(){
 		Return("INT_RET")
 	};
 
-	// メインループ,  `N` を減らしながら検査していく
 	StatementList program = {
 		begin_interrupt("INT_MAIN", "INT_RET"),
 		begin,
@@ -182,12 +214,8 @@ int main(){
 
 		While("MainLoop", { One }, {
 		}),
-		//While("MainLoop", { +N }, {
-		//	checkPrime.stat("CP"),
-		//	Const("L1,"),
-		//	--N
-		//}),
 		halt,
+
 		interruptMain.stat("INT_MAIN"),
 
 		Data::stat_all(),
