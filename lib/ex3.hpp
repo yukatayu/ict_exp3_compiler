@@ -128,6 +128,14 @@ namespace EX3{
 		std::string make_impl() override;
 	};
 
+	class Break_impl : public Statement_impl {
+	private:
+		std::string name_;
+	public:
+		Break_impl(std::string name);
+		std::string make_impl() override;
+	};
+
 	class Return_impl : public Statement_impl {
 	private:
 		std::string target_;
@@ -183,6 +191,7 @@ namespace EX3{
 	StatementGenerator(Goto)
 	StatementGenerator(MoreEq)
 	StatementGenerator(Continue)
+	StatementGenerator(Break)
 	StatementGenerator(Negative)
 	StatementGenerator(Return)
 
@@ -211,6 +220,8 @@ namespace EX3{
 	inline Statement If(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false){
 		return Statement { new If_impl{name, stats_cond, stats, invert} };
 	}
+
+	Statement operator ""_asm(char const * str, std::size_t size);
 
 	namespace helper{
 		std::vector<std::string> split(std::string str, char delim, bool skipEmpty = false);

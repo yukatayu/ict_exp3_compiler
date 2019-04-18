@@ -11,7 +11,7 @@ int main(){
 	Data out_flag(INT, "OutFlag", 0);
 
 	Data IN_tmp(INT, "INTmp", 0);
-	Data N(INT, "N", 65535);
+	Data N(INT, "N", 0);
 
 	Data ascii_0(INT, "ASCII0", 48);
 	Data ascii_ent(INT, "ASCIIENTER", 10);
@@ -35,6 +35,10 @@ int main(){
 	// Temporary
 	Data t1(INT, "TEMP1", 0);
 	Data t2(INT, "TEMP2", 0);
+
+	Data Q(INT, "QVAL", 0);
+	Data R(INT, "RVAL", 0);
+	Data X(INT, "XVAL", 0);
 
 	// `N` が素数なら終了, さもなくば返却するサブルーチン
 	StatementList checkPrime = {
@@ -68,7 +72,7 @@ int main(){
 			}),
 			// 余りが0なら返却
 			If("CPBreak", { +n_tmp },{
-				Goto("L1")
+				Goto("CPEnd")
 			}, true),
 
 			Const("CPCont,"),
@@ -85,6 +89,13 @@ int main(){
 	StatementList checkChar = {
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
 			out_flag = One,
+			While("PrimeSearchLoop", { +N }, {
+				checkPrime.stat("CP"),
+				If("BreakCPRet", { +CPRet }, {
+					Break("PrimeSearchLoop")
+				}),
+				--N
+			}),
 		}, true),
 		t1 = -ascii_0 + IN_tmp,
 		//If("CheckCharCtrlD", {}, {}),
@@ -92,6 +103,7 @@ int main(){
 			If("CheckCharNumPosi", { Negative(t1) }, {
 				N = N << 1,
 				N = (N<<2) + N + t1
+				//N = +IN_tmp
 			}, true)
 		})
 	};
@@ -105,30 +117,56 @@ int main(){
 		out_flag = Zero,
 
 		// Get Input
-		Const(
-			"SKI\n"
-			"BUN InterruptReturn\n"
-		),
+		"SKI"_asm,
+		"BUN InterruptReturn"_asm,
 		IN_tmp = Const("INP"),
 
-		out_flag = One,
-		//checkChar.stat(),
+		checkChar.stat(),
 
 		// Output
-		//If("OutputFlag", { +out_flag }, {
-			Const(
-				"SKO"
-				"BUN InterruptReturn\n"
-			),
-			+IN_tmp,
-			Const("OUT"),
-		//}),
+		If("OutputFlag", { +out_flag }, {
+			"SKO"_asm,
+			"BUN InterruptReturn"_asm,
 
-		Const("InterruptReturn,"),
+			// divide
+			If("ShowN_NEq0", { +N }, {
+				Goto("InterruptReturn")
+			}, true),
+			While("ShowMain", { +N }, {
+				i = Zero,
+				Q = +N,
+				While("ShowSubDigit", { +Q }, {
+					R = t2 = +Q,
+					X = -dec + Q,
+					Q = Zero,
+					While("ShowSub", { MoreEq(X, R, t1) }, {
+						R = +X,
+						X = -dec + X,
+						++Q
+					}, true),
+					++i,
+				}),
+				i_shift = One,
+				While("DispIShift", { --i }, {
+					i_shift = i_shift << 1,
+					i_shift = (i_shift<<2) + i_shift,
+				}),
+				i = +t2,
+				While("DispIShiftSub", { +i }, {
+					N = -i_shift + N,
+					--i
+				}),
+				// 余りに '0' を足したものを先頭に挿入
+				t2 + ascii_0,
+				"OUT"_asm,
+			}),
+		}),
+
+		"InterruptReturn,"_asm,
 		// Load Acc, E
 		EBak >> 1,
 		+AccBak,
-		Const("ION"),
+		"ION"_asm,
 		Return("INT_RET")
 	};
 
@@ -138,11 +176,9 @@ int main(){
 		begin,
 
 		+mask_init,
-		Const(
-			"IMK\n"
-			"SIO\n"
-			"ION\n"	// enable interrupt
-		),
+		"IMK"_asm,
+		"SIO"_asm,
+		"ION"_asm,	// enable interrupt
 
 		While("MainLoop", { One }, {
 		}),

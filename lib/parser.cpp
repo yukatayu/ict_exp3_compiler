@@ -111,8 +111,16 @@ namespace EX3{
 		return res;
 	}
 
+	// Break
+	Break_impl::Break_impl(std::string name)
+		: name_(name)
+	{ }
+
+	std::string Break_impl::make_impl(){
+		std::string wh3 = "XWH3" + name_;
+		return "BUN " + wh3;
+	}
 	// Continue
-	// TODO: add Break
 	Continue_impl::Continue_impl(std::string name)
 		: name_(name)
 	{ }
@@ -214,6 +222,10 @@ namespace EX3{
 		return Statement{
 			new Const_impl(res)
 		};
+	}
+
+	Statement operator ""_asm(char const * str, std::size_t size){
+		return Const(std::string{str});
 	}
 
 }
