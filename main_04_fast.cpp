@@ -8,15 +8,17 @@ int main(){
 	Data AccBak(INT, "ACCBAK", 0);
 	Data EBak(INT, "EBAK", 0);
 	Data mask_init(INT, "MASKINIT", 15);
-	Data out_trigger(INT, "OutFlag", 0);
-	Data out_digit(INT, "OutDigit", 0);
 	Data show_i(INT, "ShowIParam", 0);
+
+	Data out_trigger(INT, "OutFlag", 0);
+	Data halt_trigger(INT, "HaltFlag", 0);
 
 	Data IN_tmp(INT, "INTmp", 0);
 	Data N(INT, "N", 0);
 
 	Data ascii_0(INT, "ASCII0", 48);
 	Data ascii_ent(INT, "ASCIIENTER", 10);
+	Data ascii_ctrl_D(INT, "ASCIICTRLD", 4);
 	Data dec(INT, "DECVAL", 10);
 
 	Data CPRet(INT, "CPRET", 0);
@@ -97,7 +99,9 @@ int main(){
 			}),
 		}, true),
 		t1 = -ascii_0 + IN_tmp,
-		//If("CheckCharCtrlD", {}, {}),	//TODO: implement
+		If("CheckCharCtrlD", { -ascii_ctrl_D + IN_tmp }, {
+			halt_trigger = One,
+		}, true),
 		If("CheckCharNum", { MoreEq(dec, t1, t2) }, {
 			If("CheckCharNumPosi", { Negative(t1) }, {
 				N = N << 1,
@@ -107,7 +111,6 @@ int main(){
 	};
 
 	StatementList getDigitOne = {
-		out_digit = Zero,
 		If("GetDigitOutT", { +out_trigger }, {
 			out_trigger = Zero,
 			show_i = Zero,
@@ -124,7 +127,7 @@ int main(){
 				++show_i,
 			}),
 		}),
-		//
+
 		i_shift = One,
 		i = +show_i,
 		Q = +N,
@@ -132,11 +135,7 @@ int main(){
 			Zero,
 			Goto("GetDigitOutT_End")
 		}, true),
-	//
-	//+t2, "_B_,"_asm, +t2,
-	//+N, "_B_,"_asm, +N,
-	//+i, "_B_,"_asm, +i,
-	//
+
 		While("DispIShift", { --i }, {
 			i_shift = i_shift << 1,
 			i_shift = (i_shift<<2) + i_shift,
@@ -152,17 +151,7 @@ int main(){
 		}, true),
 		N = +R,
 		t2 = +Q,
-	//
-	//+i_shift, "_B_,"_asm, +i_shift,
-	//+t2, "_B_,"_asm, +t2,
-	//+N, "_B_,"_asm, +N,
-	//
-		/*i = +t2,
-		While("DispIShiftSub", { +i }, {
-			N = -i_shift + N,
-			--i
-		}),*/
-	//+N, "_B_,"_asm, +N,
+
 		--show_i,
 		t2 + ascii_0,
 		"GetDigitOutT_End,"_asm
@@ -196,6 +185,11 @@ int main(){
 		}),
 
 		"InterruptReturn,"_asm,
+		If("HaltTrigger", { +halt_trigger },{
+			EBak >> 1,
+			+AccBak,
+			Return("INT_RET")
+		}),
 		// Load Acc, E
 		EBak >> 1,
 		+AccBak,
@@ -212,8 +206,8 @@ int main(){
 		"SIO"_asm,
 		"ION"_asm,	// enable interrupt
 
-		While("MainLoop", { One }, {
-		}),
+		While("MainLoop", { +halt_trigger }, {
+		}, true),
 		halt,
 
 		interruptMain.stat("INT_MAIN"),

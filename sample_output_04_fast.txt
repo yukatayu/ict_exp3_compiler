@@ -10,11 +10,10 @@ ION
  / > while loop MainLoop
 XWH1MainLoop,
  / while (
-    CLA
-    INC
+    LDA HaltFlag
 SZA
-BUN XWH2MainLoop
 BUN XWH3MainLoop
+BUN XWH2MainLoop
  / ) {
 XWH2MainLoop,
 BUN XWH1MainLoop
@@ -297,6 +296,25 @@ INT_MAIN,
             ADD INTmp
             STA TEMP1
 
+             / > if CheckCharCtrlD
+             / if (
+                LDA ASCIICTRLD
+                CMA
+                INC
+                ADD INTmp
+            SZA
+            BUN XIF2CheckCharCtrlD
+            BUN XIF1CheckCharCtrlD
+             / ) {
+            XIF1CheckCharCtrlD,
+                CLA
+                INC
+                STA HaltFlag
+             / }
+            XIF2CheckCharCtrlD,
+             / < end of if CheckCharCtrlD
+
+
              / > if CheckCharNum
              / if (
                 LDA TEMP1
@@ -374,8 +392,6 @@ INT_MAIN,
 
              / > beginning of GetDigitOne
             GetDigitOne,
-                CLA
-                STA OutDigit
 
                  / > if GetDigitOutT
                  / if (
@@ -591,6 +607,24 @@ INT_MAIN,
      / < end of if OutputAvailable
 
     InterruptReturn,
+
+     / > if HaltTrigger
+     / if (
+        LDA HaltFlag
+    SZA
+    BUN XIF1HaltTrigger
+    BUN XIF2HaltTrigger
+     / ) {
+    XIF1HaltTrigger,
+        LDA EBAK
+        CLE
+        CIR
+        LDA ACCBAK
+        BUN INT_RET I
+     / }
+    XIF2HaltTrigger,
+     / < end of if HaltTrigger
+
     LDA EBAK
     CLE
     CIR
@@ -603,13 +637,14 @@ INT_MAIN,
     ACCBAK, DEC 0
     EBAK, DEC 0
     MASKINIT, DEC 15
-    OutFlag, DEC 0
-    OutDigit, DEC 0
     ShowIParam, DEC 0
+    OutFlag, DEC 0
+    HaltFlag, DEC 0
     INTmp, DEC 0
     N, DEC 0
     ASCII0, DEC 48
     ASCIIENTER, DEC 10
+    ASCIICTRLD, DEC 4
     DECVAL, DEC 10
     CPRET, DEC 0
     IINIT, DEC 2
