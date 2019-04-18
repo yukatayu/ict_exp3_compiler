@@ -111,7 +111,7 @@ int main(){
 		),
 		IN_tmp = Const("INP"),
 
-		//out_flag = One,
+		out_flag = One,
 		//checkChar.stat(),
 
 		// Output
