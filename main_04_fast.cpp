@@ -166,20 +166,28 @@ int main(){
 		out_trigger = Zero,
 
 		// Get Input
-		If("InputAvailable", { One }, {
+		If("InputAvailable", {
+			One,
 			"SKI"_asm,
-			"BUN InterruptReturn"_asm,
+			"CLA"_asm
+		}, {
+			//"SKI"_asm,
+			//"BUN InterruptReturn"_asm,
 			IN_tmp = Const("INP"),
 
 			checkChar.stat(),
 		}),
 
 		// Output
-		If("OutputAvailable", { One }, {
+		If("OutputAvailable", {
+			One,
 			"SKO"_asm,
-			"BUN InterruptReturn"_asm,
+			"CLA"_asm
+		}, {
+			//"SKO"_asm,
+			//"BUN InterruptReturn"_asm,
 
-			While("ShowMain", { getDigitOne.stat("GetDigitOne") }, {
+			If("ShowMain", { getDigitOne.stat("GetDigitOne") }, {
 				"OUT"_asm
 			})
 		}),

@@ -36,13 +36,13 @@ INT_MAIN,
      / if (
         CLA
         INC
+        SKI
+        CLA
     SZA
     BUN XIF1InputAvailable
     BUN XIF2InputAvailable
      / ) {
     XIF1InputAvailable,
-        SKI
-        BUN InterruptReturn
         INP
         STA INTmp
 
@@ -378,17 +378,16 @@ INT_MAIN,
      / if (
         CLA
         INC
+        SKO
+        CLA
     SZA
     BUN XIF1OutputAvailable
     BUN XIF2OutputAvailable
      / ) {
     XIF1OutputAvailable,
-        SKO
-        BUN InterruptReturn
 
-         / > while loop ShowMain
-        XWH1ShowMain,
-         / while (
+         / > if ShowMain
+         / if (
 
              / > beginning of GetDigitOne
             GetDigitOne,
@@ -592,15 +591,14 @@ INT_MAIN,
              / < end of GetDigitOne
 
         SZA
-        BUN XWH2ShowMain
-        BUN XWH3ShowMain
+        BUN XIF1ShowMain
+        BUN XIF2ShowMain
          / ) {
-        XWH2ShowMain,
+        XIF1ShowMain,
             OUT
-        BUN XWH1ShowMain
          / }
-        XWH3ShowMain,
-         / < end of while loop ShowMain
+        XIF2ShowMain,
+         / < end of if ShowMain
 
      / }
     XIF2OutputAvailable,
