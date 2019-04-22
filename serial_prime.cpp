@@ -48,7 +48,7 @@ int main(){
 	Data sep_trigger(INT, "SEPTRIG", 0);
 	Data min_primep1(INT, "MINIMUMPRIMEP1", 3);
 
-	// `N` が素数なら終了, さもなくば返却するサブルーチン
+	// CPRet <- `N` is prime?
 	StatementList checkPrime = {
 		i = +i_init,
 		mi = -i_init,
@@ -57,7 +57,7 @@ int main(){
 		While("CPLoop", { MoreEq(N, i2, t1) }, {
 			i_shift = +i,
 			n_tmp = +N,
-			// `i` が4以上の偶数ならcontinue
+			// continue if (i>=4 && i%2 == 0)
 			If("CPSkip1", { i >> 2 }, {
 				+i,
 				"CIR"_asm,
@@ -82,7 +82,7 @@ int main(){
 			}, true),
 
 			"CPCont,"_asm,
-			// インクリメント
+			// increment
 			i2 = (i<<1) + i2,
 			++i2,
 			++i,
@@ -92,14 +92,18 @@ int main(){
 		"CPEnd,"_asm
 	};
 
+	// Input a char
 	StatementList checkChar = {
+		// Enter -> Start output
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
 			decr_trigger = One,
 		}, true),
-		t1 = -ascii_0 + IN_tmp,
+		// ^D -> halt
 		If("CheckCharCtrlD", { -ascii_ctrl_D + IN_tmp }, {
 			halt_trigger = One,
 		}, true),
+		// [0-9] -> accumulation
+		t1 = -ascii_0 + IN_tmp,
 		If("CheckCharNum", { MoreEq(dec, t1, t2) }, {
 			If("CheckCharNumPosi", { Negative(t1) }, {
 				N = N << 1,
@@ -108,9 +112,10 @@ int main(){
 		})
 	};
 
+	// Process Trigger
 	StatementList prepareOutput = {
-		// Decrement to Prime Number
 		If("PrimeDeclTrigger", { +decr_trigger }, {
+			// Decrement to Prime Number
 			decr_trigger = Zero,
 			While("PrimeSearchLoop", { +N }, {
 				checkPrime.stat("CP"),
@@ -120,12 +125,8 @@ int main(){
 				--N
 			}),
 			N_bak = +N,
-			out_trigger = One,
-		}),
 
-		// Prepare for Output (counting 10^i)
-		If("GetDigitOutT", { +out_trigger }, {
-			out_trigger = Zero,
+			// Prepare for Output (counting 10^i)
 			show_i = Zero,
 			Q = +N,
 			While("ShowSubDigit", { +Q }, {
@@ -142,12 +143,13 @@ int main(){
 		})
 	};
 
-	// Zero が返ったら、何も表示しない。
+	// Get Next Digit
 	StatementList getDigitOne = {
 		i_shift = One,
 		i = +show_i,
 		Q = +N,
 		If("ReadyState", { +i }, {
+			// Kick `--N` Trigger
 			If("AnythingToShow", { +sep_trigger }, {
 				sep_trigger = Zero,
 				N = --N_bak,
@@ -179,6 +181,7 @@ int main(){
 
 		--show_i,
 
+		// Kick "\n" Trigger
 		If("ReachedEnd", { +show_i }, {
 			If("DecrNeeded", { MoreEq(N_bak, min_primep1, t1) }, {
 				sep_trigger = One,
@@ -189,13 +192,11 @@ int main(){
 		"GetDigitOutT_End,"_asm
 	};
 
+	// Interrupt Routine
 	StatementList interruptMain = {
 		// Save Acc, E
 		AccBak = Const(),
 		EBak = GetE,
-
-		// Reset Flag
-		//out_trigger = Zero,
 
 		// Get Input
 		If("InputAvailable", {
@@ -225,12 +226,14 @@ int main(){
 			}),
 		}),
 
+		// Return
 		"InterruptReturn,"_asm,
 		If("HaltTrigger", { +halt_trigger },{
 			EBak >> 1,
 			+AccBak,
 			Return("INT_RET")
 		}),
+
 		// Load Acc, E
 		EBak >> 1,
 		+AccBak,
@@ -238,6 +241,7 @@ int main(){
 		Return("INT_RET")
 	};
 
+	// Main Program
 	StatementList program = {
 		begin_interrupt("INT_MAIN", "INT_RET"),
 		begin,

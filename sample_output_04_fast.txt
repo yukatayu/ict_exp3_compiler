@@ -62,11 +62,6 @@ INT_MAIN,
             XIF2CheckCharEnt,
              / < end of if CheckCharEnt
 
-            LDA ASCII0
-            CMA
-            INC
-            ADD INTmp
-            STA TEMP1
 
              / > if CheckCharCtrlD
              / if (
@@ -86,6 +81,11 @@ INT_MAIN,
             XIF2CheckCharCtrlD,
              / < end of if CheckCharCtrlD
 
+            LDA ASCII0
+            CMA
+            INC
+            ADD INTmp
+            STA TEMP1
 
              / > if CheckCharNum
              / if (
@@ -388,24 +388,6 @@ INT_MAIN,
             LDA N
             STA NBAK
             CLA
-            INC
-            STA OutFlag
-         / }
-        XIF2PrimeDeclTrigger,
-         / < end of if PrimeDeclTrigger
-
-
-         / > if GetDigitOutT
-         / if (
-            LDA OutFlag
-        SZA
-        BUN XIF1GetDigitOutT
-        BUN XIF2GetDigitOutT
-         / ) {
-        XIF1GetDigitOutT,
-            CLA
-            STA OutFlag
-            CLA
             STA ShowIParam
             LDA N
             STA QVAL
@@ -476,8 +458,8 @@ INT_MAIN,
              / < end of while loop ShowSubDigit
 
          / }
-        XIF2GetDigitOutT,
-         / < end of if GetDigitOutT
+        XIF2PrimeDeclTrigger,
+         / < end of if PrimeDeclTrigger
 
      / < end of Prepare
 
