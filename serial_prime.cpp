@@ -15,6 +15,7 @@ int main(){
 
 	Data IN_tmp(INT, "INTmp", 0);
 	Data N(INT, "N", 0);
+	Data N_bak(INT, "NBAK", 0);
 
 	Data ascii_0(INT, "ASCII0", 48);
 	Data ascii_ent(INT, "ASCIIENTER", 10);
@@ -43,7 +44,9 @@ int main(){
 	Data R(INT, "RVAL", 0);
 	Data X(INT, "XVAL", 0);
 
-	Data DecrTrigger(INT, "DECLTRIG", 0);
+	Data decr_trigger(INT, "DECLTRIG", 0);
+	Data sep_trigger(INT, "SEPTRIG", 0);
+	Data min_primep1(INT, "MINIMUMPRIMEP1", 3);
 
 	// `N` が素数なら終了, さもなくば返却するサブルーチン
 	StatementList checkPrime = {
@@ -91,14 +94,7 @@ int main(){
 
 	StatementList checkChar = {
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
-			out_trigger = One,
-			While("PrimeSearchLoop", { +N }, {
-				checkPrime.stat("CP"),
-				If("BreakCPRet", { +CPRet }, {
-					Break("PrimeSearchLoop")
-				}),
-				--N
-			}),
+			decr_trigger = One,
 		}, true),
 		t1 = -ascii_0 + IN_tmp,
 		If("CheckCharCtrlD", { -ascii_ctrl_D + IN_tmp }, {
@@ -112,7 +108,22 @@ int main(){
 		})
 	};
 
-	StatementList getDigitOne = {
+	StatementList prepareOutput = {
+		// Decrement to Prime Number
+		If("PrimeDeclTrigger", { +decr_trigger }, {
+			decr_trigger = Zero,
+			While("PrimeSearchLoop", { +N }, {
+				checkPrime.stat("CP"),
+				If("BreakCPRet", { +CPRet }, {
+					Break("PrimeSearchLoop")
+				}),
+				--N
+			}),
+			N_bak = +N,
+			out_trigger = One,
+		}),
+
+		// Prepare for Output (counting 10^i)
 		If("GetDigitOutT", { +out_trigger }, {
 			out_trigger = Zero,
 			show_i = Zero,
@@ -128,21 +139,33 @@ int main(){
 				}, true),
 				++show_i,
 			}),
-		}),
+		})
+	};
 
+	// Zero が返ったら、何も表示しない。
+	StatementList getDigitOne = {
 		i_shift = One,
 		i = +show_i,
 		Q = +N,
-		If("NothingToShow", { +i }, {
+		If("ReadyState", { +i }, {
+			If("AnythingToShow", { +sep_trigger }, {
+				sep_trigger = Zero,
+				N = --N_bak,
+				decr_trigger = One
+				+ascii_ent,
+				Goto("GetDigitOutT_End")
+			}),
 			Zero,
 			Goto("GetDigitOutT_End")
 		}, true),
 
 		While("DispIShift", { --i }, {
+			// i_shift * 10
 			i_shift = i_shift << 1,
 			i_shift = (i_shift<<2) + i_shift,
 		}),
 
+		// (N, t2) <- div(N, i_shift)
 		X = -i_shift + N,
 		Q = Zero,
 		R = +N,
@@ -155,6 +178,13 @@ int main(){
 		t2 = +Q,
 
 		--show_i,
+
+		If("ReachedEnd", { +show_i }, {
+			If("DecrNeeded", { MoreEq(N_bak, min_primep1, t1) }, {
+				sep_trigger = One,
+			}),
+		}, true),
+
 		t2 + ascii_0,
 		"GetDigitOutT_End,"_asm
 	};
@@ -165,33 +195,34 @@ int main(){
 		EBak = GetE,
 
 		// Reset Flag
-		out_trigger = Zero,
+		//out_trigger = Zero,
 
 		// Get Input
 		If("InputAvailable", {
+			// If input is available ...
 			One,
 			"SKI"_asm,
 			"CLA"_asm
 		}, {
-			//"SKI"_asm,
-			//"BUN InterruptReturn"_asm,
+			// Input a digit
 			IN_tmp = Const("INP"),
-
 			checkChar.stat(),
 		}),
 
+		// Process Triggers
+		prepareOutput.stat("Prepare"),
+
 		// Output
 		If("OutputAvailable", {
+			// If output is available ...
 			One,
 			"SKO"_asm,
 			"CLA"_asm
 		}, {
-			//"SKO"_asm,
-			//"BUN InterruptReturn"_asm,
-
+			// Output a digit (If any data remains)
 			If("ShowMain", { getDigitOne.stat("GetDigitOne") }, {
 				"OUT"_asm
-			})
+			}),
 		}),
 
 		"InterruptReturn,"_asm,
@@ -223,7 +254,7 @@ int main(){
 		interruptMain.stat("INT_MAIN"),
 
 		Data::stat_all(),
-		end,
+		end
 	};
 
 	std::string res = program.make();

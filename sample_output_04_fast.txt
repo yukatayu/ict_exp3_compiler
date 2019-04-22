@@ -29,8 +29,6 @@ INT_MAIN,
     CLA
     CIL
     STA EBAK
-    CLA
-    STA OutFlag
 
      / > if InputAvailable
      / if (
@@ -59,233 +57,7 @@ INT_MAIN,
             XIF1CheckCharEnt,
                 CLA
                 INC
-                STA OutFlag
-
-                 / > while loop PrimeSearchLoop
-                XWH1PrimeSearchLoop,
-                 / while (
-                    LDA N
-                SZA
-                BUN XWH2PrimeSearchLoop
-                BUN XWH3PrimeSearchLoop
-                 / ) {
-                XWH2PrimeSearchLoop,
-
-                     / > beginning of CP
-                    CP,
-                        LDA IINIT
-                        STA I
-                        LDA IINIT
-                        CMA
-                        INC
-                        STA MI
-                        LDA I2INIT
-                        STA I2
-                        CLA
-                        STA CPRET
-
-                         / > while loop CPLoop
-                        XWH1CPLoop,
-                         / while (
-                            LDA I2
-                            CLE
-                            CME
-                            SZA
-                            CME
-                            CLA
-                            CIL
-                            STA TEMP1
-                            LDA I2
-                            CMA
-                            INC
-                            ADD N
-                            CLA
-                            CIL
-                            ADD TEMP1
-                        SZA
-                        BUN XWH2CPLoop
-                        BUN XWH3CPLoop
-                         / ) {
-                        XWH2CPLoop,
-                            LDA I
-                            STA ISH
-                            LDA N
-                            STA ITMP
-
-                             / > if CPSkip1
-                             / if (
-                                LDA I
-                                CLE
-                                CIR
-                                CLE
-                                CIR
-                            SZA
-                            BUN XIF1CPSkip1
-                            BUN XIF2CPSkip1
-                             / ) {
-                            XIF1CPSkip1,
-                                LDA I
-                                CIR
-                                CME
-                                SZE
-                                BUN CPCont
-                             / }
-                            XIF2CPSkip1,
-                             / < end of if CPSkip1
-
-
-                             / > while loop CPPre
-                            XWH1CPPre,
-                             / while (
-                                LDA ISH
-                                CIL
-                                CLA
-                                CIL
-                            SZA
-                            BUN XWH3CPPre
-                            BUN XWH2CPPre
-                             / ) {
-                            XWH2CPPre,
-                                LDA ISH
-                                CLE
-                                CIL
-                                STA ISH
-                            BUN XWH1CPPre
-                             / }
-                            XWH3CPPre,
-                             / < end of while loop CPPre
-
-
-                             / > while loop CPMain
-                            XWH1CPMain,
-                             / while (
-                                LDA I
-                                CLE
-                                CME
-                                SZA
-                                CME
-                                CLA
-                                CIL
-                                STA TEMP1
-                                LDA I
-                                CMA
-                                INC
-                                ADD ISH
-                                CLA
-                                CIL
-                                ADD TEMP1
-                            SZA
-                            BUN XWH2CPMain
-                            BUN XWH3CPMain
-                             / ) {
-                            XWH2CPMain,
-
-                                 / > if DivCmp
-                                 / if (
-                                    LDA ISH
-                                    CLE
-                                    CME
-                                    SZA
-                                    CME
-                                    CLA
-                                    CIL
-                                    STA TEMP1
-                                    LDA ISH
-                                    CMA
-                                    INC
-                                    ADD ITMP
-                                    CLA
-                                    CIL
-                                    ADD TEMP1
-                                SZA
-                                BUN XIF1DivCmp
-                                BUN XIF2DivCmp
-                                 / ) {
-                                XIF1DivCmp,
-                                    LDA ISH
-                                    CMA
-                                    INC
-                                    ADD ITMP
-                                    STA ITMP
-                                 / }
-                                XIF2DivCmp,
-                                 / < end of if DivCmp
-
-                                LDA ISH
-                                CLE
-                                CIR
-                                STA ISH
-                            BUN XWH1CPMain
-                             / }
-                            XWH3CPMain,
-                             / < end of while loop CPMain
-
-
-                             / > if CPBreak
-                             / if (
-                                LDA ITMP
-                            SZA
-                            BUN XIF2CPBreak
-                            BUN XIF1CPBreak
-                             / ) {
-                            XIF1CPBreak,
-                                BUN CPEnd
-                             / }
-                            XIF2CPBreak,
-                             / < end of if CPBreak
-
-                            CPCont,
-                            LDA I
-                            CLE
-                            CIL
-                            ADD I2
-                            STA I2
-                            LDA I2
-                            INC
-                            STA I2
-                            LDA I
-                            INC
-                            STA I
-                            LDA MI
-                            CMA
-                            INC
-                            CMA
-                            STA MI
-                        BUN XWH1CPLoop
-                         / }
-                        XWH3CPLoop,
-                         / < end of while loop CPLoop
-
-                        CLA
-                        INC
-                        STA CPRET
-                        CPEnd,
-                     / < end of CP
-
-
-                     / > if BreakCPRet
-                     / if (
-                        LDA CPRET
-                    SZA
-                    BUN XIF1BreakCPRet
-                    BUN XIF2BreakCPRet
-                     / ) {
-                    XIF1BreakCPRet,
-                        BUN XWH3PrimeSearchLoop
-                     / }
-                    XIF2BreakCPRet,
-                     / < end of if BreakCPRet
-
-                    LDA N
-                    CMA
-                    INC
-                    CMA
-                    STA N
-                BUN XWH1PrimeSearchLoop
-                 / }
-                XWH3PrimeSearchLoop,
-                 / < end of while loop PrimeSearchLoop
-
+                STA DECLTRIG
              / }
             XIF2CheckCharEnt,
              / < end of if CheckCharEnt
@@ -374,6 +146,342 @@ INT_MAIN,
      / < end of if InputAvailable
 
 
+     / > beginning of Prepare
+    Prepare,
+
+         / > if PrimeDeclTrigger
+         / if (
+            LDA DECLTRIG
+        SZA
+        BUN XIF1PrimeDeclTrigger
+        BUN XIF2PrimeDeclTrigger
+         / ) {
+        XIF1PrimeDeclTrigger,
+            CLA
+            STA DECLTRIG
+
+             / > while loop PrimeSearchLoop
+            XWH1PrimeSearchLoop,
+             / while (
+                LDA N
+            SZA
+            BUN XWH2PrimeSearchLoop
+            BUN XWH3PrimeSearchLoop
+             / ) {
+            XWH2PrimeSearchLoop,
+
+                 / > beginning of CP
+                CP,
+                    LDA IINIT
+                    STA I
+                    LDA IINIT
+                    CMA
+                    INC
+                    STA MI
+                    LDA I2INIT
+                    STA I2
+                    CLA
+                    STA CPRET
+
+                     / > while loop CPLoop
+                    XWH1CPLoop,
+                     / while (
+                        LDA I2
+                        CLE
+                        CME
+                        SZA
+                        CME
+                        CLA
+                        CIL
+                        STA TEMP1
+                        LDA I2
+                        CMA
+                        INC
+                        ADD N
+                        CLA
+                        CIL
+                        ADD TEMP1
+                    SZA
+                    BUN XWH2CPLoop
+                    BUN XWH3CPLoop
+                     / ) {
+                    XWH2CPLoop,
+                        LDA I
+                        STA ISH
+                        LDA N
+                        STA ITMP
+
+                         / > if CPSkip1
+                         / if (
+                            LDA I
+                            CLE
+                            CIR
+                            CLE
+                            CIR
+                        SZA
+                        BUN XIF1CPSkip1
+                        BUN XIF2CPSkip1
+                         / ) {
+                        XIF1CPSkip1,
+                            LDA I
+                            CIR
+                            CME
+                            SZE
+                            BUN CPCont
+                         / }
+                        XIF2CPSkip1,
+                         / < end of if CPSkip1
+
+
+                         / > while loop CPPre
+                        XWH1CPPre,
+                         / while (
+                            LDA ISH
+                            CIL
+                            CLA
+                            CIL
+                        SZA
+                        BUN XWH3CPPre
+                        BUN XWH2CPPre
+                         / ) {
+                        XWH2CPPre,
+                            LDA ISH
+                            CLE
+                            CIL
+                            STA ISH
+                        BUN XWH1CPPre
+                         / }
+                        XWH3CPPre,
+                         / < end of while loop CPPre
+
+
+                         / > while loop CPMain
+                        XWH1CPMain,
+                         / while (
+                            LDA I
+                            CLE
+                            CME
+                            SZA
+                            CME
+                            CLA
+                            CIL
+                            STA TEMP1
+                            LDA I
+                            CMA
+                            INC
+                            ADD ISH
+                            CLA
+                            CIL
+                            ADD TEMP1
+                        SZA
+                        BUN XWH2CPMain
+                        BUN XWH3CPMain
+                         / ) {
+                        XWH2CPMain,
+
+                             / > if DivCmp
+                             / if (
+                                LDA ISH
+                                CLE
+                                CME
+                                SZA
+                                CME
+                                CLA
+                                CIL
+                                STA TEMP1
+                                LDA ISH
+                                CMA
+                                INC
+                                ADD ITMP
+                                CLA
+                                CIL
+                                ADD TEMP1
+                            SZA
+                            BUN XIF1DivCmp
+                            BUN XIF2DivCmp
+                             / ) {
+                            XIF1DivCmp,
+                                LDA ISH
+                                CMA
+                                INC
+                                ADD ITMP
+                                STA ITMP
+                             / }
+                            XIF2DivCmp,
+                             / < end of if DivCmp
+
+                            LDA ISH
+                            CLE
+                            CIR
+                            STA ISH
+                        BUN XWH1CPMain
+                         / }
+                        XWH3CPMain,
+                         / < end of while loop CPMain
+
+
+                         / > if CPBreak
+                         / if (
+                            LDA ITMP
+                        SZA
+                        BUN XIF2CPBreak
+                        BUN XIF1CPBreak
+                         / ) {
+                        XIF1CPBreak,
+                            BUN CPEnd
+                         / }
+                        XIF2CPBreak,
+                         / < end of if CPBreak
+
+                        CPCont,
+                        LDA I
+                        CLE
+                        CIL
+                        ADD I2
+                        STA I2
+                        LDA I2
+                        INC
+                        STA I2
+                        LDA I
+                        INC
+                        STA I
+                        LDA MI
+                        CMA
+                        INC
+                        CMA
+                        STA MI
+                    BUN XWH1CPLoop
+                     / }
+                    XWH3CPLoop,
+                     / < end of while loop CPLoop
+
+                    CLA
+                    INC
+                    STA CPRET
+                    CPEnd,
+                 / < end of CP
+
+
+                 / > if BreakCPRet
+                 / if (
+                    LDA CPRET
+                SZA
+                BUN XIF1BreakCPRet
+                BUN XIF2BreakCPRet
+                 / ) {
+                XIF1BreakCPRet,
+                    BUN XWH3PrimeSearchLoop
+                 / }
+                XIF2BreakCPRet,
+                 / < end of if BreakCPRet
+
+                LDA N
+                CMA
+                INC
+                CMA
+                STA N
+            BUN XWH1PrimeSearchLoop
+             / }
+            XWH3PrimeSearchLoop,
+             / < end of while loop PrimeSearchLoop
+
+            LDA N
+            STA NBAK
+            CLA
+            INC
+            STA OutFlag
+         / }
+        XIF2PrimeDeclTrigger,
+         / < end of if PrimeDeclTrigger
+
+
+         / > if GetDigitOutT
+         / if (
+            LDA OutFlag
+        SZA
+        BUN XIF1GetDigitOutT
+        BUN XIF2GetDigitOutT
+         / ) {
+        XIF1GetDigitOutT,
+            CLA
+            STA OutFlag
+            CLA
+            STA ShowIParam
+            LDA N
+            STA QVAL
+
+             / > while loop ShowSubDigit
+            XWH1ShowSubDigit,
+             / while (
+                LDA QVAL
+            SZA
+            BUN XWH2ShowSubDigit
+            BUN XWH3ShowSubDigit
+             / ) {
+            XWH2ShowSubDigit,
+                LDA QVAL
+                STA RVAL
+                LDA DECVAL
+                CMA
+                INC
+                ADD QVAL
+                STA XVAL
+                CLA
+                STA QVAL
+
+                 / > while loop ShowSubSearch
+                XWH1ShowSubSearch,
+                 / while (
+                    LDA RVAL
+                    CLE
+                    CME
+                    SZA
+                    CME
+                    CLA
+                    CIL
+                    STA TEMP1
+                    LDA RVAL
+                    CMA
+                    INC
+                    ADD XVAL
+                    CLA
+                    CIL
+                    ADD TEMP1
+                SZA
+                BUN XWH3ShowSubSearch
+                BUN XWH2ShowSubSearch
+                 / ) {
+                XWH2ShowSubSearch,
+                    LDA XVAL
+                    STA RVAL
+                    LDA DECVAL
+                    CMA
+                    INC
+                    ADD XVAL
+                    STA XVAL
+                    LDA QVAL
+                    INC
+                    STA QVAL
+                BUN XWH1ShowSubSearch
+                 / }
+                XWH3ShowSubSearch,
+                 / < end of while loop ShowSubSearch
+
+                LDA ShowIParam
+                INC
+                STA ShowIParam
+            BUN XWH1ShowSubDigit
+             / }
+            XWH3ShowSubDigit,
+             / < end of while loop ShowSubDigit
+
+         / }
+        XIF2GetDigitOutT,
+         / < end of if GetDigitOutT
+
+     / < end of Prepare
+
+
      / > if OutputAvailable
      / if (
         CLA
@@ -391,91 +499,6 @@ INT_MAIN,
 
              / > beginning of GetDigitOne
             GetDigitOne,
-
-                 / > if GetDigitOutT
-                 / if (
-                    LDA OutFlag
-                SZA
-                BUN XIF1GetDigitOutT
-                BUN XIF2GetDigitOutT
-                 / ) {
-                XIF1GetDigitOutT,
-                    CLA
-                    STA OutFlag
-                    CLA
-                    STA ShowIParam
-                    LDA N
-                    STA QVAL
-
-                     / > while loop ShowSubDigit
-                    XWH1ShowSubDigit,
-                     / while (
-                        LDA QVAL
-                    SZA
-                    BUN XWH2ShowSubDigit
-                    BUN XWH3ShowSubDigit
-                     / ) {
-                    XWH2ShowSubDigit,
-                        LDA QVAL
-                        STA RVAL
-                        LDA DECVAL
-                        CMA
-                        INC
-                        ADD QVAL
-                        STA XVAL
-                        CLA
-                        STA QVAL
-
-                         / > while loop ShowSubSearch
-                        XWH1ShowSubSearch,
-                         / while (
-                            LDA RVAL
-                            CLE
-                            CME
-                            SZA
-                            CME
-                            CLA
-                            CIL
-                            STA TEMP1
-                            LDA RVAL
-                            CMA
-                            INC
-                            ADD XVAL
-                            CLA
-                            CIL
-                            ADD TEMP1
-                        SZA
-                        BUN XWH3ShowSubSearch
-                        BUN XWH2ShowSubSearch
-                         / ) {
-                        XWH2ShowSubSearch,
-                            LDA XVAL
-                            STA RVAL
-                            LDA DECVAL
-                            CMA
-                            INC
-                            ADD XVAL
-                            STA XVAL
-                            LDA QVAL
-                            INC
-                            STA QVAL
-                        BUN XWH1ShowSubSearch
-                         / }
-                        XWH3ShowSubSearch,
-                         / < end of while loop ShowSubSearch
-
-                        LDA ShowIParam
-                        INC
-                        STA ShowIParam
-                    BUN XWH1ShowSubDigit
-                     / }
-                    XWH3ShowSubDigit,
-                     / < end of while loop ShowSubDigit
-
-                 / }
-                XIF2GetDigitOutT,
-                 / < end of if GetDigitOutT
-
                 CLA
                 INC
                 STA ISH
@@ -484,19 +507,45 @@ INT_MAIN,
                 LDA N
                 STA QVAL
 
-                 / > if NothingToShow
+                 / > if ReadyState
                  / if (
                     LDA I
                 SZA
-                BUN XIF2NothingToShow
-                BUN XIF1NothingToShow
+                BUN XIF2ReadyState
+                BUN XIF1ReadyState
                  / ) {
-                XIF1NothingToShow,
+                XIF1ReadyState,
+
+                     / > if AnythingToShow
+                     / if (
+                        LDA SEPTRIG
+                    SZA
+                    BUN XIF1AnythingToShow
+                    BUN XIF2AnythingToShow
+                     / ) {
+                    XIF1AnythingToShow,
+                        CLA
+                        STA SEPTRIG
+                        LDA NBAK
+                        CMA
+                        INC
+                        CMA
+                        STA NBAK
+                        STA N
+                        CLA
+                        INC
+                        ADD ASCIIENTER
+                        STA DECLTRIG
+                        BUN GetDigitOutT_End
+                     / }
+                    XIF2AnythingToShow,
+                     / < end of if AnythingToShow
+
                     CLA
                     BUN GetDigitOutT_End
                  / }
-                XIF2NothingToShow,
-                 / < end of if NothingToShow
+                XIF2ReadyState,
+                 / < end of if ReadyState
 
 
                  / > while loop DispIShift
@@ -585,6 +634,49 @@ INT_MAIN,
                 INC
                 CMA
                 STA ShowIParam
+
+                 / > if ReachedEnd
+                 / if (
+                    LDA ShowIParam
+                SZA
+                BUN XIF2ReachedEnd
+                BUN XIF1ReachedEnd
+                 / ) {
+                XIF1ReachedEnd,
+
+                     / > if DecrNeeded
+                     / if (
+                        LDA MINIMUMPRIMEP1
+                        CLE
+                        CME
+                        SZA
+                        CME
+                        CLA
+                        CIL
+                        STA TEMP1
+                        LDA MINIMUMPRIMEP1
+                        CMA
+                        INC
+                        ADD NBAK
+                        CLA
+                        CIL
+                        ADD TEMP1
+                    SZA
+                    BUN XIF1DecrNeeded
+                    BUN XIF2DecrNeeded
+                     / ) {
+                    XIF1DecrNeeded,
+                        CLA
+                        INC
+                        STA SEPTRIG
+                     / }
+                    XIF2DecrNeeded,
+                     / < end of if DecrNeeded
+
+                 / }
+                XIF2ReachedEnd,
+                 / < end of if ReachedEnd
+
                 LDA TEMP2
                 ADD ASCII0
                 GetDigitOutT_End,
@@ -640,6 +732,7 @@ INT_MAIN,
     HaltFlag, DEC 0
     INTmp, DEC 0
     N, DEC 0
+    NBAK, DEC 0
     ASCII0, DEC 48
     ASCIIENTER, DEC 10
     ASCIICTRLD, DEC 4
@@ -657,5 +750,8 @@ INT_MAIN,
     QVAL, DEC 0
     RVAL, DEC 0
     XVAL, DEC 0
+    DECLTRIG, DEC 0
+    SEPTRIG, DEC 0
+    MINIMUMPRIMEP1, DEC 3
 END
 
