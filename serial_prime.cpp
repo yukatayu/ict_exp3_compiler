@@ -43,6 +43,8 @@ int main(){
 	Data R(INT, "RVAL", 0);
 	Data X(INT, "XVAL", 0);
 
+	Data DecrTrigger(INT, "DECLTRIG", 0);
+
 	// `N` が素数なら終了, さもなくば返却するサブルーチン
 	StatementList checkPrime = {
 		i = +i_init,

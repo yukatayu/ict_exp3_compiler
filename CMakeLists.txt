@@ -8,17 +8,11 @@ set(CMAKE_CXX_FLAGS "-g")
 
 add_subdirectory(lib)
 
-add_executable(run_02 main_02.cpp)
-add_executable(run_03 main_03.cpp)
-add_executable(run_04 main_04.cpp)
-add_executable(run_04_fast main_04_fast.cpp)
+add_executable(run_serial_prime serial_prime.cpp)
 
 include_directories(
 	PUBLIC ${PROJECT_SOURCE_DIR}/lib/
 )
 
-target_link_libraries (run_02 ict_exp3_parser)
-target_link_libraries (run_03 ict_exp3_parser)
-target_link_libraries (run_04 ict_exp3_parser)
-target_link_libraries (run_04_fast ict_exp3_parser)
+target_link_libraries (run_serial_prime ict_exp3_parser)
 
