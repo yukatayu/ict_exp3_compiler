@@ -2,7 +2,7 @@ ORG 0 / Interrupt Entry Point
 INT_RET, HEX 0 / Interrupt Return Address
 BUN INT_MAIN
 ORG 10 / Entry Point
-LDA MASKINIT
+LDA MASKSIN
 IMK
 SIO
 ION
@@ -58,6 +58,8 @@ INT_MAIN,
                 CLA
                 INC
                 STA DECLTRIG
+                LDA MASKSOUT
+                IMK
              / }
             XIF2CheckCharEnt,
              / < end of if CheckCharEnt
@@ -651,8 +653,13 @@ INT_MAIN,
                         CLA
                         INC
                         STA SEPTRIG
-                     / }
+                    BUN XIF3DecrNeeded
+                     / } else {  // DecrNeeded
                     XIF2DecrNeeded,
+                        LDA MASKSIN
+                        IMK
+                     / }
+                    XIF3DecrNeeded,
                      / < end of if DecrNeeded
 
                  / }
@@ -708,10 +715,12 @@ INT_MAIN,
  / Data Segment
     ACCBAK, DEC 0
     EBAK, DEC 0
-    MASKINIT, DEC 15
     ShowIParam, DEC 0
-    OutFlag, DEC 0
+    DECLTRIG, DEC 0
+    SEPTRIG, DEC 0
     HaltFlag, DEC 0
+    MASKSIN, DEC 8
+    MASKSOUT, DEC 4
     INTmp, DEC 0
     N, DEC 0
     NBAK, DEC 0
@@ -732,8 +741,6 @@ INT_MAIN,
     QVAL, DEC 0
     RVAL, DEC 0
     XVAL, DEC 0
-    DECLTRIG, DEC 0
-    SEPTRIG, DEC 0
     MINIMUMPRIMEP1, DEC 3
 END
 

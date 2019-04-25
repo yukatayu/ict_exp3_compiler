@@ -158,12 +158,8 @@ namespace EX3{
 		StatementList stats_cond_;
 		StatementList stats_;
 		bool invert_;
-		void init(std::string name, StatementList stats_cond, StatementList stats, bool invert);
 	public:
 		While_impl(std::string name, StatementList stats_cond, StatementList stats, bool invert = false);
-		While_impl(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false);
-		While_impl(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false);
-		While_impl(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false);
 		std::string make_impl() override;
 	};
 
@@ -172,13 +168,14 @@ namespace EX3{
 		std::string name_;
 		StatementList stats_cond_;
 		StatementList stats_;
+		StatementList stats_else_;
+		bool else_exists_;
 		bool invert_;
-		void init(std::string name, StatementList stats_cond, StatementList stats, bool invert);
+		std::string make_then_impl();
+		std::string make_then_else_impl();
 	public:
 		If_impl(std::string name, StatementList stats_cond, StatementList stats, bool invert = false);
-		If_impl(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false);
-		If_impl(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false);
-		If_impl(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false);
+		If_impl(std::string name, StatementList stats_cond, StatementList stats, StatementList stats_else, bool invert = false);
 		std::string make_impl() override;
 	};
 
@@ -198,27 +195,13 @@ namespace EX3{
 	inline Statement While(std::string name, StatementList stats_cond, StatementList stats, bool invert = false){
 			return Statement{ new While_impl{name, stats_cond, stats, invert} };
 	};
-	inline Statement While(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false){
-			return Statement{ new While_impl{name, stats_cond, stats, invert} };
-	}
-	inline Statement While(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false){
-			return Statement{ new While_impl{name, stats_cond, stats, invert} };
-	}
-	inline Statement While(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false){
-			return Statement{ new While_impl{name, stats_cond, stats, invert} };
-	}
 
 	inline Statement If(std::string name, StatementList stats_cond, StatementList stats, bool invert = false){
 		return Statement { new If_impl{name, stats_cond, stats, invert} };
 	}
-	inline Statement If(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert = false){
-		return Statement { new If_impl{name, stats_cond, stats, invert} };
-	}
-	inline Statement If(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert = false){
-		return Statement { new If_impl{name, stats_cond, stats, invert} };
-	}
-	inline Statement If(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert = false){
-		return Statement { new If_impl{name, stats_cond, stats, invert} };
+
+	inline Statement If(std::string name, StatementList stats_cond, StatementList stats, StatementList stats_else, bool invert = false){
+		return Statement { new If_impl{name, stats_cond, stats, stats_else, invert} };
 	}
 
 	Statement operator ""_asm(char const * str, std::size_t size);

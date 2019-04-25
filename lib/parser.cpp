@@ -42,12 +42,12 @@ namespace EX3{
 		StatementList cmp12 = {
 			// tmp_ <- (target2_ == 0)
 			+target2_,
-			Statement{ new Const_impl{
+			Const(
 				"CLE\n"
 				"CME\n"
 				"SZA\n"
 				"CME\n"
-			} },
+			),
 			tmp_ = helper::GetE,
 			// acc <- overflow + tmp_
 			-target2_ + target1_,
@@ -70,28 +70,24 @@ namespace EX3{
 	}
 
 	// If
-	void If_impl::init(std::string name, StatementList stats_cond, StatementList stats, bool invert){
-		name_ = name;
-		stats_cond_ = stats_cond;
-		stats_ = stats;
-		invert_ = invert;
-	}
+	If_impl::If_impl(std::string name, StatementList stats_cond, StatementList stats, bool invert)
+		: name_(name)
+		, stats_cond_(stats_cond)
+		, stats_(stats)
+		, invert_(invert)
+		, else_exists_(false)
+	{ }
 
-	If_impl::If_impl(std::string name, StatementList stats_cond, StatementList stats, bool invert){
-		init(name, stats_cond, stats, invert);
-	}
-	If_impl::If_impl(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert){
-		init(name, stats_cond, stats, invert);
-	}
-	If_impl::If_impl(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert){
-		init(name, stats_cond, stats, invert);
-	}
-	If_impl::If_impl(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert){
-		init(name, stats_cond, stats, invert);
-	}
+	If_impl::If_impl(std::string name, StatementList stats_cond, StatementList stats, StatementList stats_else, bool invert)
+		: name_(name)
+		, stats_cond_(stats_cond)
+		, stats_(stats)
+		, invert_(invert)
+		, stats_else_(stats_else)
+		, else_exists_(true)
+	{ }
 
-	//TODO: implement Else
-	std::string If_impl::make_impl() {
+	std::string If_impl::make_then_impl() {
 		std::string res;
 		std::string if1 = "XIF1" + name_;
 		std::string if2 = "XIF2" + name_;
@@ -109,6 +105,34 @@ namespace EX3{
 		res += if2 + "," + "\n";
 		res += " / < end of if " + name_ + "\n\n";
 		return res;
+	}
+
+	std::string If_impl::make_then_else_impl() {
+		std::string res;
+		std::string if1 = "XIF1" + name_;
+		std::string if2 = "XIF2" + name_;
+		std::string if3 = "XIF3" + name_;
+		res += "\n / > if " + name_ + "\n";
+		res += " / if (\n";
+		res += indent(stats_cond_.make());
+		res += "SZA\n";
+		res += "BUN " + (invert_ ? if2 : if1) + "\n";
+		res += "BUN " + (invert_ ? if1 : if2) + "\n";
+		res += " / ) {\n";
+		res += if1 + "," + "\n";
+		res += indent(stats_.make());
+		res += "BUN " + if3 + "\n";
+		res += " / } else {  // " + name_ + "\n";
+		res += if2 + "," + "\n";
+		res += indent(stats_else_.make());
+		res += " / }\n";
+		res += if3 + "," + "\n";
+		res += " / < end of if " + name_ + "\n\n";
+		return res;
+	}
+
+	std::string If_impl::make_impl() {
+		return (else_exists_ ? make_then_else_impl() : make_then_impl());
 	}
 
 	// Break
@@ -140,25 +164,12 @@ namespace EX3{
 	}
 
 	// While
-	void While_impl::init(std::string name, StatementList stats_cond, StatementList stats, bool invert){
-		name_ = name;
-		stats_cond_ = stats_cond;
-		stats_ = stats;
-		invert_ = invert;
-	}
-
-	While_impl::While_impl(std::string name, StatementList stats_cond, StatementList stats, bool invert){
-		init(name, stats_cond, stats, invert);
-	}
-	While_impl::While_impl(std::string name, std::initializer_list<Statement> stats_cond, StatementList stats, bool invert){
-		init(name, stats_cond, stats, invert);
-	}
-	While_impl::While_impl(std::string name, StatementList stats_cond, std::initializer_list<Statement> stats, bool invert){
-		init(name, stats_cond, stats, invert);
-	}
-	While_impl::While_impl(std::string name, std::initializer_list<Statement> stats_cond, std::initializer_list<Statement> stats, bool invert){
-		init(name, stats_cond, stats, invert);
-	}
+	While_impl::While_impl(std::string name, StatementList stats_cond, StatementList stats, bool invert)
+		: name_(name)
+		, stats_cond_(stats_cond)
+		, stats_(stats)
+		, invert_(invert)
+	{ }
 
 	std::string While_impl::make_impl() {
 		std::string res;
@@ -219,9 +230,7 @@ namespace EX3{
 		res += indent(mk);
 		if(!label.empty())
 			res += " / < end of " + label + "\n\n";
-		return Statement{
-			new Const_impl(res)
-		};
+		return Const(res);
 	}
 
 	Statement operator ""_asm(char const * str, std::size_t size){

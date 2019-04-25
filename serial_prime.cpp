@@ -7,13 +7,14 @@ int main(){
 
 	Data AccBak(INT, "ACCBAK", 0);
 	Data EBak(INT, "EBAK", 0);
-	Data mask_init(INT, "MASKINIT", 15);
 	Data show_i(INT, "ShowIParam", 0);
 
-	Data in_trigger(INT, "InFlag", 0);
 	Data out_trigger(INT, "DECLTRIG", 0);
 	Data sep_trigger(INT, "SEPTRIG", 0);
 	Data halt_trigger(INT, "HaltFlag", 0);
+
+	Data mask_sin(INT, "MASKSIN", 8);
+	Data mask_sout(INT, "MASKSOUT", 4);
 
 	Data IN_tmp(INT, "INTmp", 0);
 	Data N(INT, "N", 0);
@@ -97,6 +98,8 @@ int main(){
 		// Enter -> Start output
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
 			out_trigger = One,
+			+mask_sout,
+			"IMK"_asm,
 		}, true),
 		// ^D -> halt
 		If("CheckCharCtrlD", { -ascii_ctrl_D + IN_tmp }, {
@@ -185,8 +188,10 @@ int main(){
 		If("ReachedEnd", { +show_i }, {
 			If("DecrNeeded", { MoreEq(N_bak, min_primep1, t1) }, {
 				sep_trigger = One,
+			}, {
+				+mask_sin,
+				"IMK"_asm,
 			}),
-			//TODO: else: in_trigger = One,
 		}, true),
 
 		t2 + ascii_0,
@@ -247,7 +252,7 @@ int main(){
 		begin_interrupt("INT_MAIN", "INT_RET"),
 		begin,
 
-		+mask_init,
+		+mask_sin,
 		"IMK"_asm,
 		"SIO"_asm,
 		"ION"_asm,	// enable interrupt
