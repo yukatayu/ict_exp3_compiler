@@ -152,11 +152,16 @@ int main(){
 		i = +show_i,
 		Q = +N,
 		If("ReadyState", { +i }, {
-			// Kick `--N` Trigger
 			If("AnythingToShow", { +sep_trigger }, {
-				sep_trigger = Zero,
-				N = --N_bak,
-				out_trigger = One
+				If("DecrNeeded", { MoreEq(N_bak, min_primep1, t1) }, {
+				// Kick `--N` Trigger
+					sep_trigger = Zero,
+					N = --N_bak,
+					out_trigger = One
+				}, Else, {
+					+mask_sin,
+					"IMK"_asm,
+				}),
 				+ascii_ent,
 				Goto("GetDigitOutT_End")
 			}),
@@ -186,12 +191,7 @@ int main(){
 
 		// Kick "\n" Trigger
 		If("ReachedEnd", { +show_i }, {
-			If("DecrNeeded", { MoreEq(N_bak, min_primep1, t1) }, {
-				sep_trigger = One,
-			}, Else, {
-				+mask_sin,
-				"IMK"_asm,
-			}),
+			sep_trigger = One,
 		}, true),
 
 		t2 + ascii_0,
