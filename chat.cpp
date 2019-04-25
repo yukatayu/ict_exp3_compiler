@@ -19,28 +19,33 @@ int main(){
 	// triggers
 	Data in_trigger(INT, "INPTRIG", 0);
 	Data out_trigger(INT, "OUTTRIG", 0);
-	Data sep_trigger(INT, "SEPTRIG", 0);
+	Data send_trigger(INT, "SENDTRIG", 0);
 	Data halt_trigger(INT, "HaltFlag", 0);
 	Data redraw_trigger(INT, "REDRAWTRIG", 0);
 
 	Data mask_sin (INT, "MASKSIN",  8);
 	Data mask_sout(INT, "MASKSOUT", 4);
 	//Data mask_pin (INT, "MASKPIN",  2);
-	//Data mask_pout(INT, "MASKPOUT", 1);
-	Data mask_pin (INT, "MASKPIN",  0);
-	Data mask_pout(INT, "MASKPOUT", 0);	// TODO
+	Data mask_pin (INT, "MASKPIN",  0);  // TODO
+	Data mask_pout(INT, "MASKPOUT", 1);
+	Data mask_s(INT, "MASKS", 0);
+	Data mask_p(INT, "MASKP", 0);
 
 	Data send_buf(INT, "SENDBUFFER", 0);
-	for(int i=100; i --> 0;)
+	for(int i=99; i --> 0;)
 		Data(INT, "", 0);
+	Data send_buf_end_anchor(INT, "SENDBUFENDANC", 0);
 	Data send_buf_ptr_init(PTR, "SENDBUFPTRINIT", send_buf);
 	Data send_buf_ptr(PTR, "SENDBUFPTR", send_buf);
+	Data send_buf_end_anchor_ptr(PTR, "SENDBUFENDANCP", send_buf_end_anchor);
 
 	Data recv_buf(INT, "RECVBUFFER", 0);
 	for(int i=100; i --> 0;)
 		Data(INT, "", 0);
+	Data recv_buf_end_anchor(INT, "RECVBUFENDANC", 0);
 	Data recv_buf_ptr_init(PTR, "RECVBUFPTRINIT", recv_buf);
 	Data recv_buf_ptr(PTR, "RECVBUFPTR", recv_buf);
+	Data recv_buf_end_anchor_ptr(PTR, "RECVBUFENDANCP", recv_buf_end_anchor);
 
 	Data disp_buf(INT, "DISPBUFFER", 0);
 	for(int i=150; i --> 0;)
@@ -49,12 +54,18 @@ int main(){
 	Data disp_buf_ptr(PTR, "DISPBUFPTR", disp_buf);
 
 	Data ascii_ent(INT, "ASCIIENTER", 10);
+	Data ascii_0(INT, "ASCIIZERO", 48);
 	Data ascii_sp(INT, "ASCIISPACE", 32);
+	Data ascii_bs(INT, "ASCIIBKSPACE", 127);  // BS=8
 	Data ascii_ctrl_D(INT, "ASCIICTRLD", 4);
 
 	// Temporary
 	Data t1(INT, "TEMP1", 0);
 	Data t2(INT, "TEMP2", 0);
+	Data A(INT, "TEMPA", 0);
+	Data B(INT, "TEMPB", 0);
+	Data Q(INT, "TEMPQ", 0);
+	Data R(INT, "TEMPR", 0);
 	Data IN_tmp(INT, "INTMP", 0);
 
 	// エスケープシーケンスを安全に扱うために、文字列を整数に変換して扱う
@@ -68,19 +79,27 @@ int main(){
 	Data ProgName ## _ptr_init (PTR, AsmName "PtrInit", ProgName);
 	// Data ProgName ## _ptr (PTR, AsmName "Ptr", ProgName, MaybeUnused);
 
+	helper_ConstString_Safe(disp_count_postfix, "DispCountPostfix", "/100");
 	helper_ConstString_Safe(prompt_text, "PromptText", " > ");
 
-	//helper_ConstString_Safe(red_text, "RedText", "\033[91m");  // Red (Forward)
-	//helper_ConstString_Safe(red_back, "RedBack", "\033[41m");  // Red Back
-	//helper_ConstString_Safe(green_text, "GreenText", "\033[92m");  // Green
-	//helper_ConstString_Safe(reset_text, "ResetText", "\033[0m");  // Reset
-	//helper_ConstString_Safe(clear_line, "ClearLine", "\033[1G\033[0K");  // ClearLine
+	helper_ConstString_Safe(red_text, "RedText", "\033[91m");  // Red (Forward)
+	helper_ConstString_Safe(red_back, "RedBack", "\033[41m");  // Red Back
+	helper_ConstString_Safe(green_text, "GreenText", "\033[92m");  // Green
+	helper_ConstString_Safe(reset_text, "ResetText", "\033[0m");  // Reset
+	helper_ConstString_Safe(clear_line, "ClearLine", "\033[1G\033[0K");  // ClearLine
 	// vv debug vv
-	helper_ConstString_Safe(red_text, "RedText", "<Red>");
-	helper_ConstString_Safe(red_back, "RedBack", "<RedBack>");
-	helper_ConstString_Safe(green_text, "GreenText", "<Green>");
-	helper_ConstString_Safe(reset_text, "ResetText", "<Reset>");
-	helper_ConstString_Safe(clear_line, "ClearLine", "\r\n");
+	//helper_ConstString_Safe(red_text, "RedText", "<Red>");
+	//helper_ConstString_Safe(red_back, "RedBack", "<RedBack>");
+	//helper_ConstString_Safe(green_text, "GreenText", "<Green>");
+	//helper_ConstString_Safe(reset_text, "ResetText", "<Reset>");
+	//helper_ConstString_Safe(clear_line, "ClearLine", "\r\n");
+
+	// Helper
+	Data keta_10(INT, "Keta10Arr", 100);
+		Data(INT, "", 10);
+		Data(INT, "", 1);
+		Data(INT, "", 0);
+	Data keta_10_ptr_init(PTR, "Keta10PtrInit", keta_10);
 
 	// Status
 	Data status_output(INT, "ISSTATOUT", 0);
@@ -97,23 +116,47 @@ int main(){
 		}),*/
 
 		strCpy(clear_line_ptr_init, disp_buf_ptr, t1),
+		*disp_buf_ptr = +ascii_sp, ++disp_buf_ptr,
 		// 未読があったら赤色
-			// 何故かバグる //TODO
 		//	status_color = Cond("Debug_Cond", { +status_unread }, { +red_back_ptr_init }, { +reset_text_ptr_init }, true),
 		If({ +status_unread }, {
 			status_color = +red_back_ptr_init
 		}, Else, {
 			status_color = +reset_text_ptr_init
 		}),
-		//"LDA STATUSCOLOR"_asm,
-		//"_B_,LDA STATUSCOLOR"_asm,
 		strCpy(status_color, disp_buf_ptr, t1),
 		*disp_buf_ptr = +ascii_sp, ++disp_buf_ptr,
 		*disp_buf_ptr = +ascii_sp, ++disp_buf_ptr,
 		strCpy(reset_text_ptr_init, disp_buf_ptr, t1),
-		strCpy(green_text_ptr_init, disp_buf_ptr, t1),
+
+		// 現在の文字数が0か上限だったら赤色、さもなくば緑色
+		t2 = +green_text_ptr_init,
+		If({-send_buf_ptr + send_buf_end_anchor_ptr}, {
+			t2 = +red_text_ptr_init,
+		}, true),
+		If({-send_buf_ptr + send_buf_ptr_init}, {
+			t2 = +red_text_ptr_init,
+		}, true),
+		strCpy(t2, disp_buf_ptr, t1),
 		*disp_buf_ptr = +ascii_sp, ++disp_buf_ptr,
-		// TODO: 現在の文字数
+
+		// 現在の文字数を表示
+		A = -send_buf_ptr_init + send_buf_ptr,
+		For("ShowCharNumInput", { { t1 = +keta_10_ptr_init }, { +*t1 }, { ++t1 } }, {
+			B = -*t1,
+			Q = Zero,
+			--Q,
+			While({ MoreEq(A, B, t2) }, {
+				R = +A,
+				++Q,
+				A = A + B
+			}, true),
+			*disp_buf_ptr = Q + ascii_0,
+			++disp_buf_ptr,
+			A = +R,
+		}),
+		// 現在の入力内容の表示
+		strCpy(disp_count_postfix_ptr_init, disp_buf_ptr, t1),
 		strCpy(reset_text_ptr_init, disp_buf_ptr, t1),
 		strCpy(prompt_text_ptr_init, disp_buf_ptr, t1),
 		strCpy(send_buf_ptr_init, disp_buf_ptr, t1),
@@ -125,18 +168,41 @@ int main(){
 
 	// Input a char
 	StatementList inputChar = {
-		// Enter -> Start output
-		/*If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
-			out_trigger = One,
-		}, true),*/
 		// ^D -> halt
 		If("CheckCharCtrlD", { -ascii_ctrl_D + IN_tmp }, {
 			halt_trigger = One,
+		}, true),
+		// Enter -> Start output
+		// TODO: とりあえずリセットして未読フラグを反転している (デバッグ)
+		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
+			status_unread = -status_unread,
+			++status_unread,
+
+			If({ -ascii_bs + IN_tmp }, {
+				send_trigger = One,
+			}),
+			// Debug TODO: Remove (unneeded clearing)
+			send_buf_ptr = +send_buf_ptr_init,
+			*send_buf_ptr = Zero
 		}, Else, {
-			*send_buf_ptr = +IN_tmp,
-			++send_buf_ptr,
+			If("CheckCharBS", { -ascii_bs + IN_tmp }, {
+				If({-send_buf_ptr + send_buf_ptr_init}, {
+					--send_buf_ptr,
+					*send_buf_ptr = Zero,
+				})
+			}, Else, {
+				// 入力した時点で出力モードにする
+				If({-send_buf_ptr + send_buf_end_anchor_ptr}, {
+					*send_buf_ptr = +IN_tmp,
+					++send_buf_ptr,
+					*send_buf_ptr = Zero,
+				})
+			}, true),
 		}, true),
 		out_trigger = One,
+		mask_s = +mask_sout,
+		+mask_s + mask_p,
+		"IMK"_asm,
 	};
 
 	// Process Trigger
@@ -144,15 +210,11 @@ int main(){
 		If("OutTrigger", { +out_trigger }, {
 			out_trigger = Zero,
 			renderText.stat("RenderText")
-			+mask_sout + mask_pin + mask_pout,
-			"IMK"_asm,
-			status_output = One,
+			//status_output = One,
 		}),
 		If("InTrigger", { +in_trigger }, {
 			in_trigger = Zero,
-			+mask_sin + mask_pin + mask_pout,
-			"IMK"_asm,
-			status_output = Zero,
+			//status_output = Zero,
 		}),
 	};
 
@@ -162,9 +224,11 @@ int main(){
 		If("StepDispText", { +t1 }, {
 			++disp_buf_ptr
 		}, Else, {
-			If({ +status_output }, {  // TODO: unneeded?
-				in_trigger = One
-			})
+			// 出力するものがなければ入力許可
+			in_trigger = One,
+			mask_s = +mask_sin,
+			+mask_s + mask_p,
+			"IMK"_asm,
 		}),
 		+t1
 	};
@@ -174,6 +238,9 @@ int main(){
 		// Save Acc, E
 		AccBak = Const(),
 		EBak = GetE,
+
+		// シリアルポート処理
+		"SIO"_asm,
 
 		// Get Input
 		If("InputAvailable", {
@@ -203,6 +270,9 @@ int main(){
 			}),
 		}),
 
+		// パラレルポート処理
+		"SIO"_asm,
+
 		// Return
 		"InterruptReturn,"_asm,
 		If("HaltTrigger", { +halt_trigger },{
@@ -223,9 +293,14 @@ int main(){
 		begin_interrupt("INT_MAIN", "INT_RET"),
 		begin,
 
-		+mask_sin + mask_pin + mask_pout,
+		// 起動時に表示するため
+		out_trigger = One,
+
+		//+mask_sin + mask_pin + mask_pout,
+		mask_s = +mask_sout,
+		mask_p = +mask_pin,
+		+mask_s + mask_p,
 		"IMK"_asm,
-		"SIO"_asm,
 		"ION"_asm,	// enable interrupt
 
 		While("MainLoop", { +halt_trigger }, {
