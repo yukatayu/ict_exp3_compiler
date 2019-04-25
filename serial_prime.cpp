@@ -153,9 +153,9 @@ int main(){
 		Q = +N,
 		If("ReadyState", { +i }, {
 			If("AnythingToShow", { +sep_trigger }, {
+				sep_trigger = Zero,
 				If("DecrNeeded", { MoreEq(N_bak, min_primep1, t1) }, {
-				// Kick `--N` Trigger
-					sep_trigger = Zero,
+					// Kick `--N` Trigger
 					N = --N_bak,
 					out_trigger = One
 				}, Else, {

@@ -508,6 +508,8 @@ INT_MAIN,
                     BUN XIF2AnythingToShow
                      / ) {
                     XIF1AnythingToShow,
+                        CLA
+                        STA SEPTRIG
 
                          / > if DecrNeeded
                          / if (
@@ -531,8 +533,6 @@ INT_MAIN,
                         BUN XIF2DecrNeeded
                          / ) {
                         XIF1DecrNeeded,
-                            CLA
-                            STA SEPTRIG
                             LDA NBAK
                             CMA
                             INC
