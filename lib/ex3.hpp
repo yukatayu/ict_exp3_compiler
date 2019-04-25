@@ -26,6 +26,10 @@ namespace EX3{
 		PTR = 12
 	};
 
+	enum Human_Readable_Helper{
+		Else,
+	};
+
 	class Statement_impl{
 	public:
 		virtual std::string make_impl() = 0;
@@ -200,7 +204,11 @@ namespace EX3{
 		return Statement { new If_impl{name, stats_cond, stats, invert} };
 	}
 
-	inline Statement If(std::string name, StatementList stats_cond, StatementList stats, StatementList stats_else, bool invert = false){
+	/*inline Statement If(std::string name, StatementList stats_cond, StatementList stats, StatementList stats_else, bool invert = false){
+		return Statement { new If_impl{name, stats_cond, stats, stats_else, invert} };
+	}*/
+
+	inline Statement If(std::string name, StatementList stats_cond, StatementList stats, Human_Readable_Helper, StatementList stats_else, bool invert = false){
 		return Statement { new If_impl{name, stats_cond, stats, stats_else, invert} };
 	}
 

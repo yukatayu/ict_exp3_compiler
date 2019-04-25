@@ -188,7 +188,7 @@ int main(){
 		If("ReachedEnd", { +show_i }, {
 			If("DecrNeeded", { MoreEq(N_bak, min_primep1, t1) }, {
 				sep_trigger = One,
-			}, {
+			}, Else, {
 				+mask_sin,
 				"IMK"_asm,
 			}),
