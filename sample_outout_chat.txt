@@ -1,0 +1,1227 @@
+ORG 0 / Interrupt Entry Point
+INT_RET, HEX 0 / Interrupt Return Address
+BUN INT_MAIN
+ORG 10 / Entry Point
+LDA MASKSIN
+ADD MASKSOUT
+ADD MASKPIN
+ADD MASKPOUT
+IMK
+SIO
+ION
+
+ / > while loop MainLoop
+XWH1MainLoop,
+ / while (
+    LDA HaltFlag
+SZA
+BUN XWH3MainLoop
+BUN XWH2MainLoop
+ / ) {
+XWH2MainLoop,
+BUN XWH1MainLoop
+ / }
+XWH3MainLoop,
+ / < end of while loop MainLoop
+
+_M_, HLT
+
+ / > beginning of INT_MAIN
+INT_MAIN,
+    STA ACCBAK
+    CLA
+    CIL
+    STA EBAK
+
+     / > if InputAvailable
+     / if (
+        CLA
+        INC
+        SKI
+        CLA
+    SZA
+    BUN XIF1InputAvailable
+    BUN XIF2InputAvailable
+     / ) {
+    XIF1InputAvailable,
+        INP
+        STA INTMP
+
+             / > if CheckCharEnt
+             / if (
+                LDA ASCIIENTER
+                CMA
+                INC
+                ADD INTMP
+            SZA
+            BUN XIF2CheckCharEnt
+            BUN XIF1CheckCharEnt
+             / ) {
+            XIF1CheckCharEnt,
+                CLA
+                INC
+                STA DECLTRIG
+             / }
+            XIF2CheckCharEnt,
+             / < end of if CheckCharEnt
+
+
+             / > if CheckCharCtrlD
+             / if (
+                LDA ASCIICTRLD
+                CMA
+                INC
+                ADD INTMP
+            SZA
+            BUN XIF2CheckCharCtrlD
+            BUN XIF1CheckCharCtrlD
+             / ) {
+            XIF1CheckCharCtrlD,
+                CLA
+                INC
+                STA HaltFlag
+             / }
+            XIF2CheckCharCtrlD,
+             / < end of if CheckCharCtrlD
+
+     / }
+    XIF2InputAvailable,
+     / < end of if InputAvailable
+
+
+     / > beginning of Prepare
+    Prepare,
+
+         / > if PrimeDeclTrigger
+         / if (
+            LDA DECLTRIG
+        SZA
+        BUN XIF1PrimeDeclTrigger
+        BUN XIF2PrimeDeclTrigger
+         / ) {
+        XIF1PrimeDeclTrigger,
+            CLA
+            STA DECLTRIG
+            LDA TextTextPtrInit
+            STA TextTextPtr
+         / }
+        XIF2PrimeDeclTrigger,
+         / < end of if PrimeDeclTrigger
+
+     / < end of Prepare
+
+
+     / > if OutputAvailable
+     / if (
+        CLA
+        INC
+        SKO
+        CLA
+    SZA
+    BUN XIF1OutputAvailable
+    BUN XIF2OutputAvailable
+     / ) {
+    XIF1OutputAvailable,
+
+         / > if ShowMain
+         / if (
+
+             / > beginning of GetDigitOne
+            GetDigitOne,
+                LDA TextTextPtr I
+                STA TEMP2
+
+                 / > if StepTestText
+                 / if (
+                    LDA TEMP2
+                SZA
+                BUN XIF1StepTestText
+                BUN XIF2StepTestText
+                 / ) {
+                XIF1StepTestText,
+                    LDA TextTextPtr
+                    INC
+                    STA TextTextPtr
+                 / }
+                XIF2StepTestText,
+                 / < end of if StepTestText
+
+                LDA TEMP2
+             / < end of GetDigitOne
+
+        SZA
+        BUN XIF1ShowMain
+        BUN XIF2ShowMain
+         / ) {
+        XIF1ShowMain,
+            OUT
+         / }
+        XIF2ShowMain,
+         / < end of if ShowMain
+
+     / }
+    XIF2OutputAvailable,
+     / < end of if OutputAvailable
+
+    InterruptReturn,
+
+     / > if HaltTrigger
+     / if (
+        LDA HaltFlag
+    SZA
+    BUN XIF1HaltTrigger
+    BUN XIF2HaltTrigger
+     / ) {
+    XIF1HaltTrigger,
+        LDA EBAK
+        CLE
+        CIR
+        LDA ACCBAK
+        BUN INT_RET I
+     / }
+    XIF2HaltTrigger,
+     / < end of if HaltTrigger
+
+    LDA EBAK
+    CLE
+    CIR
+    LDA ACCBAK
+    ION
+    BUN INT_RET I
+ / < end of INT_MAIN
+
+ / Data Segment
+    ACCBAK, DEC 0
+    EBAK, DEC 0
+    ShowIParam, DEC 0
+    DECLTRIG, DEC 0
+    SEPTRIG, DEC 0
+    HaltFlag, DEC 0
+    MASKSIN, DEC 8
+    MASKSOUT, DEC 4
+    MASKPIN, DEC 2
+    MASKPOUT, DEC 1
+    SENDBUFFER, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+    SENDBUFPTRINIT, SYM SENDBUFFER
+    SENDBUFPTR, SYM SENDBUFFER
+    RECVBUFFER, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+    RECVBUFPTRINIT, SYM RECVBUFFER
+    RECVBUFPTR, SYM RECVBUFFER
+    ASCIIENTER, DEC 10
+    ASCIICTRLD, DEC 4
+    TEMP1, DEC 0
+    TEMP2, DEC 0
+    INTMP, DEC 0
+    TextText, CHR 
+        CHR [
+        CHR 9
+        CHR 1
+        CHR m
+        CHR M
+        CHR S
+        CHR M
+        DEC 0
+    TextTextPtrInit, SYM TextText
+    TextTextPtr, SYM TextText
+END
+
