@@ -31,13 +31,16 @@ namespace EX3{
 	};
 
 	class Statement_impl{
-	public:
+	private:
+		static long long int global_cnt_;
+	protected:
+		static std::string nextAutoLabel();
 		virtual std::string make_impl() = 0;
+	public:
 		std::string make();
 	};
 
 	using Statement = std::shared_ptr<Statement_impl>;
-	using Box = Statement;
 
 	class Data : public Statement_impl{
 	private:
@@ -167,6 +170,19 @@ namespace EX3{
 		std::string make_impl() override;
 	};
 
+	class For_impl : public Statement_impl {
+	private:
+		std::string name_;
+		StatementList stats_init_;
+		StatementList stats_cond_;
+		StatementList stats_after_;
+		StatementList stats_;
+		bool invert_;
+	public:
+		For_impl(std::string name, std::tuple<StatementList, StatementList, StatementList> stats_init_cond_after, StatementList stats, bool invert = false);
+		std::string make_impl() override;
+	};
+
 	class If_impl : public Statement_impl {
 	private:
 		std::string name_;
@@ -200,16 +216,42 @@ namespace EX3{
 			return Statement{ new While_impl{name, stats_cond, stats, invert} };
 	};
 
+	inline Statement While(StatementList stats_cond, StatementList stats, bool invert = false){
+			return Statement{ new While_impl{{}, stats_cond, stats, invert} };
+	};
+
+	inline Statement For(std::string name, std::tuple<StatementList, StatementList, StatementList> stats_init_cond_after, StatementList stats, bool invert = false){
+			return Statement{ new For_impl{name, stats_init_cond_after, stats, invert} };
+	};
+
+	inline Statement For(std::tuple<StatementList, StatementList, StatementList> stats_init_cond_after, StatementList stats, bool invert = false){
+			return Statement{ new For_impl{{}, stats_init_cond_after, stats, invert} };
+	};
+
+	// If 文
 	inline Statement If(std::string name, StatementList stats_cond, StatementList stats, bool invert = false){
 		return Statement { new If_impl{name, stats_cond, stats, invert} };
 	}
 
-	/*inline Statement If(std::string name, StatementList stats_cond, StatementList stats, StatementList stats_else, bool invert = false){
+	inline Statement If(StatementList stats_cond, StatementList stats, bool invert = false){
+		return Statement { new If_impl{{}, stats_cond, stats, invert} };
+	}
+
+	// If 式
+	/*inline Statement Cond(std::string name, StatementList stats_cond, StatementList stats, StatementList stats_else, bool invert = false){
 		return Statement { new If_impl{name, stats_cond, stats, stats_else, invert} };
+	}
+	inline Statement Cond(StatementList stats_cond, StatementList stats, StatementList stats_else, bool invert = false){
+		return Statement { new If_impl{{}, stats_cond, stats, stats_else, invert} };
 	}*/
 
+	// If-Else 文
 	inline Statement If(std::string name, StatementList stats_cond, StatementList stats, Human_Readable_Helper, StatementList stats_else, bool invert = false){
 		return Statement { new If_impl{name, stats_cond, stats, stats_else, invert} };
+	}
+
+	inline Statement If(StatementList stats_cond, StatementList stats, Human_Readable_Helper, StatementList stats_else, bool invert = false){
+		return Statement { new If_impl{{}, stats_cond, stats, stats_else, invert} };
 	}
 
 	Statement operator ""_asm(char const * str, std::size_t size);

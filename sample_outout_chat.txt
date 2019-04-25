@@ -3,7 +3,6 @@ INT_RET, HEX 0 / Interrupt Return Address
 BUN INT_MAIN
 ORG 10 / Entry Point
 LDA MASKSIN
-ADD MASKSOUT
 ADD MASKPIN
 ADD MASKPOUT
 IMK
@@ -11,17 +10,17 @@ SIO
 ION
 
  / > while loop MainLoop
-XWH1MainLoop,
+_XWH1MainLoop,
  / while (
     LDA HaltFlag
 SZA
-BUN XWH3MainLoop
-BUN XWH2MainLoop
+BUN _XWH3MainLoop
+BUN _XWH2MainLoop
  / ) {
-XWH2MainLoop,
-BUN XWH1MainLoop
+_XWH2MainLoop,
+BUN _XWH1MainLoop
  / }
-XWH3MainLoop,
+_XWH3MainLoop,
  / < end of while loop MainLoop
 
 _M_, HLT
@@ -40,31 +39,12 @@ INT_MAIN,
         SKI
         CLA
     SZA
-    BUN XIF1InputAvailable
-    BUN XIF2InputAvailable
+    BUN _XIF1InputAvailable
+    BUN _XIF2InputAvailable
      / ) {
-    XIF1InputAvailable,
+    _XIF1InputAvailable,
         INP
         STA INTMP
-
-             / > if CheckCharEnt
-             / if (
-                LDA ASCIIENTER
-                CMA
-                INC
-                ADD INTMP
-            SZA
-            BUN XIF2CheckCharEnt
-            BUN XIF1CheckCharEnt
-             / ) {
-            XIF1CheckCharEnt,
-                CLA
-                INC
-                STA DECLTRIG
-             / }
-            XIF2CheckCharEnt,
-             / < end of if CheckCharEnt
-
 
              / > if CheckCharCtrlD
              / if (
@@ -73,40 +53,282 @@ INT_MAIN,
                 INC
                 ADD INTMP
             SZA
-            BUN XIF2CheckCharCtrlD
-            BUN XIF1CheckCharCtrlD
+            BUN _XIF2CheckCharCtrlD
+            BUN _XIF1CheckCharCtrlD
              / ) {
-            XIF1CheckCharCtrlD,
+            _XIF1CheckCharCtrlD,
                 CLA
                 INC
                 STA HaltFlag
+            BUN _XIF3CheckCharCtrlD
+             / } else {  // CheckCharCtrlD
+            _XIF2CheckCharCtrlD,
+                LDA INTMP
+                STA SENDBUFPTR I
+                LDA SENDBUFPTR
+                INC
+                STA SENDBUFPTR
              / }
-            XIF2CheckCharCtrlD,
+            _XIF3CheckCharCtrlD,
              / < end of if CheckCharCtrlD
 
+            CLA
+            INC
+            STA OUTTRIG
      / }
-    XIF2InputAvailable,
+    _XIF2InputAvailable,
      / < end of if InputAvailable
 
 
      / > beginning of Prepare
     Prepare,
 
-         / > if PrimeDeclTrigger
+         / > if OutTrigger
          / if (
-            LDA DECLTRIG
+            LDA OUTTRIG
         SZA
-        BUN XIF1PrimeDeclTrigger
-        BUN XIF2PrimeDeclTrigger
+        BUN _XIF1OutTrigger
+        BUN _XIF2OutTrigger
          / ) {
-        XIF1PrimeDeclTrigger,
+        _XIF1OutTrigger,
             CLA
-            STA DECLTRIG
-            LDA TextTextPtrInit
-            STA TextTextPtr
+            STA OUTTRIG
+
+             / > beginning of RenderText
+            RenderText,
+                LDA DISPBUFPTRINIT
+                STA DISPBUFPTR
+
+                LDA ClearLinePtrInit
+                STA TEMP1
+                _XFOR1_XAUTO1,
+                 / for (
+                    LDA TEMP1 I
+                SZA
+                BUN _XFOR2_XAUTO1
+                BUN _XFOR3_XAUTO1
+                 / ) {
+                _XFOR2_XAUTO1,
+                    LDA TEMP1 I
+                    STA DISPBUFPTR I
+                    LDA DISPBUFPTR
+                    INC
+                    STA DISPBUFPTR
+                LDA TEMP1
+                INC
+                STA TEMP1
+                BUN _XFOR1_XAUTO1
+                 / }
+                _XFOR3_XAUTO1,
+
+
+                 / if (
+                    LDA STATUREAD
+                SZA
+                BUN _XIF1_XAUTO2
+                BUN _XIF2_XAUTO2
+                 / ) {
+                _XIF1_XAUTO2,
+                    LDA RedBackPtrInit
+                    STA STATUSCOLOR
+                BUN _XIF3_XAUTO2
+                 / } else {  // 
+                _XIF2_XAUTO2,
+                    LDA ResetTextPtrInit
+                    STA STATUSCOLOR
+                 / }
+                _XIF3_XAUTO2,
+
+
+                LDA STATUSCOLOR
+                STA TEMP1
+                _XFOR1_XAUTO3,
+                 / for (
+                    LDA TEMP1 I
+                SZA
+                BUN _XFOR2_XAUTO3
+                BUN _XFOR3_XAUTO3
+                 / ) {
+                _XFOR2_XAUTO3,
+                    LDA TEMP1 I
+                    STA DISPBUFPTR I
+                    LDA DISPBUFPTR
+                    INC
+                    STA DISPBUFPTR
+                LDA TEMP1
+                INC
+                STA TEMP1
+                BUN _XFOR1_XAUTO3
+                 / }
+                _XFOR3_XAUTO3,
+
+                LDA ASCIISPACE
+                STA DISPBUFPTR I
+                LDA DISPBUFPTR
+                INC
+                STA DISPBUFPTR
+                LDA ASCIISPACE
+                STA DISPBUFPTR I
+                LDA DISPBUFPTR
+                INC
+                STA DISPBUFPTR
+
+                LDA ResetTextPtrInit
+                STA TEMP1
+                _XFOR1_XAUTO4,
+                 / for (
+                    LDA TEMP1 I
+                SZA
+                BUN _XFOR2_XAUTO4
+                BUN _XFOR3_XAUTO4
+                 / ) {
+                _XFOR2_XAUTO4,
+                    LDA TEMP1 I
+                    STA DISPBUFPTR I
+                    LDA DISPBUFPTR
+                    INC
+                    STA DISPBUFPTR
+                LDA TEMP1
+                INC
+                STA TEMP1
+                BUN _XFOR1_XAUTO4
+                 / }
+                _XFOR3_XAUTO4,
+
+
+                LDA GreenTextPtrInit
+                STA TEMP1
+                _XFOR1_XAUTO5,
+                 / for (
+                    LDA TEMP1 I
+                SZA
+                BUN _XFOR2_XAUTO5
+                BUN _XFOR3_XAUTO5
+                 / ) {
+                _XFOR2_XAUTO5,
+                    LDA TEMP1 I
+                    STA DISPBUFPTR I
+                    LDA DISPBUFPTR
+                    INC
+                    STA DISPBUFPTR
+                LDA TEMP1
+                INC
+                STA TEMP1
+                BUN _XFOR1_XAUTO5
+                 / }
+                _XFOR3_XAUTO5,
+
+                LDA ASCIISPACE
+                STA DISPBUFPTR I
+                LDA DISPBUFPTR
+                INC
+                STA DISPBUFPTR
+
+                LDA ResetTextPtrInit
+                STA TEMP1
+                _XFOR1_XAUTO6,
+                 / for (
+                    LDA TEMP1 I
+                SZA
+                BUN _XFOR2_XAUTO6
+                BUN _XFOR3_XAUTO6
+                 / ) {
+                _XFOR2_XAUTO6,
+                    LDA TEMP1 I
+                    STA DISPBUFPTR I
+                    LDA DISPBUFPTR
+                    INC
+                    STA DISPBUFPTR
+                LDA TEMP1
+                INC
+                STA TEMP1
+                BUN _XFOR1_XAUTO6
+                 / }
+                _XFOR3_XAUTO6,
+
+
+                LDA PromptTextPtrInit
+                STA TEMP1
+                _XFOR1_XAUTO7,
+                 / for (
+                    LDA TEMP1 I
+                SZA
+                BUN _XFOR2_XAUTO7
+                BUN _XFOR3_XAUTO7
+                 / ) {
+                _XFOR2_XAUTO7,
+                    LDA TEMP1 I
+                    STA DISPBUFPTR I
+                    LDA DISPBUFPTR
+                    INC
+                    STA DISPBUFPTR
+                LDA TEMP1
+                INC
+                STA TEMP1
+                BUN _XFOR1_XAUTO7
+                 / }
+                _XFOR3_XAUTO7,
+
+
+                LDA SENDBUFPTRINIT
+                STA TEMP1
+                _XFOR1_XAUTO8,
+                 / for (
+                    LDA TEMP1 I
+                SZA
+                BUN _XFOR2_XAUTO8
+                BUN _XFOR3_XAUTO8
+                 / ) {
+                _XFOR2_XAUTO8,
+                    LDA TEMP1 I
+                    STA DISPBUFPTR I
+                    LDA DISPBUFPTR
+                    INC
+                    STA DISPBUFPTR
+                LDA TEMP1
+                INC
+                STA TEMP1
+                BUN _XFOR1_XAUTO8
+                 / }
+                _XFOR3_XAUTO8,
+
+                CLA
+                STA DISPBUFPTR I
+                LDA DISPBUFPTRINIT
+                STA DISPBUFPTR
+             / < end of RenderText
+
+            ADD MASKSOUT
+            ADD MASKPIN
+            ADD MASKPOUT
+            IMK
+            CLA
+            INC
+            STA ISSTATOUT
          / }
-        XIF2PrimeDeclTrigger,
-         / < end of if PrimeDeclTrigger
+        _XIF2OutTrigger,
+         / < end of if OutTrigger
+
+
+         / > if InTrigger
+         / if (
+            LDA INPTRIG
+        SZA
+        BUN _XIF1InTrigger
+        BUN _XIF2InTrigger
+         / ) {
+        _XIF1InTrigger,
+            CLA
+            STA INPTRIG
+            LDA MASKSIN
+            ADD MASKPIN
+            ADD MASKPOUT
+            IMK
+            CLA
+            STA ISSTATOUT
+         / }
+        _XIF2InTrigger,
+         / < end of if InTrigger
 
      / < end of Prepare
 
@@ -118,49 +340,66 @@ INT_MAIN,
         SKO
         CLA
     SZA
-    BUN XIF1OutputAvailable
-    BUN XIF2OutputAvailable
+    BUN _XIF1OutputAvailable
+    BUN _XIF2OutputAvailable
      / ) {
-    XIF1OutputAvailable,
+    _XIF1OutputAvailable,
 
          / > if ShowMain
          / if (
 
-             / > beginning of GetDigitOne
-            GetDigitOne,
-                LDA TextTextPtr I
-                STA TEMP2
+             / > beginning of GetOutput
+            GetOutput,
+                LDA DISPBUFPTR I
+                STA TEMP1
 
-                 / > if StepTestText
+                 / > if StepDispText
                  / if (
-                    LDA TEMP2
+                    LDA TEMP1
                 SZA
-                BUN XIF1StepTestText
-                BUN XIF2StepTestText
+                BUN _XIF1StepDispText
+                BUN _XIF2StepDispText
                  / ) {
-                XIF1StepTestText,
-                    LDA TextTextPtr
+                _XIF1StepDispText,
+                    LDA DISPBUFPTR
                     INC
-                    STA TextTextPtr
-                 / }
-                XIF2StepTestText,
-                 / < end of if StepTestText
+                    STA DISPBUFPTR
+                BUN _XIF3StepDispText
+                 / } else {  // StepDispText
+                _XIF2StepDispText,
 
-                LDA TEMP2
-             / < end of GetDigitOne
+                     / if (
+                        LDA ISSTATOUT
+                    SZA
+                    BUN _XIF1_XAUTO9
+                    BUN _XIF2_XAUTO9
+                     / ) {
+                    _XIF1_XAUTO9,
+                        CLA
+                        INC
+                        STA INPTRIG
+                     / }
+                    _XIF2_XAUTO9,
+
+                 / }
+                _XIF3StepDispText,
+                 / < end of if StepDispText
+
+                LDA TEMP1
+             / < end of GetOutput
 
         SZA
-        BUN XIF1ShowMain
-        BUN XIF2ShowMain
+        BUN _XIF1ShowMain
+        BUN _XIF2ShowMain
          / ) {
-        XIF1ShowMain,
+        _XIF1ShowMain,
             OUT
          / }
-        XIF2ShowMain,
+        _XIF2ShowMain,
          / < end of if ShowMain
 
      / }
-    XIF2OutputAvailable,
+    _XIF2OutputAvailable,
      / < end of if OutputAvailable
 
     InterruptReturn,
@@ -169,17 +408,17 @@ INT_MAIN,
      / if (
         LDA HaltFlag
     SZA
-    BUN XIF1HaltTrigger
-    BUN XIF2HaltTrigger
+    BUN _XIF1HaltTrigger
+    BUN _XIF2HaltTrigger
      / ) {
-    XIF1HaltTrigger,
+    _XIF1HaltTrigger,
         LDA EBAK
         CLE
         CIR
         LDA ACCBAK
         BUN INT_RET I
      / }
-    XIF2HaltTrigger,
+    _XIF2HaltTrigger,
      / < end of if HaltTrigger
 
     LDA EBAK
@@ -193,415 +432,16 @@ INT_MAIN,
  / Data Segment
     ACCBAK, DEC 0
     EBAK, DEC 0
-    ShowIParam, DEC 0
-    DECLTRIG, DEC 0
+    INPTRIG, DEC 0
+    OUTTRIG, DEC 0
     SEPTRIG, DEC 0
     HaltFlag, DEC 0
+    REDRAWTRIG, DEC 0
     MASKSIN, DEC 8
     MASKSOUT, DEC 4
-    MASKPIN, DEC 2
-    MASKPOUT, DEC 1
+    MASKPIN, DEC 0
+    MASKPOUT, DEC 0
     SENDBUFFER, DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
         DEC 0
         DEC 0
         DEC 0
@@ -805,423 +645,221 @@ INT_MAIN,
         DEC 0
         DEC 0
         DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
-        DEC 0
     RECVBUFPTRINIT, SYM RECVBUFFER
     RECVBUFPTR, SYM RECVBUFFER
+    DISPBUFFER, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+    DISPBUFPTRINIT, SYM DISPBUFFER
+    DISPBUFPTR, SYM DISPBUFFER
     ASCIIENTER, DEC 10
+    ASCIISPACE, DEC 32
     ASCIICTRLD, DEC 4
     TEMP1, DEC 0
     TEMP2, DEC 0
     INTMP, DEC 0
-    TextText, CHR 
-        CHR [
-        CHR 9
-        CHR 1
-        CHR m
-        CHR M
-        CHR S
-        CHR M
+    PromptText, DEC 32
+        DEC 62
+        DEC 32
         DEC 0
-    TextTextPtrInit, SYM TextText
-    TextTextPtr, SYM TextText
+        DEC 0
+    PromptTextPtrInit, SYM PromptText
+    RedText, DEC 60
+        DEC 82
+        DEC 101
+        DEC 100
+        DEC 62
+        DEC 0
+        DEC 0
+    RedTextPtrInit, SYM RedText
+    RedBack, DEC 60
+        DEC 82
+        DEC 101
+        DEC 100
+        DEC 66
+        DEC 97
+        DEC 99
+        DEC 107
+        DEC 62
+        DEC 0
+        DEC 0
+    RedBackPtrInit, SYM RedBack
+    GreenText, DEC 60
+        DEC 71
+        DEC 114
+        DEC 101
+        DEC 101
+        DEC 110
+        DEC 62
+        DEC 0
+        DEC 0
+    GreenTextPtrInit, SYM GreenText
+    ResetText, DEC 60
+        DEC 82
+        DEC 101
+        DEC 115
+        DEC 101
+        DEC 116
+        DEC 62
+        DEC 0
+        DEC 0
+    ResetTextPtrInit, SYM ResetText
+    ClearLine, DEC 13
+        DEC 10
+        DEC 0
+        DEC 0
+    ClearLinePtrInit, SYM ClearLine
+    ISSTATOUT, DEC 0
+    STATUSCOLOR, SYM ResetText
+    STATUREAD, DEC 0
+    INPUTCHARNUM, DEC 0
 END
 

@@ -7,12 +7,18 @@
 namespace EX3{
 	using helper::indent;
 
+	long long int Statement_impl::global_cnt_ = 0;
+
 	// Statement_impl
 	std::string Statement_impl::make(){
 		std::string res = make_impl();
 		if(!res.empty() && res.back() != '\n')
 			res += "\n";
 		return res;
+	}
+
+	std::string Statement_impl::nextAutoLabel() {
+		return "_XAUTO" + std::to_string(++global_cnt_);
 	}
 
 	// Const
@@ -88,11 +94,16 @@ namespace EX3{
 	{ }
 
 	std::string If_impl::make_then_impl() {
+		std::string name_label = name_;
+		if(name_.empty())
+			name_label = Statement_impl::nextAutoLabel();
 		std::string res;
-		std::string if1 = "XIF1" + name_;
-		std::string if2 = "XIF2" + name_;
-		//std::string if3 = "XIF3" + name_;
-		res += "\n / > if " + name_ + "\n";
+		std::string if1 = "_XIF1" + name_label;
+		std::string if2 = "_XIF2" + name_label;
+		//std::string if3 = "XIF3" + name_label;
+		res += "\n";
+		if(!name_.empty())
+			res += " / > if " + name_ + "\n";
 		res += " / if (\n";
 		res += indent(stats_cond_.make());
 		res += "SZA\n";
@@ -103,16 +114,23 @@ namespace EX3{
 		res += indent(stats_.make());
 		res += " / }\n";
 		res += if2 + "," + "\n";
-		res += " / < end of if " + name_ + "\n\n";
+		if(!name_.empty())
+			res += " / < end of if " + name_ + "\n";
+		res += "\n";
 		return res;
 	}
 
 	std::string If_impl::make_then_else_impl() {
+		std::string name_label = name_;
+		if(name_.empty())
+			name_label = Statement_impl::nextAutoLabel();
 		std::string res;
-		std::string if1 = "XIF1" + name_;
-		std::string if2 = "XIF2" + name_;
-		std::string if3 = "XIF3" + name_;
-		res += "\n / > if " + name_ + "\n";
+		std::string if1 = "_XIF1" + name_label;
+		std::string if2 = "_XIF2" + name_label;
+		std::string if3 = "_XIF3" + name_label;
+		res += "\n";
+		if(!name_.empty())
+			res += " / > if " + name_ + "\n";
 		res += " / if (\n";
 		res += indent(stats_cond_.make());
 		res += "SZA\n";
@@ -127,7 +145,9 @@ namespace EX3{
 		res += indent(stats_else_.make());
 		res += " / }\n";
 		res += if3 + "," + "\n";
-		res += " / < end of if " + name_ + "\n\n";
+		if(!name_.empty())
+			res += " / < end of if " + name_ + "\n";
+		res += "\n";
 		return res;
 	}
 
@@ -141,7 +161,7 @@ namespace EX3{
 	{ }
 
 	std::string Break_impl::make_impl(){
-		std::string wh3 = "XWH3" + name_;
+		std::string wh3 = "_XWH3" + name_;
 		return "BUN " + wh3;
 	}
 	// Continue
@@ -150,7 +170,7 @@ namespace EX3{
 	{ }
 
 	std::string Continue_impl::make_impl(){
-		std::string wh1 = "XWH1" + name_;
+		std::string wh1 = "_XWH1" + name_;
 		return "BUN " + wh1;
 	}
 
@@ -172,11 +192,16 @@ namespace EX3{
 	{ }
 
 	std::string While_impl::make_impl() {
+		std::string name_label = name_;
+		if(name_.empty())
+			name_label = Statement_impl::nextAutoLabel();
 		std::string res;
-		std::string wh1 = "XWH1" + name_;
-		std::string wh2 = "XWH2" + name_;
-		std::string wh3 = "XWH3" + name_;
-		res += "\n / > while loop " + name_ + "\n";
+		std::string wh1 = "_XWH1" + name_label;
+		std::string wh2 = "_XWH2" + name_label;
+		std::string wh3 = "_XWH3" + name_label;
+		res += "\n";
+		if(!name_.empty())
+			res += " / > while loop " + name_ + "\n";
 		res += wh1 + "," + "\n";
 		res += " / while (\n";
 		res += indent(stats_cond_.make());
@@ -189,7 +214,49 @@ namespace EX3{
 		res += "BUN " + wh1 + "\n";
 		res += " / }\n";
 		res += wh3 + "," + "\n";
-		res += " / < end of while loop " + name_ + "\n\n";
+		if(!name_.empty())
+			res += " / < end of while loop " + name_ + "\n";
+		res += "\n";
+		return res;
+	}
+
+	// For
+	For_impl::For_impl(std::string name, std::tuple<StatementList, StatementList, StatementList> stats_init_cond_after, StatementList stats, bool invert)
+		: name_(name)
+		, stats_(stats)
+		, invert_(invert)
+	{
+		std::tie(stats_init_, stats_cond_, stats_after_) = stats_init_cond_after;
+	}
+
+	std::string For_impl::make_impl() {
+		std::string name_label = name_;
+		if(name_.empty())
+			name_label = Statement_impl::nextAutoLabel();
+		std::string res;
+		std::string wh1 = "_XFOR1" + name_label;
+		std::string wh2 = "_XFOR2" + name_label;
+		std::string wh3 = "_XFOR3" + name_label;
+		res += "\n";
+		if(!name_.empty())
+			res += " / > for loop " + name_ + "\n";
+		res += stats_init_.make();
+		res += wh1 + "," + "\n";
+		res += " / for (\n";
+		res += indent(stats_cond_.make());
+		res += "SZA\n";
+		res += "BUN " + (invert_ ? wh3 : wh2) + "\n";
+		res += "BUN " + (invert_ ? wh2 : wh3) + "\n";
+		res += " / ) {\n";
+		res += wh2 + "," + "\n";
+		res += indent(stats_.make());
+		res += stats_after_.make();
+		res += "BUN " + wh1 + "\n";
+		res += " / }\n";
+		res += wh3 + "," + "\n";
+		if(!name_.empty())
+			res += " / < end of for loop " + name_ + "\n";
+		res += "\n";
 		return res;
 	}
 
