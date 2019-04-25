@@ -10,7 +10,9 @@ int main(){
 	Data mask_init(INT, "MASKINIT", 15);
 	Data show_i(INT, "ShowIParam", 0);
 
-	Data out_trigger(INT, "OutFlag", 0);
+	Data in_trigger(INT, "InFlag", 0);
+	Data out_trigger(INT, "DECLTRIG", 0);
+	Data sep_trigger(INT, "SEPTRIG", 0);
 	Data halt_trigger(INT, "HaltFlag", 0);
 
 	Data IN_tmp(INT, "INTmp", 0);
@@ -44,8 +46,6 @@ int main(){
 	Data R(INT, "RVAL", 0);
 	Data X(INT, "XVAL", 0);
 
-	Data decr_trigger(INT, "DECLTRIG", 0);
-	Data sep_trigger(INT, "SEPTRIG", 0);
 	Data min_primep1(INT, "MINIMUMPRIMEP1", 3);
 
 	// CPRet <- `N` is prime?
@@ -96,7 +96,7 @@ int main(){
 	StatementList checkChar = {
 		// Enter -> Start output
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
-			decr_trigger = One,
+			out_trigger = One,
 		}, true),
 		// ^D -> halt
 		If("CheckCharCtrlD", { -ascii_ctrl_D + IN_tmp }, {
@@ -114,9 +114,9 @@ int main(){
 
 	// Process Trigger
 	StatementList prepareOutput = {
-		If("PrimeDeclTrigger", { +decr_trigger }, {
+		If("PrimeDeclTrigger", { +out_trigger }, {
 			// Decrement to Prime Number
-			decr_trigger = Zero,
+			out_trigger = Zero,
 			While("PrimeSearchLoop", { +N }, {
 				checkPrime.stat("CP"),
 				If("BreakCPRet", { +CPRet }, {
@@ -153,7 +153,7 @@ int main(){
 			If("AnythingToShow", { +sep_trigger }, {
 				sep_trigger = Zero,
 				N = --N_bak,
-				decr_trigger = One
+				out_trigger = One
 				+ascii_ent,
 				Goto("GetDigitOutT_End")
 			}),
@@ -186,6 +186,7 @@ int main(){
 			If("DecrNeeded", { MoreEq(N_bak, min_primep1, t1) }, {
 				sep_trigger = One,
 			}),
+			//TODO: else: in_trigger = One,
 		}, true),
 
 		t2 + ascii_0,
