@@ -86,6 +86,11 @@ INT_MAIN,
                 CLA
                 INC
                 STA OPENTRIG
+                CLA
+                INC
+                STA SENDTRIG
+                LDA SENDBUFPTRINIT
+                STA SENDBUFPTR
             BUN _XIF3CheckCharEnt
              / } else {  // CheckCharEnt
             _XIF2CheckCharEnt,
@@ -108,10 +113,10 @@ INT_MAIN,
                         INC
                         ADD SENDBUFPTRINIT
                     SZA
-                    BUN _XIF1_XAUTO15
-                    BUN _XIF2_XAUTO15
+                    BUN _XIF1_XAUTO16
+                    BUN _XIF2_XAUTO16
                      / ) {
-                    _XIF1_XAUTO15,
+                    _XIF1_XAUTO16,
                         LDA SENDBUFPTR
                         CMA
                         INC
@@ -120,7 +125,7 @@ INT_MAIN,
                         CLA
                         STA SENDBUFPTR I
                      / }
-                    _XIF2_XAUTO15,
+                    _XIF2_XAUTO16,
 
                 BUN _XIF3CheckCharBS
                  / } else {  // CheckCharBS
@@ -132,10 +137,10 @@ INT_MAIN,
                         INC
                         ADD SENDBUFENDANCP
                     SZA
-                    BUN _XIF1_XAUTO16
-                    BUN _XIF2_XAUTO16
+                    BUN _XIF1_XAUTO17
+                    BUN _XIF2_XAUTO17
                      / ) {
-                    _XIF1_XAUTO16,
+                    _XIF1_XAUTO17,
                         LDA INTMP
                         STA SENDBUFPTR I
                         LDA SENDBUFPTR
@@ -144,7 +149,7 @@ INT_MAIN,
                         CLA
                         STA SENDBUFPTR I
                      / }
-                    _XIF2_XAUTO16,
+                    _XIF2_XAUTO17,
 
                  / }
                 _XIF3CheckCharBS,
@@ -220,62 +225,73 @@ INT_MAIN,
                     CLA
                     STA OPENTRIG
 
-                    LDA NewMsgTextPtrInit
-                    STA TEMP1
-                    _XFOR1_XAUTO2,
-                     / for (
-                        LDA TEMP1 I
+                     / if (
+                        LDA STATUREAD
                     SZA
-                    BUN _XFOR2_XAUTO2
-                    BUN _XFOR3_XAUTO2
+                    BUN _XIF1_XAUTO2
+                    BUN _XIF2_XAUTO2
                      / ) {
-                    _XFOR2_XAUTO2,
-                        LDA TEMP1 I
+                    _XIF1_XAUTO2,
+                        CLA
+                        STA STATUREAD
+
+                        LDA NewMsgTextPtrInit
+                        STA TEMP1
+                        _XFOR1_XAUTO3,
+                         / for (
+                            LDA TEMP1 I
+                        SZA
+                        BUN _XFOR2_XAUTO3
+                        BUN _XFOR3_XAUTO3
+                         / ) {
+                        _XFOR2_XAUTO3,
+                            LDA TEMP1 I
+                            STA DISPBUFPTR I
+                            LDA DISPBUFPTR
+                            INC
+                            STA DISPBUFPTR
+                        LDA TEMP1
+                        INC
+                        STA TEMP1
+                        BUN _XFOR1_XAUTO3
+                         / }
+                        _XFOR3_XAUTO3,
+
+
+                        LDA RECVBUFPTRINIT
+                        STA TEMP1
+                        _XFOR1_XAUTO4,
+                         / for (
+                            LDA TEMP1 I
+                        SZA
+                        BUN _XFOR2_XAUTO4
+                        BUN _XFOR3_XAUTO4
+                         / ) {
+                        _XFOR2_XAUTO4,
+                            LDA TEMP1 I
+                            STA DISPBUFPTR I
+                            LDA DISPBUFPTR
+                            INC
+                            STA DISPBUFPTR
+                        LDA TEMP1
+                        INC
+                        STA TEMP1
+                        BUN _XFOR1_XAUTO4
+                         / }
+                        _XFOR3_XAUTO4,
+
+                        LDA RECVBUFPTRINIT
+                        STA RECVBUFPTR
+                        CLA
+                        STA RECVBUFPTR I
+                        LDA ASCIIENTER
                         STA DISPBUFPTR I
                         LDA DISPBUFPTR
                         INC
                         STA DISPBUFPTR
-                    LDA TEMP1
-                    INC
-                    STA TEMP1
-                    BUN _XFOR1_XAUTO2
                      / }
-                    _XFOR3_XAUTO2,
+                    _XIF2_XAUTO2,
 
-
-                    LDA RECVBUFPTRINIT
-                    STA TEMP1
-                    _XFOR1_XAUTO3,
-                     / for (
-                        LDA TEMP1 I
-                    SZA
-                    BUN _XFOR2_XAUTO3
-                    BUN _XFOR3_XAUTO3
-                     / ) {
-                    _XFOR2_XAUTO3,
-                        LDA TEMP1 I
-                        STA DISPBUFPTR I
-                        LDA DISPBUFPTR
-                        INC
-                        STA DISPBUFPTR
-                    LDA TEMP1
-                    INC
-                    STA TEMP1
-                    BUN _XFOR1_XAUTO3
-                     / }
-                    _XFOR3_XAUTO3,
-
-                    LDA RECVBUFPTRINIT
-                    STA RECVBUFPTR
-                    CLA
-                    STA RECVBUFPTR I
-                    LDA ASCIIENTER
-                    STA DISPBUFPTR I
-                    LDA DISPBUFPTR
-                    INC
-                    STA DISPBUFPTR
-                    CLA
-                    STA STATUREAD
                  / }
                 _XIF2OpenArrivedMsg,
                  / < end of if OpenArrivedMsg
@@ -289,55 +305,22 @@ INT_MAIN,
                  / if (
                     LDA STATUREAD
                 SZA
-                BUN _XIF1_XAUTO4
-                BUN _XIF2_XAUTO4
+                BUN _XIF1_XAUTO5
+                BUN _XIF2_XAUTO5
                  / ) {
-                _XIF1_XAUTO4,
+                _XIF1_XAUTO5,
                     LDA RedBackPtrInit
                     STA STATUSCOLOR
-                BUN _XIF3_XAUTO4
+                BUN _XIF3_XAUTO5
                  / } else {  // 
-                _XIF2_XAUTO4,
+                _XIF2_XAUTO5,
                     LDA ResetTextPtrInit
                     STA STATUSCOLOR
                  / }
-                _XIF3_XAUTO4,
+                _XIF3_XAUTO5,
 
 
                 LDA STATUSCOLOR
-                STA TEMP1
-                _XFOR1_XAUTO5,
-                 / for (
-                    LDA TEMP1 I
-                SZA
-                BUN _XFOR2_XAUTO5
-                BUN _XFOR3_XAUTO5
-                 / ) {
-                _XFOR2_XAUTO5,
-                    LDA TEMP1 I
-                    STA DISPBUFPTR I
-                    LDA DISPBUFPTR
-                    INC
-                    STA DISPBUFPTR
-                LDA TEMP1
-                INC
-                STA TEMP1
-                BUN _XFOR1_XAUTO5
-                 / }
-                _XFOR3_XAUTO5,
-
-                LDA ASCIISPACE
-                STA DISPBUFPTR I
-                LDA DISPBUFPTR
-                INC
-                STA DISPBUFPTR
-                LDA ASCIISPACE
-                STA DISPBUFPTR I
-                LDA DISPBUFPTR
-                INC
-                STA DISPBUFPTR
-
-                LDA ResetTextPtrInit
                 STA TEMP1
                 _XFOR1_XAUTO6,
                  / for (
@@ -359,6 +342,39 @@ INT_MAIN,
                  / }
                 _XFOR3_XAUTO6,
 
+                LDA ASCIISPACE
+                STA DISPBUFPTR I
+                LDA DISPBUFPTR
+                INC
+                STA DISPBUFPTR
+                LDA ASCIISPACE
+                STA DISPBUFPTR I
+                LDA DISPBUFPTR
+                INC
+                STA DISPBUFPTR
+
+                LDA ResetTextPtrInit
+                STA TEMP1
+                _XFOR1_XAUTO7,
+                 / for (
+                    LDA TEMP1 I
+                SZA
+                BUN _XFOR2_XAUTO7
+                BUN _XFOR3_XAUTO7
+                 / ) {
+                _XFOR2_XAUTO7,
+                    LDA TEMP1 I
+                    STA DISPBUFPTR I
+                    LDA DISPBUFPTR
+                    INC
+                    STA DISPBUFPTR
+                LDA TEMP1
+                INC
+                STA TEMP1
+                BUN _XFOR1_XAUTO7
+                 / }
+                _XFOR3_XAUTO7,
+
                 LDA GreenTextPtrInit
                 STA TEMP2
 
@@ -367,22 +383,6 @@ INT_MAIN,
                     CMA
                     INC
                     ADD SENDBUFENDANCP
-                SZA
-                BUN _XIF2_XAUTO7
-                BUN _XIF1_XAUTO7
-                 / ) {
-                _XIF1_XAUTO7,
-                    LDA RedTextPtrInit
-                    STA TEMP2
-                 / }
-                _XIF2_XAUTO7,
-
-
-                 / if (
-                    LDA SENDBUFPTR
-                    CMA
-                    INC
-                    ADD SENDBUFPTRINIT
                 SZA
                 BUN _XIF2_XAUTO8
                 BUN _XIF1_XAUTO8
@@ -394,16 +394,32 @@ INT_MAIN,
                 _XIF2_XAUTO8,
 
 
+                 / if (
+                    LDA SENDBUFPTR
+                    CMA
+                    INC
+                    ADD SENDBUFPTRINIT
+                SZA
+                BUN _XIF2_XAUTO9
+                BUN _XIF1_XAUTO9
+                 / ) {
+                _XIF1_XAUTO9,
+                    LDA RedTextPtrInit
+                    STA TEMP2
+                 / }
+                _XIF2_XAUTO9,
+
+
                 LDA TEMP2
                 STA TEMP1
-                _XFOR1_XAUTO9,
+                _XFOR1_XAUTO10,
                  / for (
                     LDA TEMP1 I
                 SZA
-                BUN _XFOR2_XAUTO9
-                BUN _XFOR3_XAUTO9
+                BUN _XFOR2_XAUTO10
+                BUN _XFOR3_XAUTO10
                  / ) {
-                _XFOR2_XAUTO9,
+                _XFOR2_XAUTO10,
                     LDA TEMP1 I
                     STA DISPBUFPTR I
                     LDA DISPBUFPTR
@@ -412,9 +428,9 @@ INT_MAIN,
                 LDA TEMP1
                 INC
                 STA TEMP1
-                BUN _XFOR1_XAUTO9
+                BUN _XFOR1_XAUTO10
                  / }
-                _XFOR3_XAUTO9,
+                _XFOR3_XAUTO10,
 
                 LDA ASCIISPACE
                 STA DISPBUFPTR I
@@ -450,7 +466,7 @@ INT_MAIN,
                     CMA
                     STA TEMPQ
 
-                    _XWH1_XAUTO10,
+                    _XWH1_XAUTO11,
                      / while (
                         LDA TEMPB
                         CLE
@@ -468,10 +484,10 @@ INT_MAIN,
                         CIL
                         ADD TEMP2
                     SZA
-                    BUN _XWH3_XAUTO10
-                    BUN _XWH2_XAUTO10
+                    BUN _XWH3_XAUTO11
+                    BUN _XWH2_XAUTO11
                      / ) {
-                    _XWH2_XAUTO10,
+                    _XWH2_XAUTO11,
                         LDA TEMPA
                         STA TEMPR
                         LDA TEMPQ
@@ -480,9 +496,9 @@ INT_MAIN,
                         LDA TEMPA
                         ADD TEMPB
                         STA TEMPA
-                    BUN _XWH1_XAUTO10
+                    BUN _XWH1_XAUTO11
                      / }
-                    _XWH3_XAUTO10,
+                    _XWH3_XAUTO11,
 
                     LDA TEMPQ
                     ADD ASCIIZERO
@@ -502,29 +518,6 @@ INT_MAIN,
 
 
                 LDA DispCountPostfixPtrInit
-                STA TEMP1
-                _XFOR1_XAUTO11,
-                 / for (
-                    LDA TEMP1 I
-                SZA
-                BUN _XFOR2_XAUTO11
-                BUN _XFOR3_XAUTO11
-                 / ) {
-                _XFOR2_XAUTO11,
-                    LDA TEMP1 I
-                    STA DISPBUFPTR I
-                    LDA DISPBUFPTR
-                    INC
-                    STA DISPBUFPTR
-                LDA TEMP1
-                INC
-                STA TEMP1
-                BUN _XFOR1_XAUTO11
-                 / }
-                _XFOR3_XAUTO11,
-
-
-                LDA ResetTextPtrInit
                 STA TEMP1
                 _XFOR1_XAUTO12,
                  / for (
@@ -547,7 +540,7 @@ INT_MAIN,
                 _XFOR3_XAUTO12,
 
 
-                LDA PromptTextPtrInit
+                LDA ResetTextPtrInit
                 STA TEMP1
                 _XFOR1_XAUTO13,
                  / for (
@@ -570,7 +563,7 @@ INT_MAIN,
                 _XFOR3_XAUTO13,
 
 
-                LDA SENDBUFPTRINIT
+                LDA PromptTextPtrInit
                 STA TEMP1
                 _XFOR1_XAUTO14,
                  / for (
@@ -591,6 +584,29 @@ INT_MAIN,
                 BUN _XFOR1_XAUTO14
                  / }
                 _XFOR3_XAUTO14,
+
+
+                LDA SENDBUFPTRINIT
+                STA TEMP1
+                _XFOR1_XAUTO15,
+                 / for (
+                    LDA TEMP1 I
+                SZA
+                BUN _XFOR2_XAUTO15
+                BUN _XFOR3_XAUTO15
+                 / ) {
+                _XFOR2_XAUTO15,
+                    LDA TEMP1 I
+                    STA DISPBUFPTR I
+                    LDA DISPBUFPTR
+                    INC
+                    STA DISPBUFPTR
+                LDA TEMP1
+                INC
+                STA TEMP1
+                BUN _XFOR1_XAUTO15
+                 / }
+                _XFOR3_XAUTO15,
 
                 CLA
                 STA DISPBUFPTR I
@@ -720,10 +736,10 @@ INT_MAIN,
                     INC
                     ADD RECVBUFENDANCP
                 SZA
-                BUN _XIF1_XAUTO17
-                BUN _XIF2_XAUTO17
+                BUN _XIF1_XAUTO18
+                BUN _XIF2_XAUTO18
                  / ) {
-                _XIF1_XAUTO17,
+                _XIF1_XAUTO18,
                     LDA INTMP
                     STA RECVBUFPTR I
                     LDA RECVBUFPTR
@@ -735,7 +751,7 @@ INT_MAIN,
                     INC
                     STA STATUREAD
                  / }
-                _XIF2_XAUTO17,
+                _XIF2_XAUTO18,
 
              / }
             _XIF3CheckCharBSPara,
@@ -761,10 +777,10 @@ INT_MAIN,
          / if (
             LDA SENDTRIG
         SZA
-        BUN _XIF1_XAUTO18
-        BUN _XIF2_XAUTO18
+        BUN _XIF1_XAUTO19
+        BUN _XIF2_XAUTO19
          / ) {
-        _XIF1_XAUTO18,
+        _XIF1_XAUTO19,
 
              / if (
 
@@ -792,14 +808,17 @@ INT_MAIN,
                  / < end of GetOutputPara
 
             SZA
-            BUN _XIF1_XAUTO19
-            BUN _XIF2_XAUTO19
+            BUN _XIF1_XAUTO20
+            BUN _XIF2_XAUTO20
              / ) {
-            _XIF1_XAUTO19,
+            _XIF1_XAUTO20,
                 OUT
-            BUN _XIF3_XAUTO19
+                LDA DEBUGNUM
+                INC
+                STA DEBUGNUM
+            BUN _XIF3_XAUTO20
              / } else {  // 
-            _XIF2_XAUTO19,
+            _XIF2_XAUTO20,
                 CLA
                 STA SENDTRIG
                 LDA SENDBUFPTRINIT
@@ -807,10 +826,10 @@ INT_MAIN,
                 CLA
                 STA SENDBUFPTR I
              / }
-            _XIF3_XAUTO19,
+            _XIF3_XAUTO20,
 
          / }
-        _XIF2_XAUTO18,
+        _XIF2_XAUTO19,
 
      / }
     _XIF2OutputAvailablePara,
@@ -853,6 +872,7 @@ INT_MAIN,
     HaltFlag, DEC 0
     REDRAWTRIG, DEC 0
     OPENTRIG, DEC 0
+    DEBUGNUM, DEC 0
     MASKSIN, DEC 8
     MASKSOUT, DEC 4
     MASKPIN, DEC 0

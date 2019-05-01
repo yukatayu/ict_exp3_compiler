@@ -24,9 +24,10 @@ int main(){
 	Data redraw_trigger(INT, "REDRAWTRIG", 0);
 	Data open_trigger(INT, "OPENTRIG", 0);
 
+	Data debug_num(INT, "DEBUGNUM", 0);	// TODO: debug
+
 	Data mask_sin (INT, "MASKSIN",  8);
 	Data mask_sout(INT, "MASKSOUT", 4);
-	//Data mask_pin (INT, "MASKPIN",  2);
 	Data mask_pin (INT, "MASKPIN",  0);  // TODO
 	Data mask_pout(INT, "MASKPOUT", 1);
 	Data mask_s(INT, "MASKS", 0);
@@ -120,12 +121,14 @@ int main(){
 		strCpy(clear_line_ptr_init, disp_buf_ptr, t1),
 		If("OpenArrivedMsg", {+open_trigger}, {
 			open_trigger = Zero,
-			strCpy(new_message_text_ptr_init, disp_buf_ptr, t1),
-			strCpy(recv_buf_ptr_init, disp_buf_ptr, t1),
-			recv_buf_ptr = +recv_buf_ptr_init,
-			*recv_buf_ptr = Zero,
-			*disp_buf_ptr = +ascii_ent, ++disp_buf_ptr,
-			status_unread = Zero,
+			If({+status_unread}, {
+				status_unread = Zero,
+				strCpy(new_message_text_ptr_init, disp_buf_ptr, t1),
+				strCpy(recv_buf_ptr_init, disp_buf_ptr, t1),
+				recv_buf_ptr = +recv_buf_ptr_init,
+				*recv_buf_ptr = Zero,
+				*disp_buf_ptr = +ascii_ent, ++disp_buf_ptr,
+			})
 		}),
 
 		*disp_buf_ptr = +ascii_sp, ++disp_buf_ptr,
@@ -194,7 +197,8 @@ int main(){
 			open_trigger = One,
 
 			//If({ -ascii_bs + IN_tmp }, {
-			/////////////send_trigger = One,
+			send_trigger = One,
+			send_buf_ptr = +send_buf_ptr_init,
 			//}),
 			// Debug TODO: Remove (unneeded clearing)
 			//send_buf_ptr = +send_buf_ptr_init,
@@ -334,7 +338,8 @@ int main(){
 			If({+send_trigger}, {
 				// Output a char (If any data remains)
 				If({ getOutputParallel.stat("GetOutputPara") }, {
-					"OUT"_asm
+					"OUT"_asm,
+					++debug_num  // TODO: remove
 				}, Else, {
 					// パラレル出力フラグをOFFにして、出力バッファをクリア
 					send_trigger = Zero,
