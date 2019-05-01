@@ -22,6 +22,7 @@ int main(){
 	Data send_trigger(INT, "SENDTRIG", 0);
 	Data halt_trigger(INT, "HaltFlag", 0);
 	Data redraw_trigger(INT, "REDRAWTRIG", 0);
+	Data open_trigger(INT, "OPENTRIG", 0);
 
 	Data mask_sin (INT, "MASKSIN",  8);
 	Data mask_sout(INT, "MASKSOUT", 4);
@@ -40,7 +41,7 @@ int main(){
 	Data send_buf_end_anchor_ptr(PTR, "SENDBUFENDANCP", send_buf_end_anchor);
 
 	Data recv_buf(INT, "RECVBUFFER", 0);
-	for(int i=100; i --> 0;)
+	for(int i=99; i --> 0;)
 		Data(INT, "", 0);
 	Data recv_buf_end_anchor(INT, "RECVBUFENDANC", 0);
 	Data recv_buf_ptr_init(PTR, "RECVBUFPTRINIT", recv_buf);
@@ -48,7 +49,7 @@ int main(){
 	Data recv_buf_end_anchor_ptr(PTR, "RECVBUFENDANCP", recv_buf_end_anchor);
 
 	Data disp_buf(INT, "DISPBUFFER", 0);
-	for(int i=150; i --> 0;)
+	for(int i=250; i --> 0;)
 		Data(INT, "", 0);
 	Data disp_buf_ptr_init(PTR, "DISPBUFPTRINIT", disp_buf);
 	Data disp_buf_ptr(PTR, "DISPBUFPTR", disp_buf);
@@ -81,6 +82,7 @@ int main(){
 
 	helper_ConstString_Safe(disp_count_postfix, "DispCountPostfix", "/100");
 	helper_ConstString_Safe(prompt_text, "PromptText", " > ");
+	helper_ConstString_Safe(new_message_text, "NewMsgText", "New Message > ");
 
 	helper_ConstString_Safe(red_text, "RedText", "\033[91m");  // Red (Forward)
 	helper_ConstString_Safe(red_back, "RedBack", "\033[41m");  // Red Back
@@ -116,6 +118,16 @@ int main(){
 		}),*/
 
 		strCpy(clear_line_ptr_init, disp_buf_ptr, t1),
+		If("OpenArrivedMsg", {+open_trigger}, {
+			open_trigger = Zero,
+			strCpy(new_message_text_ptr_init, disp_buf_ptr, t1),
+			strCpy(recv_buf_ptr_init, disp_buf_ptr, t1),
+			recv_buf_ptr = +recv_buf_ptr_init,
+			*recv_buf_ptr = Zero,
+			*disp_buf_ptr = +ascii_ent, ++disp_buf_ptr,
+			status_unread = Zero,
+		}),
+
 		*disp_buf_ptr = +ascii_sp, ++disp_buf_ptr,
 		// 未読があったら赤色
 		//	status_color = Cond("Debug_Cond", { +status_unread }, { +red_back_ptr_init }, { +reset_text_ptr_init }, true),
@@ -161,6 +173,8 @@ int main(){
 		strCpy(prompt_text_ptr_init, disp_buf_ptr, t1),
 		strCpy(send_buf_ptr_init, disp_buf_ptr, t1),
 
+		//"renderTextReturn,"_asm,
+
 		// NULL文字を追加し、ポインタ位置をリセット
 		*disp_buf_ptr = Zero,
 		disp_buf_ptr = +disp_buf_ptr_init,
@@ -175,15 +189,16 @@ int main(){
 		// Enter -> Start output
 		// TODO: とりあえずリセットして未読フラグを反転している (デバッグ)
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
-			status_unread = -status_unread,
-			++status_unread,
+			//status_unread = -status_unread,
+			//++status_unread,
+			open_trigger = One,
 
-			If({ -ascii_bs + IN_tmp }, {
-				send_trigger = One,
-			}),
+			//If({ -ascii_bs + IN_tmp }, {
+			/////////////send_trigger = One,
+			//}),
 			// Debug TODO: Remove (unneeded clearing)
-			send_buf_ptr = +send_buf_ptr_init,
-			*send_buf_ptr = Zero
+			//send_buf_ptr = +send_buf_ptr_init,
+			//*send_buf_ptr = Zero
 		}, Else, {
 			If("CheckCharBS", { -ascii_bs + IN_tmp }, {
 				If({-send_buf_ptr + send_buf_ptr_init}, {
@@ -203,6 +218,20 @@ int main(){
 		mask_s = +mask_sout,
 		+mask_s + mask_p,
 		"IMK"_asm,
+	};
+
+	StatementList inputCharParallel = {
+		If("CheckCharBSPara", { -ascii_bs + IN_tmp }, {
+			// do nothing: Debug
+		}, Else, {
+			// バッファに蓄積
+			If({-recv_buf_ptr + recv_buf_end_anchor_ptr}, {
+				*recv_buf_ptr = +IN_tmp,
+				++recv_buf_ptr,
+				*recv_buf_ptr = Zero,
+				status_unread = One,
+			})
+		}, true)
 	};
 
 	// Process Trigger
@@ -233,13 +262,24 @@ int main(){
 		+t1
 	};
 
+	// Get Next Output (Parallel)
+	StatementList getOutputParallel = {
+		t1 = +*send_buf_ptr,
+		If("StepOutputText", { +t1 }, {
+			++send_buf_ptr
+		})
+		+t1
+	};
+
 	// Interrupt Routine
 	StatementList interruptMain = {
 		// Save Acc, E
 		AccBak = Const(),
 		EBak = GetE,
 
+		//
 		// シリアルポート処理
+		//
 		"SIO"_asm,
 
 		// Get Input
@@ -270,9 +310,41 @@ int main(){
 			}),
 		}),
 
+		//
 		// パラレルポート処理
-		"SIO"_asm,
+		//
+		"PIO"_asm,
+		If("InputAvailablePara", {
+			// If input is available ...
+			One,
+			"SKI"_asm,
+			"CLA"_asm
+		}, {
+			// Input a digit
+			IN_tmp = Const("INP"),
+			inputCharParallel.stat()
+		}),
+		// Output
+		If("OutputAvailablePara", {
+			// If output is available ...
+			One,
+			"SKO"_asm,
+			"CLA"_asm
+		}, {
+			If({+send_trigger}, {
+				// Output a char (If any data remains)
+				If({ getOutputParallel.stat("GetOutputPara") }, {
+					"OUT"_asm
+				}, Else, {
+					// パラレル出力フラグをOFFにして、出力バッファをクリア
+					send_trigger = Zero,
+					send_buf_ptr = +send_buf_ptr_init,
+					*send_buf_ptr = Zero
+				})
+			})
+		}),
 
+		"SIO"_asm,  // TODO: debug
 		// Return
 		"InterruptReturn,"_asm,
 		If("HaltTrigger", { +halt_trigger },{
@@ -298,7 +370,7 @@ int main(){
 
 		//+mask_sin + mask_pin + mask_pout,
 		mask_s = +mask_sout,
-		mask_p = +mask_pin,
+		mask_p = +mask_pin + mask_pout,
 		+mask_s + mask_p,
 		"IMK"_asm,
 		"ION"_asm,	// enable interrupt
