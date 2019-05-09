@@ -28,7 +28,7 @@ int main(){
 
 	Data mask_sin (INT, "MASKSIN",  8);
 	Data mask_sout(INT, "MASKSOUT", 4);
-	Data mask_pin (INT, "MASKPIN",  2);  // TODO
+	Data mask_pin (INT, "MASKPIN",  2);
 	Data mask_pout(INT, "MASKPOUT", 1);
 	Data mask_s(INT, "MASKS", 0);
 	Data mask_p(INT, "MASKP", 0);
@@ -39,7 +39,7 @@ int main(){
 	Data send_buf_end_anchor(INT, "SENDBUFENDANC", 0);
 	Data send_buf_ptr_init(PTR, "SENDBUFPTRINIT", send_buf);
 	Data send_buf_ptr(PTR, "SENDBUFPTR", send_buf);
-	Data send_buf_ptr_para(PTR, "SENDBUFPTR2", send_buf);
+	//Data send_buf_ptr_para(PTR, "SENDBUFPTR2", send_buf);
 	Data send_buf_end_anchor_ptr(PTR, "SENDBUFENDANCP", send_buf_end_anchor);
 
 	Data recv_buf(INT, "RECVBUFFER", 0);
@@ -200,7 +200,7 @@ int main(){
 
 			//If({ -ascii_bs + IN_tmp }, {
 			send_trigger = One,
-			send_buf_ptr_para = +send_buf_ptr_init,
+			send_buf_ptr = +send_buf_ptr_init,
 			// パラレルを出力モードに
 			mask_p = +mask_pout,
 			+mask_s + mask_p,
@@ -238,7 +238,7 @@ int main(){
 	};
 
 	StatementList inputCharParallel = {
-		If("CheckCharBSPara", { -ascii_bs + IN_tmp }, {
+		If("CheckCharBSPara", { -ascii_del + IN_tmp }, {
 			// do nothing: Debug
 		}, Else, {
 			// バッファに蓄積
@@ -281,9 +281,9 @@ int main(){
 
 	// Get Next Output (Parallel)
 	StatementList getOutputParallel = {
-		t1 = +*send_buf_ptr_para,
+		t1 = +*send_buf_ptr,
 		If("StepOutputText", { +t1 }, {
-			++send_buf_ptr_para
+			++send_buf_ptr
 		})
 		+t1
 	};
@@ -356,8 +356,6 @@ int main(){
 				}, Else, {
 					// パラレル出力フラグをOFFにして、出力バッファをクリア
 					send_trigger = Zero,
-					+ascii_ent,
-					"OUT"_asm,
 					send_buf_ptr = +send_buf_ptr_init,
 					*send_buf_ptr = Zero,
 					// パラレルを入力モードに

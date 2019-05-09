@@ -89,7 +89,7 @@ INT_MAIN,
                 INC
                 STA SENDTRIG
                 LDA SENDBUFPTRINIT
-                STA SENDBUFPTR2
+                STA SENDBUFPTR
                 LDA MASKPOUT
                 STA MASKP
                 LDA MASKS
@@ -754,7 +754,7 @@ INT_MAIN,
 
              / > if CheckCharBSPara
              / if (
-                LDA ASCIIBKSPACE
+                LDA ASCIIDELETE
                 CMA
                 INC
                 ADD INTMP
@@ -823,7 +823,7 @@ INT_MAIN,
 
                  / > beginning of GetOutputPara
                 GetOutputPara,
-                    LDA SENDBUFPTR2 I
+                    LDA SENDBUFPTR I
                     STA TEMP1
 
                      / > if StepOutputText
@@ -834,9 +834,9 @@ INT_MAIN,
                     BUN _XIF2StepOutputText
                      / ) {
                     _XIF1StepOutputText,
-                        LDA SENDBUFPTR2
+                        LDA SENDBUFPTR
                         INC
-                        STA SENDBUFPTR2
+                        STA SENDBUFPTR
                      / }
                     _XIF2StepOutputText,
                      / < end of if StepOutputText
@@ -858,8 +858,6 @@ INT_MAIN,
             _XIF2_XAUTO22,
                 CLA
                 STA SENDTRIG
-                LDA ASCIIENTER
-                OUT
                 LDA SENDBUFPTRINIT
                 STA SENDBUFPTR
                 CLA
@@ -1026,7 +1024,6 @@ INT_MAIN,
     SENDBUFENDANC, DEC 0
     SENDBUFPTRINIT, SYM SENDBUFFER
     SENDBUFPTR, SYM SENDBUFFER
-    SENDBUFPTR2, SYM SENDBUFFER
     SENDBUFENDANCP, SYM SENDBUFENDANC
     RECVBUFFER, DEC 0
         DEC 0
