@@ -1,0 +1,484 @@
+ORG 0 / Interrupt Entry Point
+INT_RET, HEX 0 / Interrupt Return Address
+BUN INT_MAIN
+ORG 10 / Entry Point
+    LDA RAWSTRPTRINIT
+    STA RAWSTRPTR
+    LDA ASCIIPARBEG
+    STA RAWSTRPTR I
+    LDA RAWSTRPTR
+    INC
+    STA RAWSTRPTR
+    CLA
+    STA RAWSTRPTR I
+LDA MASKSIN
+IMK
+SIO
+ION
+
+ / > while loop MainLoop
+_XWH1MainLoop,
+ / while (
+    LDA HaltFlag
+SZA
+BUN _XWH3MainLoop
+BUN _XWH2MainLoop
+ / ) {
+_XWH2MainLoop,
+BUN _XWH1MainLoop
+ / }
+_XWH3MainLoop,
+ / < end of while loop MainLoop
+
+_M_, HLT
+
+ / > beginning of INT_MAIN
+INT_MAIN,
+    STA ACCBAK
+    CLA
+    CIL
+    STA EBAK
+
+     / > if InputAvailable
+     / if (
+        CLA
+        INC
+        SKI
+        CLA
+    SZA
+    BUN _XIF1InputAvailable
+    BUN _XIF2InputAvailable
+     / ) {
+    _XIF1InputAvailable,
+        INP
+        STA INTmp
+
+             / > if CheckCharEnt
+             / if (
+                LDA ASCIIENTER
+                CMA
+                INC
+                ADD INTmp
+            SZA
+            BUN _XIF2CheckCharEnt
+            BUN _XIF1CheckCharEnt
+             / ) {
+            _XIF1CheckCharEnt,
+                CLA
+                INC
+                STA DECLTRIG
+                LDA MASKSOUT
+                IMK
+            BUN _XIF3CheckCharEnt
+             / } else {  // CheckCharEnt
+            _XIF2CheckCharEnt,
+
+                 / > if CheckCharCtrlD
+                 / if (
+                    LDA ASCIICTRLD
+                    CMA
+                    INC
+                    ADD INTmp
+                SZA
+                BUN _XIF2CheckCharCtrlD
+                BUN _XIF1CheckCharCtrlD
+                 / ) {
+                _XIF1CheckCharCtrlD,
+                    CLA
+                    INC
+                    STA HaltFlag
+                BUN _XIF3CheckCharCtrlD
+                 / } else {  // CheckCharCtrlD
+                _XIF2CheckCharCtrlD,
+                    LDA INTmp
+                    STA RAWSTRPTR I
+                    LDA RAWSTRPTR
+                    INC
+                    STA RAWSTRPTR
+                    CLA
+                    STA RAWSTRPTR I
+                 / }
+                _XIF3CheckCharCtrlD,
+                 / < end of if CheckCharCtrlD
+
+             / }
+            _XIF3CheckCharEnt,
+             / < end of if CheckCharEnt
+
+            LDA ASCII0
+            CMA
+            INC
+            ADD INTmp
+            STA TEMP1
+     / }
+    _XIF2InputAvailable,
+     / < end of if InputAvailable
+
+
+     / > beginning of Output
+    Output,
+
+         / if (
+            LDA DECLTRIG
+        SZA
+        BUN _XIF1_XAUTO4
+        BUN _XIF2_XAUTO4
+         / ) {
+        _XIF1_XAUTO4,
+                    LDA ASCIIPAREND
+                    STA RAWSTRPTR I
+                    LDA RAWSTRPTR
+                    INC
+                    STA RAWSTRPTR
+                    CLA
+                    STA RAWSTRPTR I
+                    CLA
+                    STA TOKENINDEX
+                    STA STACKINDEX
+                    LDA STACKPTRINIT
+                    STA STACKPTR
+                    LDA STACKTYPEPTRINIT
+                    STA STACKTYPEPTR
+                    LDA TOKENPTRINIT
+                    STA TOKENPTR
+                    LDA TOKENTYPEPTRINIT
+                    STA TOKENTYPEPTR
+                    CLA
+                    STA TOKENNUMTMP
+
+                 / > for loop TokenizeStr
+                LDA RAWSTRPTRINIT
+                STA RAWSTRPTR
+                _XFOR1TokenizeStr,
+                 / for (
+                    LDA RAWSTRPTR I
+                    STA TEMP1
+                SZA
+                BUN _XFOR2TokenizeStr
+                BUN _XFOR3TokenizeStr
+                 / ) {
+                _XFOR2TokenizeStr,
+                        CLA
+                        INC
+                        STA TEMPCTOI2
+                        LDA ASCII0
+                        CMA
+                        INC
+                        ADD TEMP1
+                        STA TEMPCTOI1
+
+                         / if (
+                            LDA TEMPCTOI1
+                            CIL
+                            CLA
+                            CIL
+                        SZA
+                        BUN _XIF2_XAUTO1
+                        BUN _XIF1_XAUTO1
+                         / ) {
+                        _XIF1_XAUTO1,
+
+                             / if (
+                                LDA DECVAL
+                                CMA
+                                INC
+                                ADD TEMPCTOI1
+                                CIL
+                                CLA
+                                CIL
+                            SZA
+                            BUN _XIF1_XAUTO2
+                            BUN _XIF2_XAUTO2
+                             / ) {
+                            _XIF1_XAUTO2,
+                                CLA
+                                STA TEMPCTOI2
+                             / }
+                            _XIF2_XAUTO2,
+
+                         / }
+                        _XIF2_XAUTO1,
+
+                        CLE
+                        LDA TEMPCTOI2
+                        SZA
+                        CME
+                        LDA TEMPCTOI1
+                    STA TEMP2
+
+                     / > if TokenIsNum
+                     / if (
+                        CLA
+                        CIL
+                    SZA
+                    BUN _XIF2TokenIsNum
+                    BUN _XIF1TokenIsNum
+                     / ) {
+                    _XIF1TokenIsNum,
+                        LDA TOKENNUMTMP
+                        CLE
+                        CIL
+                        STA TOKENNUMTMP
+                        LDA TOKENNUMTMP
+                        CLE
+                        CIL
+                        CLE
+                        CIL
+                        ADD TOKENNUMTMP
+                        STA TOKENNUMTMP
+                        LDA TOKENNUMTMP
+                        ADD TEMP2
+                        STA TOKENNUMTMP
+                        CLA
+                        INC
+                        STA BEFORETYPE
+                    BUN _XIF3TokenIsNum
+                     / } else {  // TokenIsNum
+                    _XIF2TokenIsNum,
+
+                         / if (
+                            LDA BEFORETYPE
+                        SZA
+                        BUN _XIF1_XAUTO3
+                        BUN _XIF2_XAUTO3
+                         / ) {
+                        _XIF1_XAUTO3,
+                            LDA TOKENNUMTMP
+                            STA TOKENPTR I
+                            LDA TOKENPTR
+                            INC
+                            STA TOKENPTR
+                            CLA
+                            INC
+                            STA TOKENTYPEPTR I
+                            LDA TOKENTYPEPTR
+                            INC
+                            STA TOKENTYPEPTR
+                            LDA TOKENINDEX
+                            INC
+                            STA TOKENINDEX
+                            CLA
+                            STA TOKENNUMTMP
+                            STA BEFORETYPE
+                         / }
+                        _XIF2_XAUTO3,
+
+                        LDA TEMP1
+                        STA TOKENPTR I
+                        LDA TOKENPTR
+                        INC
+                        STA TOKENPTR
+                        CLA
+                        STA TOKENTYPEPTR I
+                        LDA TOKENTYPEPTR
+                        INC
+                        STA TOKENTYPEPTR
+                        LDA TOKENINDEX
+                        INC
+                        STA TOKENINDEX
+                     / }
+                    _XIF3TokenIsNum,
+                     / < end of if TokenIsNum
+
+                LDA RAWSTRPTR
+                INC
+                STA RAWSTRPTR
+                BUN _XFOR1TokenizeStr
+                 / }
+                _XFOR3TokenizeStr,
+                 / < end of for loop TokenizeStr
+
+                    LDA RAWSTRPTRINIT
+                    STA RAWSTRPTR
+                    LDA ASCIIPARBEG
+                    STA RAWSTRPTR I
+                    LDA RAWSTRPTR
+                    INC
+                    STA RAWSTRPTR
+                    CLA
+                    STA RAWSTRPTR I
+            _M_, HLT
+         / }
+        _XIF2_XAUTO4,
+
+     / < end of Output
+
+
+     / > if HaltTrigger
+     / if (
+        LDA HaltFlag
+    SZA
+    BUN _XIF1HaltTrigger
+    BUN _XIF2HaltTrigger
+     / ) {
+    _XIF1HaltTrigger,
+        LDA EBAK
+        CLE
+        CIR
+        LDA ACCBAK
+        BUN INT_RET I
+     / }
+    _XIF2HaltTrigger,
+     / < end of if HaltTrigger
+
+    LDA EBAK
+    CLE
+    CIR
+    CLE
+    CIR
+    LDA ACCBAK
+    ION
+    BUN INT_RET I
+ / < end of INT_MAIN
+
+ / Data Segment
+    ACCBAK, DEC 0
+    EBAK, DEC 0
+    ShowIParam, DEC 0
+    DECLTRIG, DEC 0
+    HaltFlag, DEC 0
+    MASKSIN, DEC 8
+    MASKSOUT, DEC 4
+    INTmp, DEC 0
+    N, DEC 0
+    NNUM, DEC 0
+    ASCII0, DEC 48
+    ASCIIA, DEC 65
+    ASCIIENTER, DEC 10
+    ASCIICTRLD, DEC 4
+    ASCIIPARBEG, DEC 40
+    ASCIIPAREND, DEC 41
+    DECVAL, DEC 10
+    TEMP1, DEC 0
+    TEMP2, DEC 0
+    TEMPCTOI1, DEC 0
+    TEMPCTOI2, DEC 0
+    QVAL, DEC 0
+    RVAL, DEC 0
+    XVAL, DEC 0
+    STACKDATA, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+    STACKTYPEDATA, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+    STACKINDEX, DEC 0
+    STACKPTR, SYM STACKDATA
+    STACKPTRINIT, SYM STACKDATA
+    STACKTYPEPTR, SYM STACKTYPEDATA
+    STACKTYPEPTRINIT, SYM STACKTYPEDATA
+    TOKENDATA, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+    TOKENTYPEDATA, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+    TOKENINDEX, DEC 0
+    TOKENPTR, SYM TOKENDATA
+    TOKENPTRINIT, SYM TOKENDATA
+    TOKENTYPEPTR, SYM TOKENTYPEDATA
+    TOKENTYPEPTRINIT, SYM TOKENTYPEDATA
+    TOKENNUMTMP, DEC 0
+    RAWSTRDATA, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+    RAWSTRPTR, SYM RAWSTRDATA
+    RAWSTRPTRINIT, SYM RAWSTRDATA
+    BEFORETYPE, DEC 0
+END
+
