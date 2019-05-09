@@ -28,7 +28,7 @@ int main(){
 
 	Data mask_sin (INT, "MASKSIN",  8);
 	Data mask_sout(INT, "MASKSOUT", 4);
-	Data mask_pin (INT, "MASKPIN",  0);  // TODO
+	Data mask_pin (INT, "MASKPIN",  2);  // TODO
 	Data mask_pout(INT, "MASKPOUT", 1);
 	Data mask_s(INT, "MASKS", 0);
 	Data mask_p(INT, "MASKP", 0);
