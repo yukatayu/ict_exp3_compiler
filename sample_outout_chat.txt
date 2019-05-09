@@ -90,7 +90,7 @@ INT_MAIN,
                 INC
                 STA SENDTRIG
                 LDA SENDBUFPTRINIT
-                STA SENDBUFPTR
+                STA SENDBUFPTR2
             BUN _XIF3CheckCharEnt
              / } else {  // CheckCharEnt
             _XIF2CheckCharEnt,
@@ -819,7 +819,7 @@ INT_MAIN,
 
                  / > beginning of GetOutputPara
                 GetOutputPara,
-                    LDA SENDBUFPTR I
+                    LDA SENDBUFPTR2 I
                     STA TEMP1
 
                      / > if StepOutputText
@@ -830,9 +830,9 @@ INT_MAIN,
                     BUN _XIF2StepOutputText
                      / ) {
                     _XIF1StepOutputText,
-                        LDA SENDBUFPTR
+                        LDA SENDBUFPTR2
                         INC
-                        STA SENDBUFPTR
+                        STA SENDBUFPTR2
                      / }
                     _XIF2StepOutputText,
                      / < end of if StepOutputText
@@ -854,10 +854,8 @@ INT_MAIN,
             _XIF2_XAUTO22,
                 CLA
                 STA SENDTRIG
-                LDA SENDBUFPTRINIT
-                STA SENDBUFPTR
-                CLA
-                STA SENDBUFPTR I
+                LDA ASCIIENTER
+                OUT
              / }
             _XIF3_XAUTO22,
 
@@ -1015,6 +1013,7 @@ INT_MAIN,
     SENDBUFENDANC, DEC 0
     SENDBUFPTRINIT, SYM SENDBUFFER
     SENDBUFPTR, SYM SENDBUFFER
+    SENDBUFPTR2, SYM SENDBUFFER
     SENDBUFENDANCP, SYM SENDBUFENDANC
     RECVBUFFER, DEC 0
         DEC 0

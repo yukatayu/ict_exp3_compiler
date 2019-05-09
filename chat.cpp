@@ -39,6 +39,7 @@ int main(){
 	Data send_buf_end_anchor(INT, "SENDBUFENDANC", 0);
 	Data send_buf_ptr_init(PTR, "SENDBUFPTRINIT", send_buf);
 	Data send_buf_ptr(PTR, "SENDBUFPTR", send_buf);
+	Data send_buf_ptr_para(PTR, "SENDBUFPTR2", send_buf);
 	Data send_buf_end_anchor_ptr(PTR, "SENDBUFENDANCP", send_buf_end_anchor);
 
 	Data recv_buf(INT, "RECVBUFFER", 0);
@@ -199,7 +200,7 @@ int main(){
 
 			//If({ -ascii_bs + IN_tmp }, {
 			send_trigger = One,
-			send_buf_ptr = +send_buf_ptr_init,
+			send_buf_ptr_para = +send_buf_ptr_init,
 			//}),
 			// Debug TODO: Remove (unneeded clearing)
 			//send_buf_ptr = +send_buf_ptr_init,
@@ -276,9 +277,9 @@ int main(){
 
 	// Get Next Output (Parallel)
 	StatementList getOutputParallel = {
-		t1 = +*send_buf_ptr,
+		t1 = +*send_buf_ptr_para,
 		If("StepOutputText", { +t1 }, {
-			++send_buf_ptr
+			++send_buf_ptr_para
 		})
 		+t1
 	};
@@ -351,8 +352,10 @@ int main(){
 				}, Else, {
 					// パラレル出力フラグをOFFにして、出力バッファをクリア
 					send_trigger = Zero,
-					send_buf_ptr = +send_buf_ptr_init,
-					*send_buf_ptr = Zero
+					+ascii_ent,
+					"OUT"_asm,
+					//send_buf_ptr = +send_buf_ptr_init,
+					//*send_buf_ptr = Zero
 				})
 			})
 		}),
