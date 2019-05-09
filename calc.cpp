@@ -25,6 +25,10 @@ int main(){
 	Data ascii_ctrl_D(INT, "ASCIICTRLD", 4);
 	Data ascii_paren_begin(INT, "ASCIIPARBEG", 40);
 	Data ascii_paren_end(INT, "ASCIIPAREND", 41);
+	Data ascii_plus(INT, "ASCIIPLUS", 43);
+	Data ascii_minus(INT, "ASCIIMINUS", 45);
+	Data ascii_ast(INT, "ASCIIAST", 42);
+	Data ascii_slush(INT, "ASCIISLU", 47);
 	Data dec(INT, "DECVAL", 10);
 
 	// Temporary
@@ -32,22 +36,32 @@ int main(){
 	Data t2(INT, "TEMP2", 0);
 	Data t_ctoi_1(INT, "TEMPCTOI1", 0);
 	Data t_ctoi_2(INT, "TEMPCTOI2", 0);
-	Data Q(INT, "QVAL", 0);
-	Data R(INT, "RVAL", 0);
-	Data X(INT, "XVAL", 0);
+	Data t_priority_1(INT, "TEMPPRI1", 0);
+	Data t_priority_2(INT, "TEMPPRI2", 0);
+	//Data Q(INT, "QVAL", 0);
+	//Data R(INT, "RVAL", 0);
+	//Data X(INT, "XVAL", 0);
 
-	// Note: [Type] Num: 1, Op: 0
 	// Stack
-	const int STACK_MAX = 15; // TODO: increase
+	// TODO: store value type
+	const int STACK_MAX = 20; // TODO: increase
 	Data stack_data(INT, "STACKDATA", 0);
-	for(int i = STACK_MAX; i --> 0;) Data(INT, "", 0);
-	Data stack_type_data(INT, "STACKTYPEDATA", 0);
 	for(int i = STACK_MAX; i --> 0;) Data(INT, "", 0);
 	Data stack_index(INT, "STACKINDEX", 0);
 	Data stack_ptr(PTR, "STACKPTR", stack_data);
 	Data stack_ptr_init(PTR, "STACKPTRINIT", stack_data);
-	Data stack_type_ptr(PTR, "STACKTYPEPTR", stack_type_data);
-	Data stack_type_ptr_init(PTR, "STACKTYPEPTRINIT", stack_type_data);
+
+	Data stack_tmp(INT, "STACKTMPVAL", 0);
+	Data RPN_i(INT, "RPNITR", 0);
+	Data RPN_token(INT, "RPNITRTOKEN", 0);
+	Data RPN_type(INT, "RPNITRTYPE", 0);
+
+	// Buffer
+	Data buffer_data(INT, "BUFDATA", 0);
+	for(int i = STACK_MAX; i --> 0;) Data(INT, "", 0);
+	Data buffer_index(INT, "BUFINDEX", 0);
+	Data buffer_ptr(PTR, "BUFPTR", buffer_data);
+	Data buffer_ptr_init(PTR, "BUFPTRINIT", buffer_data);
 
 	// Heap
 	/*Data heap_data(INT, "HEAPDATA", 0);
@@ -58,6 +72,7 @@ int main(){
 	*/
 
 	// Token List
+	// Note: [Type] Num: 1, Op: 0
 	Data token_data(INT, "TOKENDATA", 0);
 	for(int i = STACK_MAX; i --> 0;) Data(INT, "", 0);
 	Data token_type_data(INT, "TOKENTYPEDATA", 0);
@@ -71,7 +86,6 @@ int main(){
 	Data token_num_tmp(INT, "TOKENNUMTMP", 0);
 
 	// String
-	// TODO: 重要: 最初と最後に ( ) を追加
 	Data raw_str_data(INT, "RAWSTRDATA", 0);
 	for(int i = (STACK_MAX/2+1) * 5 + 5; i --> 0;) Data(INT, "", 0);
 	Data raw_str_ptr(PTR, "RAWSTRPTR", raw_str_data);
@@ -82,11 +96,12 @@ int main(){
 	StatementList resetTokenStack = {
 		stack_index
 		= token_index
+		= buffer_index
 		= Zero,
 
 		stack_ptr = +stack_ptr_init,
-		stack_type_ptr = +stack_type_ptr_init,
 		token_ptr = +token_ptr_init,
+		buffer_ptr = +buffer_ptr_init,
 		token_type_ptr = +token_type_ptr_init,
 
 		token_num_tmp = before_num = Zero,
@@ -159,21 +174,117 @@ int main(){
 		resetInputString()
 	};
 
-	auto push = [&](Data dat){
+	auto push = [&](Data i){
 		return StatementList{
 			// TODO: border check
-		};
+			*stack_ptr = +i,
+			++stack_ptr,
+			++stack_index,
+		}.stat();
 	};
 
 	// returns char*
 	StatementList pop = {
+		--stack_ptr,
+		--stack_index,
+		+*stack_ptr
+	};
+
+	StatementList priority = {
+		t_priority_1 = Const(),
+		t_priority_2 = +ascii_0,  // 十分大きければ何でも良い
+
+		If({ -ascii_plus + t_priority_1 }, {
+			t_priority_2 = One,
+		}, true),
+		If({ -ascii_minus + t_priority_1 }, {
+			t_priority_2 = One,
+		}, true),
+		If({ -ascii_ast + t_priority_1 }, {
+			t_priority_2 = Zero,
+		}, true),
+		If({ -ascii_slush + t_priority_1 }, {
+			t_priority_2 = Zero,
+		}, true),
+		+t_priority_2
 	};
 
 	StatementList peek = {
+		stack_tmp = One,
+		stack_tmp = -stack_tmp + stack_ptr,
+		//stack_tmp =
+		+*stack_tmp,
 	};
 
 	StatementList error = {
 		// TODO: implement
+	};
+
+	StatementList RPN = {
+		For({{ RPN_i = Zero }, {
+			-token_index + RPN_i,
+			"CIL"_asm,
+			"CLA"_asm,
+			"CIL"_asm,
+		}, { ++RPN_i }}, {
+			RPN_token = token_ptr_init + RPN_i,
+			RPN_type = token_type_ptr_init + RPN_i,
+			If("RPNTokenNum", { +*RPN_type }, {  // 数字だったらbufferへ
+				*buffer_ptr = +*RPN_token,
+				++buffer_ptr,
+				++buffer_index,
+			}, Else, {  // 演算子や ( ) の場合
+				If({ -*RPN_token + ascii_paren_begin }, {  // `(`
+					push(*RPN_token),
+				}, Else, {
+					If({ -*RPN_token + ascii_paren_end }, {  // `)`
+						// スタックを巻き戻す処理を入れる
+						While({
+							t1 = One,
+							If({+stack_index}, {t1 = Zero}, Else, {t2 = pop()} , true),
+							If({-ascii_paren_begin + t2}, {t1 = Zero} , true),
+							+t1
+						}, {
+							*buffer_ptr = +t2,
+							++buffer_ptr,
+							++buffer_index,
+						}),
+						// TODO: 括弧の対応エラーを受けるならここ
+					}, Else, {
+						If({ +stack_index }, {  // stack is empty
+							push(*RPN_token),
+						}, Else, {  // need to compare operators
+							While("CompareOps", { +stack_index }, {
+								+*RPN_token,
+								t1 = priority(),
+								peek(),
+								t2 = priority(),
+								If({
+									-t1 + t2,
+									"CIL"_asm,
+									"CLA"_asm,
+									"CIL"_asm,
+								}, {
+									*buffer_ptr = pop(),
+									++buffer_ptr,
+									++buffer_index,
+								}, Else, {
+									push(*RPN_token),
+									Break("CompareOps"),
+								})
+							})
+						}, true),
+					}, true),
+				}, true),
+			})
+
+		//,+*RPN_token,
+		//"_B_,"_asm,
+		//+*RPN_token,
+
+		}),
+		// この時点で一番外側の ( ) によってバッファは全てフラッシュされているはず
+		// (さもなくばエラー)
 	};
 
 	// Input a char
@@ -201,6 +312,7 @@ int main(){
 	StatementList digitOutput = {
 		If({ +out_trigger }, {
 			tokenize_and_reset_str(),
+			RPN(),
 			halt
 		})
 	};
