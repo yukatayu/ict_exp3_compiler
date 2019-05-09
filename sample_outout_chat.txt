@@ -841,7 +841,7 @@ INT_MAIN,
                     _XIF2StepOutputText,
                      / < end of if StepOutputText
 
-                    ADD TEMP1
+                    LDA TEMP1
                  / < end of GetOutputPara
 
             SZA

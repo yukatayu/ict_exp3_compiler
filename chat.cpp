@@ -284,7 +284,7 @@ int main(){
 		t1 = +*send_buf_ptr,
 		If("StepOutputText", { +t1 }, {
 			++send_buf_ptr
-		})
+		}),
 		+t1
 	};
 
