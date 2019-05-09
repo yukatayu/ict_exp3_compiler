@@ -144,6 +144,7 @@ INT_MAIN,
                     LDA TOKENTYPEPTRINIT
                     STA TOKENTYPEPTR
                     CLA
+                    STA BEFORETYPE
                     STA TOKENNUMTMP
 
                  / > for loop TokenizeStr

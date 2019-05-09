@@ -89,7 +89,7 @@ int main(){
 		token_ptr = +token_ptr_init,
 		token_type_ptr = +token_type_ptr_init,
 
-		token_num_tmp = Zero,
+		token_num_tmp = before_num = Zero,
 	};
 
 	StatementList resetInputString = {
