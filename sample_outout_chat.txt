@@ -8,7 +8,6 @@ STA OUTTRIG
 LDA MASKSOUT
 STA MASKS
 LDA MASKPIN
-ADD MASKPOUT
 STA MASKP
 LDA MASKS
 ADD MASKP
@@ -91,6 +90,11 @@ INT_MAIN,
                 STA SENDTRIG
                 LDA SENDBUFPTRINIT
                 STA SENDBUFPTR2
+                LDA MASKPOUT
+                STA MASKP
+                LDA MASKS
+                ADD MASKP
+                IMK
             BUN _XIF3CheckCharEnt
              / } else {  // CheckCharEnt
             _XIF2CheckCharEnt,
@@ -856,6 +860,15 @@ INT_MAIN,
                 STA SENDTRIG
                 LDA ASCIIENTER
                 OUT
+                LDA SENDBUFPTRINIT
+                STA SENDBUFPTR
+                CLA
+                STA SENDBUFPTR I
+                LDA MASKPIN
+                STA MASKP
+                LDA MASKS
+                ADD MASKP
+                IMK
              / }
             _XIF3_XAUTO22,
 

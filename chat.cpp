@@ -201,6 +201,10 @@ int main(){
 			//If({ -ascii_bs + IN_tmp }, {
 			send_trigger = One,
 			send_buf_ptr_para = +send_buf_ptr_init,
+			// パラレルを出力モードに
+			mask_p = +mask_pout,
+			+mask_s + mask_p,
+			"IMK"_asm
 			//}),
 			// Debug TODO: Remove (unneeded clearing)
 			//send_buf_ptr = +send_buf_ptr_init,
@@ -355,7 +359,11 @@ int main(){
 					+ascii_ent,
 					"OUT"_asm,
 					send_buf_ptr = +send_buf_ptr_init,
-					*send_buf_ptr = Zero
+					*send_buf_ptr = Zero,
+					// パラレルを入力モードに
+					mask_p = +mask_pin,
+					+mask_s + mask_p,
+					"IMK"_asm
 				})
 			})
 		}),
@@ -386,7 +394,7 @@ int main(){
 
 		//+mask_sin + mask_pin + mask_pout,
 		mask_s = +mask_sout,
-		mask_p = +mask_pin + mask_pout,
+		mask_p = +mask_pin,
 		+mask_s + mask_p,
 		"IMK"_asm,
 		"ION"_asm,	// enable interrupt
