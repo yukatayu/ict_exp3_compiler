@@ -94,13 +94,46 @@ INT_MAIN,
             BUN _XIF3CheckCharEnt
              / } else {  // CheckCharEnt
             _XIF2CheckCharEnt,
+                CLA
+                STA TEMP1
 
-                 / > if CheckCharBS
                  / if (
                     LDA ASCIIBKSPACE
                     CMA
                     INC
                     ADD INTMP
+                SZA
+                BUN _XIF1_XAUTO16
+                BUN _XIF2_XAUTO16
+                 / ) {
+                _XIF1_XAUTO16,
+                    CLA
+                    INC
+                    STA TEMP1
+                 / }
+                _XIF2_XAUTO16,
+
+
+                 / if (
+                    LDA ASCIIDELETE
+                    CMA
+                    INC
+                    ADD INTMP
+                SZA
+                BUN _XIF1_XAUTO17
+                BUN _XIF2_XAUTO17
+                 / ) {
+                _XIF1_XAUTO17,
+                    CLA
+                    INC
+                    STA TEMP1
+                 / }
+                _XIF2_XAUTO17,
+
+
+                 / > if CheckCharBS
+                 / if (
+                    LDA TEMP1
                 SZA
                 BUN _XIF2CheckCharBS
                 BUN _XIF1CheckCharBS
@@ -113,10 +146,10 @@ INT_MAIN,
                         INC
                         ADD SENDBUFPTRINIT
                     SZA
-                    BUN _XIF1_XAUTO16
-                    BUN _XIF2_XAUTO16
+                    BUN _XIF1_XAUTO18
+                    BUN _XIF2_XAUTO18
                      / ) {
-                    _XIF1_XAUTO16,
+                    _XIF1_XAUTO18,
                         LDA SENDBUFPTR
                         CMA
                         INC
@@ -125,7 +158,7 @@ INT_MAIN,
                         CLA
                         STA SENDBUFPTR I
                      / }
-                    _XIF2_XAUTO16,
+                    _XIF2_XAUTO18,
 
                 BUN _XIF3CheckCharBS
                  / } else {  // CheckCharBS
@@ -137,10 +170,10 @@ INT_MAIN,
                         INC
                         ADD SENDBUFENDANCP
                     SZA
-                    BUN _XIF1_XAUTO17
-                    BUN _XIF2_XAUTO17
+                    BUN _XIF1_XAUTO19
+                    BUN _XIF2_XAUTO19
                      / ) {
-                    _XIF1_XAUTO17,
+                    _XIF1_XAUTO19,
                         LDA INTMP
                         STA SENDBUFPTR I
                         LDA SENDBUFPTR
@@ -149,7 +182,7 @@ INT_MAIN,
                         CLA
                         STA SENDBUFPTR I
                      / }
-                    _XIF2_XAUTO17,
+                    _XIF2_XAUTO19,
 
                  / }
                 _XIF3CheckCharBS,
@@ -736,10 +769,10 @@ INT_MAIN,
                     INC
                     ADD RECVBUFENDANCP
                 SZA
-                BUN _XIF1_XAUTO18
-                BUN _XIF2_XAUTO18
+                BUN _XIF1_XAUTO20
+                BUN _XIF2_XAUTO20
                  / ) {
-                _XIF1_XAUTO18,
+                _XIF1_XAUTO20,
                     LDA INTMP
                     STA RECVBUFPTR I
                     LDA RECVBUFPTR
@@ -751,7 +784,7 @@ INT_MAIN,
                     INC
                     STA STATUREAD
                  / }
-                _XIF2_XAUTO18,
+                _XIF2_XAUTO20,
 
              / }
             _XIF3CheckCharBSPara,
@@ -777,10 +810,10 @@ INT_MAIN,
          / if (
             LDA SENDTRIG
         SZA
-        BUN _XIF1_XAUTO19
-        BUN _XIF2_XAUTO19
+        BUN _XIF1_XAUTO21
+        BUN _XIF2_XAUTO21
          / ) {
-        _XIF1_XAUTO19,
+        _XIF1_XAUTO21,
 
              / if (
 
@@ -808,17 +841,17 @@ INT_MAIN,
                  / < end of GetOutputPara
 
             SZA
-            BUN _XIF1_XAUTO20
-            BUN _XIF2_XAUTO20
+            BUN _XIF1_XAUTO22
+            BUN _XIF2_XAUTO22
              / ) {
-            _XIF1_XAUTO20,
+            _XIF1_XAUTO22,
                 OUT
                 LDA DEBUGNUM
                 INC
                 STA DEBUGNUM
-            BUN _XIF3_XAUTO20
+            BUN _XIF3_XAUTO22
              / } else {  // 
-            _XIF2_XAUTO20,
+            _XIF2_XAUTO22,
                 CLA
                 STA SENDTRIG
                 LDA SENDBUFPTRINIT
@@ -826,10 +859,10 @@ INT_MAIN,
                 CLA
                 STA SENDBUFPTR I
              / }
-            _XIF3_XAUTO20,
+            _XIF3_XAUTO22,
 
          / }
-        _XIF2_XAUTO19,
+        _XIF2_XAUTO21,
 
      / }
     _XIF2OutputAvailablePara,
@@ -875,7 +908,7 @@ INT_MAIN,
     DEBUGNUM, DEC 0
     MASKSIN, DEC 8
     MASKSOUT, DEC 4
-    MASKPIN, DEC 0
+    MASKPIN, DEC 2
     MASKPOUT, DEC 1
     MASKS, DEC 0
     MASKP, DEC 0
@@ -1343,7 +1376,8 @@ INT_MAIN,
     ASCIIENTER, DEC 10
     ASCIIZERO, DEC 48
     ASCIISPACE, DEC 32
-    ASCIIBKSPACE, DEC 127
+    ASCIIBKSPACE, DEC 8
+    ASCIIDELETE, DEC 127
     ASCIICTRLD, DEC 4
     TEMP1, DEC 0
     TEMP2, DEC 0

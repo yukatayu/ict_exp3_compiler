@@ -58,7 +58,8 @@ int main(){
 	Data ascii_ent(INT, "ASCIIENTER", 10);
 	Data ascii_0(INT, "ASCIIZERO", 48);
 	Data ascii_sp(INT, "ASCIISPACE", 32);
-	Data ascii_bs(INT, "ASCIIBKSPACE", 127);  // BS=8
+	Data ascii_bs(INT, "ASCIIBKSPACE", 8);
+	Data ascii_del(INT, "ASCIIDELETE", 127);
 	Data ascii_ctrl_D(INT, "ASCIICTRLD", 4);
 
 	// Temporary
@@ -204,7 +205,14 @@ int main(){
 			//send_buf_ptr = +send_buf_ptr_init,
 			//*send_buf_ptr = Zero
 		}, Else, {
-			If("CheckCharBS", { -ascii_bs + IN_tmp }, {
+			t1 = Zero,
+			If({ -ascii_bs + IN_tmp }, {
+				t1 = One
+			}),
+			If({ -ascii_del + IN_tmp }, {
+				t1 = One
+			}),
+			If("CheckCharBS", { +t1 }, {
 				If({-send_buf_ptr + send_buf_ptr_init}, {
 					--send_buf_ptr,
 					*send_buf_ptr = Zero,
