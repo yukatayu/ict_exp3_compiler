@@ -103,8 +103,8 @@ INT_MAIN,
                     INC
                     ADD INTMP
                 SZA
-                BUN _XIF1_XAUTO16
                 BUN _XIF2_XAUTO16
+                BUN _XIF1_XAUTO16
                  / ) {
                 _XIF1_XAUTO16,
                     CLA
@@ -120,8 +120,8 @@ INT_MAIN,
                     INC
                     ADD INTMP
                 SZA
-                BUN _XIF1_XAUTO17
                 BUN _XIF2_XAUTO17
+                BUN _XIF1_XAUTO17
                  / ) {
                 _XIF1_XAUTO17,
                     CLA
@@ -135,8 +135,8 @@ INT_MAIN,
                  / if (
                     LDA TEMP1
                 SZA
-                BUN _XIF2CheckCharBS
                 BUN _XIF1CheckCharBS
+                BUN _XIF2CheckCharBS
                  / ) {
                 _XIF1CheckCharBS,
 

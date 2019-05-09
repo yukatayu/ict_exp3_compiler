@@ -208,10 +208,10 @@ int main(){
 			t1 = Zero,
 			If({ -ascii_bs + IN_tmp }, {
 				t1 = One
-			}),
+			}, true),
 			If({ -ascii_del + IN_tmp }, {
 				t1 = One
-			}),
+			}, true),
 			If("CheckCharBS", { +t1 }, {
 				If({-send_buf_ptr + send_buf_ptr_init}, {
 					--send_buf_ptr,
@@ -224,7 +224,7 @@ int main(){
 					++send_buf_ptr,
 					*send_buf_ptr = Zero,
 				})
-			}, true),
+			}),
 		}, true),
 		out_trigger = One,
 		mask_s = +mask_sout,
