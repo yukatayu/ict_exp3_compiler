@@ -354,8 +354,8 @@ int main(){
 					send_trigger = Zero,
 					+ascii_ent,
 					"OUT"_asm,
-					//send_buf_ptr = +send_buf_ptr_init,
-					//*send_buf_ptr = Zero
+					send_buf_ptr = +send_buf_ptr_init,
+					*send_buf_ptr = Zero
 				})
 			})
 		}),
