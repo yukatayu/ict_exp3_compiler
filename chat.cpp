@@ -17,14 +17,10 @@ int main(){
 	Data EBak(INT, "EBAK", 0);
 
 	// triggers
-	Data in_trigger(INT, "INPTRIG", 0);
 	Data out_trigger(INT, "OUTTRIG", 0);
 	Data send_trigger(INT, "SENDTRIG", 0);
 	Data halt_trigger(INT, "HaltFlag", 0);
-	Data redraw_trigger(INT, "REDRAWTRIG", 0);
 	Data open_trigger(INT, "OPENTRIG", 0);
-
-	Data debug_num(INT, "DEBUGNUM", 0);	// TODO: debug
 
 	Data mask_sin (INT, "MASKSIN",  8);
 	Data mask_sout(INT, "MASKSOUT", 4);
@@ -39,7 +35,6 @@ int main(){
 	Data send_buf_end_anchor(INT, "SENDBUFENDANC", 0);
 	Data send_buf_ptr_init(PTR, "SENDBUFPTRINIT", send_buf);
 	Data send_buf_ptr(PTR, "SENDBUFPTR", send_buf);
-	//Data send_buf_ptr_para(PTR, "SENDBUFPTR2", send_buf);
 	Data send_buf_end_anchor_ptr(PTR, "SENDBUFENDANCP", send_buf_end_anchor);
 
 	Data recv_buf(INT, "RECVBUFFER", 0);
@@ -92,12 +87,6 @@ int main(){
 	helper_ConstString_Safe(green_text, "GreenText", "\033[92m");  // Green
 	helper_ConstString_Safe(reset_text, "ResetText", "\033[0m");  // Reset
 	helper_ConstString_Safe(clear_line, "ClearLine", "\033[1G\033[0K");  // ClearLine
-	// vv debug vv
-	//helper_ConstString_Safe(red_text, "RedText", "<Red>");
-	//helper_ConstString_Safe(red_back, "RedBack", "<RedBack>");
-	//helper_ConstString_Safe(green_text, "GreenText", "<Green>");
-	//helper_ConstString_Safe(reset_text, "ResetText", "<Reset>");
-	//helper_ConstString_Safe(clear_line, "ClearLine", "\r\n");
 
 	// Helper
 	Data keta_10(INT, "Keta10Arr", 100);
@@ -107,18 +96,12 @@ int main(){
 	Data keta_10_ptr_init(PTR, "Keta10PtrInit", keta_10);
 
 	// Status
-	Data status_output(INT, "ISSTATOUT", 0);
 	Data status_color(PTR, "STATUSCOLOR", reset_text);
 	Data status_unread(INT, "STATUREAD", 0);
-	Data input_cnt(INT, "INPUTCHARNUM", 0);
 
 	// テキストのレンダリング
 	StatementList renderText = {
 		disp_buf_ptr = +disp_buf_ptr_init,
-		/*For({ { clear_line_ptr = +clear_line_ptr_init }, { +*clear_line_ptr }, { ++clear_line_ptr } }, {
-			*disp_buf_ptr = +*clear_line_ptr,
-			++disp_buf_ptr,
-		}),*/
 
 		strCpy(clear_line_ptr_init, disp_buf_ptr, t1),
 		If("OpenArrivedMsg", {+open_trigger}, {
@@ -135,7 +118,6 @@ int main(){
 
 		*disp_buf_ptr = +ascii_sp, ++disp_buf_ptr,
 		// 未読があったら赤色
-		//	status_color = Cond("Debug_Cond", { +status_unread }, { +red_back_ptr_init }, { +reset_text_ptr_init }, true),
 		If({ +status_unread }, {
 			status_color = +red_back_ptr_init
 		}, Else, {
@@ -178,8 +160,6 @@ int main(){
 		strCpy(prompt_text_ptr_init, disp_buf_ptr, t1),
 		strCpy(send_buf_ptr_init, disp_buf_ptr, t1),
 
-		//"renderTextReturn,"_asm,
-
 		// NULL文字を追加し、ポインタ位置をリセット
 		*disp_buf_ptr = Zero,
 		disp_buf_ptr = +disp_buf_ptr_init,
@@ -192,23 +172,15 @@ int main(){
 			halt_trigger = One,
 		}, true),
 		// Enter -> Start output
-		// TODO: とりあえずリセットして未読フラグを反転している (デバッグ)
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
-			//status_unread = -status_unread,
-			//++status_unread,
 			open_trigger = One,
 
-			//If({ -ascii_bs + IN_tmp }, {
 			send_trigger = One,
 			send_buf_ptr = +send_buf_ptr_init,
 			// パラレルを出力モードに
 			mask_p = +mask_pout,
 			+mask_s + mask_p,
 			"IMK"_asm
-			//}),
-			// Debug TODO: Remove (unneeded clearing)
-			//send_buf_ptr = +send_buf_ptr_init,
-			//*send_buf_ptr = Zero
 		}, Else, {
 			t1 = Zero,
 			If({ -ascii_bs + IN_tmp }, {
@@ -239,7 +211,7 @@ int main(){
 
 	StatementList inputCharParallel = {
 		If("CheckCharBSPara", { -ascii_del + IN_tmp }, {
-			// do nothing: Debug
+			// do nothing
 		}, Else, {
 			// バッファに蓄積
 			If({-recv_buf_ptr + recv_buf_end_anchor_ptr}, {
@@ -253,25 +225,18 @@ int main(){
 
 	// Process Trigger
 	StatementList prepareOutput = {
-		If("OutTrigger", { +out_trigger }, {
+		If({ +out_trigger }, {
 			out_trigger = Zero,
 			renderText.stat("RenderText")
-			//status_output = One,
-		}),
-		If("InTrigger", { +in_trigger }, {
-			in_trigger = Zero,
-			//status_output = Zero,
 		}),
 	};
 
 	// Get Next Output Char
 	StatementList getOutput = {
-		t1 = +*disp_buf_ptr,
-		If("StepDispText", { +t1 }, {
+		If("StepDispText", { t1 = +*disp_buf_ptr }, {
 			++disp_buf_ptr
 		}, Else, {
 			// 出力するものがなければ入力許可
-			in_trigger = One,
 			mask_s = +mask_sin,
 			+mask_s + mask_p,
 			"IMK"_asm,
@@ -281,8 +246,7 @@ int main(){
 
 	// Get Next Output (Parallel)
 	StatementList getOutputParallel = {
-		t1 = +*send_buf_ptr,
-		If("StepOutputText", { +t1 }, {
+		If("StepOutputText", { t1 = +*send_buf_ptr }, {
 			++send_buf_ptr
 		}),
 		+t1
@@ -352,7 +316,6 @@ int main(){
 				// Output a char (If any data remains)
 				If({ getOutputParallel.stat("GetOutputPara") }, {
 					"OUT"_asm,
-					++debug_num  // TODO: remove
 				}, Else, {
 					// パラレル出力フラグをOFFにして、出力バッファをクリア
 					send_trigger = Zero,
@@ -366,7 +329,7 @@ int main(){
 			})
 		}),
 
-		"SIO"_asm,  // TODO: debug
+		"SIO"_asm,
 		// Return
 		"InterruptReturn,"_asm,
 		If("HaltTrigger", { +halt_trigger },{
@@ -390,7 +353,7 @@ int main(){
 		// 起動時に表示するため
 		out_trigger = One,
 
-		//+mask_sin + mask_pin + mask_pout,
+		// parallel, serial -> input
 		mask_s = +mask_sout,
 		mask_p = +mask_pin,
 		+mask_s + mask_p,
