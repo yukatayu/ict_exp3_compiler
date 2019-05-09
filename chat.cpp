@@ -85,7 +85,7 @@ int main(){
 
 	helper_ConstString_Safe(disp_count_postfix, "DispCountPostfix", "/100");
 	helper_ConstString_Safe(prompt_text, "PromptText", " > ");
-	helper_ConstString_Safe(new_message_text, "NewMsgText", "New Message > ");
+	helper_ConstString_Safe(new_message_text, "NewMsgText", "N:");
 
 	helper_ConstString_Safe(red_text, "RedText", "\033[91m");  // Red (Forward)
 	helper_ConstString_Safe(red_back, "RedBack", "\033[41m");  // Red Back
@@ -100,9 +100,9 @@ int main(){
 	//helper_ConstString_Safe(clear_line, "ClearLine", "\r\n");
 
 	// Helper
-	Data keta_10(INT, "Keta10Arr", 100);
-		Data(INT, "", 10);
-		Data(INT, "", 1);
+	Data keta_10(INT, "Keta10Arr", 1);
+		//Data(INT, "", 10);
+		//Data(INT, "", 1);
 		Data(INT, "", 0);
 	Data keta_10_ptr_init(PTR, "Keta10PtrInit", keta_10);
 
@@ -120,7 +120,6 @@ int main(){
 			++disp_buf_ptr,
 		}),*/
 
-		strCpy(clear_line_ptr_init, disp_buf_ptr, t1),
 		If("OpenArrivedMsg", {+open_trigger}, {
 			open_trigger = Zero,
 			If({+status_unread}, {
@@ -132,30 +131,6 @@ int main(){
 				*disp_buf_ptr = +ascii_ent, ++disp_buf_ptr,
 			})
 		}),
-
-		*disp_buf_ptr = +ascii_sp, ++disp_buf_ptr,
-		// 未読があったら赤色
-		//	status_color = Cond("Debug_Cond", { +status_unread }, { +red_back_ptr_init }, { +reset_text_ptr_init }, true),
-		If({ +status_unread }, {
-			status_color = +red_back_ptr_init
-		}, Else, {
-			status_color = +reset_text_ptr_init
-		}),
-		strCpy(status_color, disp_buf_ptr, t1),
-		*disp_buf_ptr = +ascii_sp, ++disp_buf_ptr,
-		*disp_buf_ptr = +ascii_sp, ++disp_buf_ptr,
-		strCpy(reset_text_ptr_init, disp_buf_ptr, t1),
-
-		// 現在の文字数が0か上限だったら赤色、さもなくば緑色
-		t2 = +green_text_ptr_init,
-		If({-send_buf_ptr + send_buf_end_anchor_ptr}, {
-			t2 = +red_text_ptr_init,
-		}, true),
-		If({-send_buf_ptr + send_buf_ptr_init}, {
-			t2 = +red_text_ptr_init,
-		}, true),
-		strCpy(t2, disp_buf_ptr, t1),
-		*disp_buf_ptr = +ascii_sp, ++disp_buf_ptr,
 
 		// 現在の文字数を表示
 		A = -send_buf_ptr_init + send_buf_ptr,
@@ -172,14 +147,6 @@ int main(){
 			++disp_buf_ptr,
 			A = +R,
 		}),
-		// 現在の入力内容の表示
-		strCpy(disp_count_postfix_ptr_init, disp_buf_ptr, t1),
-		strCpy(reset_text_ptr_init, disp_buf_ptr, t1),
-		strCpy(prompt_text_ptr_init, disp_buf_ptr, t1),
-		strCpy(send_buf_ptr_init, disp_buf_ptr, t1),
-
-		//"renderTextReturn,"_asm,
-
 		// NULL文字を追加し、ポインタ位置をリセット
 		*disp_buf_ptr = Zero,
 		disp_buf_ptr = +disp_buf_ptr_init,
@@ -284,7 +251,7 @@ int main(){
 		t1 = +*send_buf_ptr,
 		If("StepOutputText", { +t1 }, {
 			++send_buf_ptr
-		})
+		}), // TODO: add , to master branch !!!!
 		+t1
 	};
 
