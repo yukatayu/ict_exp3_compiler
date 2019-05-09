@@ -281,6 +281,10 @@ namespace EX3{
 		return res;
 	}
 
+	Statement StatementList::operator()(){
+		return stat();
+	}
+
 	Statement StatementList::stat(std::string label, std::string placeholder){
 		std::string res;
 		if(!label.empty())
