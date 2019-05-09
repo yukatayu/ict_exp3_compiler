@@ -212,14 +212,13 @@ INT_MAIN,
      / > beginning of Prepare
     Prepare,
 
-         / > if OutTrigger
          / if (
             LDA OUTTRIG
         SZA
-        BUN _XIF1OutTrigger
-        BUN _XIF2OutTrigger
+        BUN _XIF1_XAUTO20
+        BUN _XIF2_XAUTO20
          / ) {
-        _XIF1OutTrigger,
+        _XIF1_XAUTO20,
             CLA
             STA OUTTRIG
 
@@ -652,23 +651,7 @@ INT_MAIN,
              / < end of RenderText
 
          / }
-        _XIF2OutTrigger,
-         / < end of if OutTrigger
-
-
-         / > if InTrigger
-         / if (
-            LDA INPTRIG
-        SZA
-        BUN _XIF1InTrigger
-        BUN _XIF2InTrigger
-         / ) {
-        _XIF1InTrigger,
-            CLA
-            STA INPTRIG
-         / }
-        _XIF2InTrigger,
-         / < end of if InTrigger
+        _XIF2_XAUTO20,
 
      / < end of Prepare
 
@@ -690,12 +673,11 @@ INT_MAIN,
 
              / > beginning of GetOutput
             GetOutput,
-                LDA DISPBUFPTR I
-                STA TEMP1
 
                  / > if StepDispText
                  / if (
-                    LDA TEMP1
+                    LDA DISPBUFPTR I
+                    STA TEMP1
                 SZA
                 BUN _XIF1StepDispText
                 BUN _XIF2StepDispText
@@ -707,9 +689,6 @@ INT_MAIN,
                 BUN _XIF3StepDispText
                  / } else {  // StepDispText
                 _XIF2StepDispText,
-                    CLA
-                    INC
-                    STA INPTRIG
                     LDA MASKSIN
                     STA MASKS
                     LDA MASKS
@@ -773,10 +752,10 @@ INT_MAIN,
                     INC
                     ADD RECVBUFENDANCP
                 SZA
-                BUN _XIF1_XAUTO20
-                BUN _XIF2_XAUTO20
+                BUN _XIF1_XAUTO21
+                BUN _XIF2_XAUTO21
                  / ) {
-                _XIF1_XAUTO20,
+                _XIF1_XAUTO21,
                     LDA INTMP
                     STA RECVBUFPTR I
                     LDA RECVBUFPTR
@@ -788,7 +767,7 @@ INT_MAIN,
                     INC
                     STA STATUREAD
                  / }
-                _XIF2_XAUTO20,
+                _XIF2_XAUTO21,
 
              / }
             _XIF3CheckCharBSPara,
@@ -814,21 +793,20 @@ INT_MAIN,
          / if (
             LDA SENDTRIG
         SZA
-        BUN _XIF1_XAUTO21
-        BUN _XIF2_XAUTO21
+        BUN _XIF1_XAUTO22
+        BUN _XIF2_XAUTO22
          / ) {
-        _XIF1_XAUTO21,
+        _XIF1_XAUTO22,
 
              / if (
 
                  / > beginning of GetOutputPara
                 GetOutputPara,
-                    LDA SENDBUFPTR I
-                    STA TEMP1
 
                      / > if StepOutputText
                      / if (
-                        LDA TEMP1
+                        LDA SENDBUFPTR I
+                        STA TEMP1
                     SZA
                     BUN _XIF1StepOutputText
                     BUN _XIF2StepOutputText
@@ -845,17 +823,14 @@ INT_MAIN,
                  / < end of GetOutputPara
 
             SZA
-            BUN _XIF1_XAUTO22
-            BUN _XIF2_XAUTO22
+            BUN _XIF1_XAUTO23
+            BUN _XIF2_XAUTO23
              / ) {
-            _XIF1_XAUTO22,
+            _XIF1_XAUTO23,
                 OUT
-                LDA DEBUGNUM
-                INC
-                STA DEBUGNUM
-            BUN _XIF3_XAUTO22
+            BUN _XIF3_XAUTO23
              / } else {  // 
-            _XIF2_XAUTO22,
+            _XIF2_XAUTO23,
                 CLA
                 STA SENDTRIG
                 LDA SENDBUFPTRINIT
@@ -868,10 +843,10 @@ INT_MAIN,
                 ADD MASKP
                 IMK
              / }
-            _XIF3_XAUTO22,
+            _XIF3_XAUTO23,
 
          / }
-        _XIF2_XAUTO21,
+        _XIF2_XAUTO22,
 
      / }
     _XIF2OutputAvailablePara,
@@ -908,13 +883,10 @@ INT_MAIN,
  / Data Segment
     ACCBAK, DEC 0
     EBAK, DEC 0
-    INPTRIG, DEC 0
     OUTTRIG, DEC 0
     SENDTRIG, DEC 0
     HaltFlag, DEC 0
-    REDRAWTRIG, DEC 0
     OPENTRIG, DEC 0
-    DEBUGNUM, DEC 0
     MASKSIN, DEC 8
     MASKSOUT, DEC 4
     MASKPIN, DEC 2
@@ -1472,9 +1444,7 @@ INT_MAIN,
         DEC 1
         DEC 0
     Keta10PtrInit, SYM Keta10Arr
-    ISSTATOUT, DEC 0
     STATUSCOLOR, SYM ResetText
     STATUREAD, DEC 0
-    INPUTCHARNUM, DEC 0
 END
 
