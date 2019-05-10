@@ -1,14 +1,6 @@
 #include <iostream>
 #include <ex3.hpp>
 
-EX3::Statement strCpy(EX3::Data from_ptr_init, EX3::Data to_ptr, EX3::Data tmp) {
-	using namespace EX3;
-	return For({ { tmp = +from_ptr_init }, { +*tmp }, { ++tmp } }, {
-		*to_ptr = +*tmp,
-		++to_ptr,
-	});
-}
-
 int main(){
 	using namespace EX3;
 	using namespace helper;
@@ -39,6 +31,7 @@ int main(){
 	Data ascii_ast(INT, "ASCIIAST", 42);
 	Data ascii_slush(INT, "ASCIISLU", 47);
 	Data dec(INT, "DECVAL", 10);
+	Data minus_dec(INT, "MIDECVAL", -10);
 
 	// Temporary
 	Data t1(INT, "TEMP1", 0);
@@ -48,11 +41,17 @@ int main(){
 	Data t_priority_1(INT, "TEMPPRI1", 0);
 	Data t_priority_2(INT, "TEMPPRI2", 0);
 	Data t_calc_index(INT, "TEMPCALCINDEX", 0);
+	Data t_queue_1(INT, "TEMPQUEUE1", 0);
 	Data t_calc_1(INT, "TEMPCALC1", 0);
 	Data t_calc_2(INT, "TEMPCALC2", 0);
 	Data t_calc_3(INT, "TEMPCALC3", 0);
 	Data t_result(INT, "TEMPRESULT", 0);
-	//Data Q(INT, "QVAL", 0);
+	Data t_print_1(INT, "TEMPPRINT1", 0);
+	Data t_print_2(INT, "TEMPPRINT2", 0);
+	Data t_print_3(INT, "TEMPPRINT3", 0);
+	Data t_print_4(INT, "TEMPPRINT4", 0);
+	Data A(INT, "AVAL", 0);
+	Data Q(INT, "QVAL", 0);
 	//Data R(INT, "RVAL", 0);
 	//Data X(INT, "XVAL", 0);
 
@@ -62,9 +61,50 @@ int main(){
 	for(int i = QUEUE_MAX; i --> 0;) Data(INT, "", 0);
 	Data queue_data_end_anchor(INT, "QUEDATENDA", 0);
 	Data queue_index(INT, "QUEINDEX", 0);
+	Data queue_remain(INT, "QUEREMAIN", 0);
 	Data queue_ptr(PTR, "QUEPTR", queue_data);
+	Data queue_read_ptr(PTR, "QUEREADPTR", queue_data);
 	Data queue_ptr_init(PTR, "QUEPTRINIT", queue_data);
-	Data queue_ptr_end(PTR, "QUEPTRINIT", queue_data_end_anchor);
+	Data queue_ptr_end(PTR, "QUEPTRINITEND", queue_data_end_anchor);
+
+	Data queue_tmp(INT, "QUERETMP", 0);
+
+	// Queue Util
+	auto que_push = [&](Data d){
+		// enqueue
+		return StatementList{
+			*queue_ptr = +d,
+			++queue_ptr,
+			// 終端に達していたら戻る
+			// Trivial: que_push呼び出しの度にStatementListが新規生成されるので
+			//          ラベル名の「焼き付き」は起こらない
+			If({-queue_ptr + queue_ptr_end}, {
+				queue_ptr = +queue_ptr_init,
+			}, true),
+			++queue_remain,
+		}.stat();
+	};
+
+	auto print = que_push;
+
+	StatementList que_pop = {
+		t_queue_1 = +*queue_read_ptr,
+		++queue_read_ptr,
+		// 終端に達していたら戻る
+		// Trivial: que_popのstatの度にStatementListが新規生成される
+		// TODO: 要検証
+		If({-queue_read_ptr + queue_ptr_end}, {
+			queue_read_ptr = +queue_ptr_init,
+		}, true),
+		--queue_remain,
+		+t_queue_1
+	};
+
+	auto print_str = [&](Data from_ptr_init, Data tmp){
+		return For({ { tmp = +from_ptr_init }, { +*tmp }, { ++tmp } }, {
+			print(*tmp)
+		});
+	};
 
 	// Stack
 	const int STACK_MAX = 30;
@@ -78,6 +118,28 @@ int main(){
 	Data RPN_i(INT, "RPNITR", 0);
 	Data RPN_token(INT, "RPNITRTOKEN", 0);
 	Data RPN_type(INT, "RPNITRTYPE", 0);
+
+	// Stack Util
+	auto push = [&](Data i){
+		return StatementList{
+			// TODO: border check
+			*stack_ptr = +i,
+			++stack_ptr,
+			++stack_index,
+		}.stat();
+	};
+
+	StatementList pop = {
+		--stack_ptr,
+		--stack_index,
+		+*stack_ptr
+	};
+
+	StatementList peek = {
+		stack_tmp = One,
+		stack_tmp = -stack_tmp + stack_ptr,
+		+*stack_tmp,
+	};
 
 	// Buffer
 	Data buffer_data(INT, "BUFDATA", 0);
@@ -130,13 +192,16 @@ int main(){
 	//helper_ConstString_Safe(prompt_text, "PromptText", " > ");
 
 	// Initialization
+	StatementList resetStack = {
+		stack_index = Zero,
+		stack_ptr = +stack_ptr_init,
+	};
 	StatementList resetTokenStack = {
-		stack_index
-		= token_index
+		resetStack(),
+		token_index
 		= buffer_index
 		= Zero,
 
-		stack_ptr = +stack_ptr_init,
 		token_ptr = +token_ptr_init,
 		buffer_ptr = +buffer_ptr_init,
 		token_type_ptr = +token_type_ptr_init,
@@ -181,6 +246,46 @@ int main(){
 		}.stat();
 	};
 
+	// TODO: toHex
+	auto printNum = [&](Data c){
+		return StatementList {
+			resetStack(),
+			If({+c}, {
+				t_print_2 = +c,
+				While({+t_print_2}, {
+					// minus_dec <- B
+					A = +t_print_2,
+					t_print_3 = Q = Zero,
+					--Q,
+					While({ MoreEq(A, minus_dec, t_print_4) }, {
+						t_print_3 = A + ascii_0, 
+						++Q,
+						A = A + minus_dec, 
+					}, true),
+					t_print_2 = +Q,
+					//
+					/*" / Show Q"_asm,
+					"CLE"_asm, // do nothing
+					"_B_,"_asm,
+					+t_print_3,
+					" / Show R"_asm,
+					"CLE"_asm, // do nothing
+					"_B_,"_asm,
+					*/
+					//
+					push(t_print_3),
+					//"_B_,"_asm,
+				}),
+			}, Else, {
+				push(ascii_0)
+			}),
+			While({+stack_index}, {
+				t_print_1 = pop(),
+				print(t_print_1),
+			})
+		}.stat();
+	};
+
 	// TODO: remove
 	auto cToi_dec = [&](Data c){
 		return StatementList {
@@ -205,33 +310,6 @@ int main(){
 
 	StatementList error = {
 		// TODO: implement
-	};
-
-	auto print = [&](Data ptr){
-		return StatementList{
-		}.stat();
-	};
-
-	// Stack Util
-	auto push = [&](Data i){
-		return StatementList{
-			// TODO: border check
-			*stack_ptr = +i,
-			++stack_ptr,
-			++stack_index,
-		}.stat();
-	};
-
-	StatementList pop = {
-		--stack_ptr,
-		--stack_index,
-		+*stack_ptr
-	};
-
-	StatementList peek = {
-		stack_tmp = One,
-		stack_tmp = -stack_tmp + stack_ptr,
-		+*stack_tmp,
 	};
 
 	// Operator Precedence
@@ -417,6 +495,7 @@ int main(){
 			RPN(),
 			t_result = calc(),
 			"_B_,"_asm,
+			printNum(t_result),
 			t_debug = +t_result,
 			//halt
 			// TODO: v  allow input v

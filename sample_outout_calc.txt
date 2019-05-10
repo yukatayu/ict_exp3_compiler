@@ -97,10 +97,10 @@ INT_MAIN,
                         INC
                         ADD INTmp
                     SZA
-                    BUN _XIF1_XAUTO26
-                    BUN _XIF2_XAUTO26
+                    BUN _XIF1_XAUTO31
+                    BUN _XIF2_XAUTO31
                      / ) {
-                    _XIF1_XAUTO26,
+                    _XIF1_XAUTO31,
                         LDA INTmp
                         STA RAWSTRPTR I
                         LDA RAWSTRPTR
@@ -109,7 +109,7 @@ INT_MAIN,
                         CLA
                         STA RAWSTRPTR I
                      / }
-                    _XIF2_XAUTO26,
+                    _XIF2_XAUTO31,
 
                  / }
                 _XIF3CheckCharCtrlD,
@@ -135,10 +135,10 @@ INT_MAIN,
          / if (
             LDA DECLTRIG
         SZA
-        BUN _XIF1_XAUTO27
-        BUN _XIF2_XAUTO27
+        BUN _XIF1_XAUTO32
+        BUN _XIF2_XAUTO32
          / ) {
-        _XIF1_XAUTO27,
+        _XIF1_XAUTO32,
             CLA
             STA DECLTRIG
                     LDA ASCIIPAREND
@@ -148,12 +148,13 @@ INT_MAIN,
                     STA RAWSTRPTR
                     CLA
                     STA RAWSTRPTR I
+                        CLA
+                        STA STACKINDEX
+                        LDA STACKPTRINIT
+                        STA STACKPTR
                     CLA
                     STA BUFINDEX
                     STA TOKENINDEX
-                    STA STACKINDEX
-                    LDA STACKPTRINIT
-                    STA STACKPTR
                     LDA TOKENPTRINIT
                     STA TOKENPTR
                     LDA BUFPTRINIT
@@ -931,12 +932,158 @@ INT_MAIN,
                     LDA STACKPTR I
             STA TEMPRESULT
             _B_,
+                    CLA
+                    STA STACKINDEX
+                    LDA STACKPTRINIT
+                    STA STACKPTR
+
+                 / if (
+                    LDA TEMPRESULT
+                SZA
+                BUN _XIF1_XAUTO27
+                BUN _XIF2_XAUTO27
+                 / ) {
+                _XIF1_XAUTO27,
+                    LDA TEMPRESULT
+                    STA TEMPPRINT2
+
+                    _XWH1_XAUTO28,
+                     / while (
+                        LDA TEMPPRINT2
+                    SZA
+                    BUN _XWH2_XAUTO28
+                    BUN _XWH3_XAUTO28
+                     / ) {
+                    _XWH2_XAUTO28,
+                        LDA TEMPPRINT2
+                        STA AVAL
+                        CLA
+                        STA QVAL
+                        STA TEMPPRINT3
+                        LDA QVAL
+                        CMA
+                        INC
+                        CMA
+                        STA QVAL
+
+                        _XWH1_XAUTO29,
+                         / while (
+                            LDA MIDECVAL
+                            CLE
+                            CME
+                            SZA
+                            CME
+                            CLA
+                            CIL
+                            STA TEMPPRINT4
+                            LDA MIDECVAL
+                            CMA
+                            INC
+                            ADD AVAL
+                            CLA
+                            CIL
+                            ADD TEMPPRINT4
+                        SZA
+                        BUN _XWH3_XAUTO29
+                        BUN _XWH2_XAUTO29
+                         / ) {
+                        _XWH2_XAUTO29,
+                            LDA AVAL
+                            ADD ASCII0
+                            STA TEMPPRINT3
+                            LDA QVAL
+                            INC
+                            STA QVAL
+                            LDA AVAL
+                            ADD MIDECVAL
+                            STA AVAL
+                        BUN _XWH1_XAUTO29
+                         / }
+                        _XWH3_XAUTO29,
+
+                        LDA QVAL
+                        STA TEMPPRINT2
+                            LDA TEMPPRINT3
+                            STA STACKPTR I
+                            LDA STACKPTR
+                            INC
+                            STA STACKPTR
+                            LDA STACKINDEX
+                            INC
+                            STA STACKINDEX
+                    BUN _XWH1_XAUTO28
+                     / }
+                    _XWH3_XAUTO28,
+
+                BUN _XIF3_XAUTO27
+                 / } else {  // 
+                _XIF2_XAUTO27,
+                        LDA ASCII0
+                        STA STACKPTR I
+                        LDA STACKPTR
+                        INC
+                        STA STACKPTR
+                        LDA STACKINDEX
+                        INC
+                        STA STACKINDEX
+                 / }
+                _XIF3_XAUTO27,
+
+
+                _XWH1_XAUTO30,
+                 / while (
+                    LDA STACKINDEX
+                SZA
+                BUN _XWH2_XAUTO30
+                BUN _XWH3_XAUTO30
+                 / ) {
+                _XWH2_XAUTO30,
+                        LDA STACKPTR
+                        CMA
+                        INC
+                        CMA
+                        STA STACKPTR
+                        LDA STACKINDEX
+                        CMA
+                        INC
+                        CMA
+                        STA STACKINDEX
+                        LDA STACKPTR I
+                    STA TEMPPRINT1
+                        LDA TEMPPRINT1
+                        STA QUEPTR I
+                        LDA QUEPTR
+                        INC
+                        STA QUEPTR
+
+                         / if (
+                            LDA QUEPTR
+                            CMA
+                            INC
+                            ADD QUEPTRINITEND
+                        SZA
+                        BUN _XIF2_XAUTO26
+                        BUN _XIF1_XAUTO26
+                         / ) {
+                        _XIF1_XAUTO26,
+                            LDA QUEPTRINIT
+                            STA QUEPTR
+                         / }
+                        _XIF2_XAUTO26,
+
+                        LDA QUEREMAIN
+                        INC
+                        STA QUEREMAIN
+                BUN _XWH1_XAUTO30
+                 / }
+                _XWH3_XAUTO30,
+
             LDA TEMPRESULT
             STA TEMPDEBUG
             LDA MASKSIN
             IMK
          / }
-        _XIF2_XAUTO27,
+        _XIF2_XAUTO32,
 
      / < end of Output
 
@@ -988,6 +1135,7 @@ INT_MAIN,
     ASCIIAST, DEC 42
     ASCIISLU, DEC 47
     DECVAL, DEC 10
+    MIDECVAL, DEC -10
     TEMP1, DEC 0
     TEMP2, DEC 0
     TEMPCTOI1, DEC 0
@@ -995,10 +1143,17 @@ INT_MAIN,
     TEMPPRI1, DEC 0
     TEMPPRI2, DEC 0
     TEMPCALCINDEX, DEC 0
+    TEMPQUEUE1, DEC 0
     TEMPCALC1, DEC 0
     TEMPCALC2, DEC 0
     TEMPCALC3, DEC 0
     TEMPRESULT, DEC 0
+    TEMPPRINT1, DEC 0
+    TEMPPRINT2, DEC 0
+    TEMPPRINT3, DEC 0
+    TEMPPRINT4, DEC 0
+    AVAL, DEC 0
+    QVAL, DEC 0
     QUEDATA, DEC 0
         DEC 0
         DEC 0
@@ -1052,9 +1207,12 @@ INT_MAIN,
         DEC 0
     QUEDATENDA, DEC 0
     QUEINDEX, DEC 0
+    QUEREMAIN, DEC 0
     QUEPTR, SYM QUEDATA
+    QUEREADPTR, SYM QUEDATA
     QUEPTRINIT, SYM QUEDATA
-    QUEPTRINIT, SYM QUEDATENDA
+    QUEPTRINITEND, SYM QUEDATENDA
+    QUERETMP, DEC 0
     STACKDATA, DEC 0
         DEC 0
         DEC 0
