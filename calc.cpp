@@ -1,6 +1,14 @@
 #include <iostream>
 #include <ex3.hpp>
 
+EX3::Statement strCpy(EX3::Data from_ptr_init, EX3::Data to_ptr, EX3::Data tmp) {
+	using namespace EX3;
+	return For({ { tmp = +from_ptr_init }, { +*tmp }, { ++tmp } }, {
+		*to_ptr = +*tmp,
+		++to_ptr,
+	});
+}
+
 int main(){
 	using namespace EX3;
 	using namespace helper;
@@ -48,9 +56,18 @@ int main(){
 	//Data R(INT, "RVAL", 0);
 	//Data X(INT, "XVAL", 0);
 
+	// Display Buffer
+	const int QUEUE_MAX = 50;
+	Data queue_data(INT, "QUEDATA", 0);
+	for(int i = QUEUE_MAX; i --> 0;) Data(INT, "", 0);
+	Data queue_data_end_anchor(INT, "QUEDATENDA", 0);
+	Data queue_index(INT, "QUEINDEX", 0);
+	Data queue_ptr(PTR, "QUEPTR", queue_data);
+	Data queue_ptr_init(PTR, "QUEPTRINIT", queue_data);
+	Data queue_ptr_end(PTR, "QUEPTRINIT", queue_data_end_anchor);
+
 	// Stack
-	// TODO: store value type
-	const int STACK_MAX = 20; // TODO: increase
+	const int STACK_MAX = 30;
 	Data stack_data(INT, "STACKDATA", 0);
 	for(int i = STACK_MAX; i --> 0;) Data(INT, "", 0);
 	Data stack_index(INT, "STACKINDEX", 0);
@@ -72,14 +89,6 @@ int main(){
 	Data buffer_ptr_init(PTR, "BUFPTRINIT", buffer_data);
 	Data buffer_type_ptr(PTR, "BUFTYPEPTR", buffer_type_data);
 	Data buffer_type_ptr_init(PTR, "BUFTYPEPTRINIT", buffer_type_data);
-
-	// Heap
-	/*Data heap_data(INT, "HEAPDATA", 0);
-	for(int i = STACK_MAX*5; i --> 0;) Data(INT, "", 0);
-	Data heap_index(INT, "HEAPINDEX", 0);
-	Data heap_ptr(PTR, "HEAPPTR", heap_data);
-	Data heap_ptr_init(PTR, "HEAPPTRINIT", heap_data);
-	*/
 
 	// Token List
 	// Note: [Type] Num: 1, Op: 0
@@ -105,6 +114,22 @@ int main(){
 
 	Data t_debug(INT, "TEMPDEBUG", 0);  // TODO: remove
 
+	// エスケープシーケンスを安全に扱うために、文字列を整数に変換して扱う
+	// 文字列リテラルは末尾に '\0' が入るのでヌル文字の追加は不要
+	// Ptr は MaybeUnused
+#define helper_ConstString_Safe(ProgName, AsmName, Str) \
+	Data ProgName(INT, AsmName, static_cast<unsigned char>(Str[0])); \
+	for(int i=1; i<(sizeof(Str)/sizeof(*Str)); ++i) \
+		Data(INT, "", static_cast<unsigned char>(Str[i])); \
+	Data(INT, "", 0); \
+	Data ProgName ## _ptr_init (PTR, AsmName "PtrInit", ProgName);
+	// Data ProgName ## _ptr (PTR, AsmName "Ptr", ProgName, MaybeUnused);
+
+	// TODO
+	//helper_ConstString_Safe(disp_count_postfix, "DispCountPostfix", "/100");
+	//helper_ConstString_Safe(prompt_text, "PromptText", " > ");
+
+	// Initialization
 	StatementList resetTokenStack = {
 		stack_index
 		= token_index
@@ -133,6 +158,7 @@ int main(){
 		*raw_str_ptr = Zero,
 	};
 
+	// String Utilities
 	// TODO: to HEX
 	auto cToi = [&](Data c){
 		return StatementList {
@@ -177,6 +203,58 @@ int main(){
 		}.stat();
 	};
 
+	StatementList error = {
+		// TODO: implement
+	};
+
+	auto print = [&](Data ptr){
+		return StatementList{
+		}.stat();
+	};
+
+	// Stack Util
+	auto push = [&](Data i){
+		return StatementList{
+			// TODO: border check
+			*stack_ptr = +i,
+			++stack_ptr,
+			++stack_index,
+		}.stat();
+	};
+
+	StatementList pop = {
+		--stack_ptr,
+		--stack_index,
+		+*stack_ptr
+	};
+
+	StatementList peek = {
+		stack_tmp = One,
+		stack_tmp = -stack_tmp + stack_ptr,
+		+*stack_tmp,
+	};
+
+	// Operator Precedence
+	StatementList priority = {
+		t_priority_1 = Const(),
+		t_priority_2 = +ascii_0,  // 十分大きければ何でも良い
+
+		If({ -ascii_plus + t_priority_1 }, {
+			t_priority_2 = One,
+		}, true),
+		If({ -ascii_minus + t_priority_1 }, {
+			t_priority_2 = One,
+		}, true),
+		If({ -ascii_ast + t_priority_1 }, {
+			t_priority_2 = Zero,
+		}, true),
+		If({ -ascii_slush + t_priority_1 }, {
+			t_priority_2 = Zero,
+		}, true),
+		+t_priority_2
+	};
+
+	// Step1: Tokenize
 	StatementList tokenize_and_reset_str = {
 		finishInputString(),
 		resetTokenStack(),
@@ -208,51 +286,7 @@ int main(){
 		resetInputString()
 	};
 
-	auto push = [&](Data i){
-		return StatementList{
-			// TODO: border check
-			*stack_ptr = +i,
-			++stack_ptr,
-			++stack_index,
-		}.stat();
-	};
-
-	// returns char*
-	StatementList pop = {
-		--stack_ptr,
-		--stack_index,
-		+*stack_ptr
-	};
-
-	StatementList priority = {
-		t_priority_1 = Const(),
-		t_priority_2 = +ascii_0,  // 十分大きければ何でも良い
-
-		If({ -ascii_plus + t_priority_1 }, {
-			t_priority_2 = One,
-		}, true),
-		If({ -ascii_minus + t_priority_1 }, {
-			t_priority_2 = One,
-		}, true),
-		If({ -ascii_ast + t_priority_1 }, {
-			t_priority_2 = Zero,
-		}, true),
-		If({ -ascii_slush + t_priority_1 }, {
-			t_priority_2 = Zero,
-		}, true),
-		+t_priority_2
-	};
-
-	StatementList peek = {
-		stack_tmp = One,
-		stack_tmp = -stack_tmp + stack_ptr,
-		+*stack_tmp,
-	};
-
-	StatementList error = {
-		// TODO: implement
-	};
-
+	// Step2: RPN
 	StatementList RPN = {
 		For({{ RPN_i = Zero }, { -token_index + RPN_i, GetNegative }, { ++RPN_i }}, {
 			RPN_token = token_ptr_init + RPN_i,
@@ -309,17 +343,12 @@ int main(){
 					}, true),
 				}, true),
 			})
-
-		//,+*RPN_token,
-		//"_B_,"_asm,
-		//+*RPN_token,
-
 		}),
 		// この時点で一番外側の ( ) によってバッファは全てフラッシュされているはず
 		// (TODO: さもなくばエラー)
 	};
 
-	// Calculate
+	// Step3: Calculate
 	StatementList calc = {
 		// reset stack
 		stack_index = Zero,
@@ -356,7 +385,7 @@ int main(){
 		pop()  // TODO: エラー処理
 	};
 
-	// Input a char
+	// Input Subroutine
 	StatementList checkChar = {
 		// Enter -> Start output
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
@@ -383,11 +412,16 @@ int main(){
 	// Process Trigger
 	StatementList digitOutput = {
 		If({ +out_trigger }, {
+			out_trigger = Zero,
 			tokenize_and_reset_str(),
 			RPN(),
 			t_result = calc(),
+			"_B_,"_asm,
 			t_debug = +t_result,
-			halt
+			//halt
+			// TODO: v  allow input v
+			+mask_sin,
+			"IMK"_asm,
 		})
 	};
 

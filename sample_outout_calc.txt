@@ -139,6 +139,8 @@ INT_MAIN,
         BUN _XIF2_XAUTO27
          / ) {
         _XIF1_XAUTO27,
+            CLA
+            STA DECLTRIG
                     LDA ASCIIPAREND
                     STA RAWSTRPTR I
                     LDA RAWSTRPTR
@@ -928,9 +930,11 @@ INT_MAIN,
                     STA STACKINDEX
                     LDA STACKPTR I
             STA TEMPRESULT
+            _B_,
             LDA TEMPRESULT
             STA TEMPDEBUG
-            _M_, HLT
+            LDA MASKSIN
+            IMK
          / }
         _XIF2_XAUTO27,
 
@@ -995,7 +999,73 @@ INT_MAIN,
     TEMPCALC2, DEC 0
     TEMPCALC3, DEC 0
     TEMPRESULT, DEC 0
+    QUEDATA, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+    QUEDATENDA, DEC 0
+    QUEINDEX, DEC 0
+    QUEPTR, SYM QUEDATA
+    QUEPTRINIT, SYM QUEDATA
+    QUEPTRINIT, SYM QUEDATENDA
     STACKDATA, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
         DEC 0
         DEC 0
         DEC 0
@@ -1044,7 +1114,27 @@ INT_MAIN,
         DEC 0
         DEC 0
         DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
     BUFTYPEDATA, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
         DEC 0
         DEC 0
         DEC 0
@@ -1091,7 +1181,27 @@ INT_MAIN,
         DEC 0
         DEC 0
         DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
     TOKENTYPEDATA, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
         DEC 0
         DEC 0
         DEC 0
@@ -1119,6 +1229,31 @@ INT_MAIN,
     TOKENTYPEPTRINIT, SYM TOKENTYPEDATA
     TOKENNUMTMP, DEC 0
     RAWSTRDATA, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
         DEC 0
         DEC 0
         DEC 0
