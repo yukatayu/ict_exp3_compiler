@@ -98,6 +98,7 @@ namespace EX3{
 		StatementList(std::vector<Statement> statements);
 		std::string make();
 		Statement stat(std::string label = "", std::string placeholder = "");
+		Statement operator()();
 	};
 
 	class Const_impl : public Statement_impl {
@@ -280,6 +281,14 @@ namespace EX3{
 			new Const_impl(
 				"CLA\n"
 				"INC\n"
+			)
+		};
+
+		static Statement GetNegative{
+			new Const_impl(
+				"CIL\n"
+				"CLA\n"
+				"CIL\n"
 			)
 		};
 
