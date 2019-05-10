@@ -292,7 +292,7 @@ int main(){
 								peek(),
 								t2 = priority(),
 								If({
-									-t1 + t2,
+									-t2 + t1,
 									GetNegative
 								}, {
 									*buffer_ptr = pop(),
@@ -303,7 +303,7 @@ int main(){
 								}, Else, {
 									push(*RPN_token),
 									Break("CompareOps"),
-								})
+								}, true)
 							})
 						}, true),
 					}, true),

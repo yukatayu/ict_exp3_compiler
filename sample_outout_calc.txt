@@ -656,16 +656,16 @@ INT_MAIN,
                                         STA TEMP2
 
                                          / if (
-                                            LDA TEMP1
+                                            LDA TEMP2
                                             CMA
                                             INC
-                                            ADD TEMP2
+                                            ADD TEMP1
                                             CIL
                                             CLA
                                             CIL
                                         SZA
-                                        BUN _XIF1_XAUTO19
                                         BUN _XIF2_XAUTO19
+                                        BUN _XIF1_XAUTO19
                                          / ) {
                                         _XIF1_XAUTO19,
                                                 LDA STACKPTR
