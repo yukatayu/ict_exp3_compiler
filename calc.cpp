@@ -7,7 +7,7 @@ int main(){
 
 	Data AccBak(INT, "ACCBAK", 0);
 	Data EBak(INT, "EBAK", 0);
-	Data show_i(INT, "ShowIParam", 0);
+	//Data show_i(INT, "ShowIParam", 0);
 
 	Data out_trigger(INT, "DECLTRIG", 0);
 	Data halt_trigger(INT, "HaltFlag", 0);
@@ -16,8 +16,8 @@ int main(){
 	Data mask_sout(INT, "MASKSOUT", 4);
 
 	Data IN_tmp(INT, "INTmp", 0);
-	Data N(INT, "N", 0);
-	Data N_num(INT, "NNUM", 0);  // Nの桁数
+	//Data N(INT, "N", 0);
+	//Data N_num(INT, "NNUM", 0);  // Nの桁数
 
 	Data ascii_0(INT, "ASCII0", 48);
 	Data ascii_A(INT, "ASCIIA", 65);
@@ -120,11 +120,36 @@ int main(){
 		*raw_str_ptr = Zero,
 	};
 
+	// TODO: to HEX
 	auto cToi = [&](Data c){
 		return StatementList {
 			t_ctoi_2 = One,  // error
 			t_ctoi_1 = -ascii_0 + c,
-			If({ Negative(t_ctoi_1) }, {	
+			If({ Negative(t_ctoi_1) }, {
+				If({
+					-dec + t_ctoi_1,
+					"CIL"_asm,
+					"CLA"_asm,
+					"CIL"_asm,
+				}, {
+					t_ctoi_2 = Zero
+				})
+			}, true),
+			// E <- t2
+			"CLE"_asm,
+			+t_ctoi_2,
+			"SZA"_asm,
+			"CME"_asm,
+			+t_ctoi_1
+		}.stat();
+	};
+
+	// TODO: remove
+	auto cToi_dec = [&](Data c){
+		return StatementList {
+			t_ctoi_2 = One,  // error
+			t_ctoi_1 = -ascii_0 + c,
+			If({ Negative(t_ctoi_1) }, {
 				If({
 					-dec + t_ctoi_1,
 					"CIL"_asm,
