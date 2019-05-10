@@ -97,10 +97,10 @@ INT_MAIN,
                         INC
                         ADD INTmp
                     SZA
-                    BUN _XIF1_XAUTO20
-                    BUN _XIF2_XAUTO20
+                    BUN _XIF1_XAUTO26
+                    BUN _XIF2_XAUTO26
                      / ) {
-                    _XIF1_XAUTO20,
+                    _XIF1_XAUTO26,
                         LDA INTmp
                         STA RAWSTRPTR I
                         LDA RAWSTRPTR
@@ -109,7 +109,7 @@ INT_MAIN,
                         CLA
                         STA RAWSTRPTR I
                      / }
-                    _XIF2_XAUTO20,
+                    _XIF2_XAUTO26,
 
                  / }
                 _XIF3CheckCharCtrlD,
@@ -135,10 +135,10 @@ INT_MAIN,
          / if (
             LDA DECLTRIG
         SZA
-        BUN _XIF1_XAUTO21
-        BUN _XIF2_XAUTO21
+        BUN _XIF1_XAUTO27
+        BUN _XIF2_XAUTO27
          / ) {
-        _XIF1_XAUTO21,
+        _XIF1_XAUTO27,
                     LDA ASCIIPAREND
                     STA RAWSTRPTR I
                     LDA RAWSTRPTR
@@ -731,9 +731,208 @@ INT_MAIN,
                  / }
                 _XFOR3_XAUTO12,
 
+                CLA
+                STA STACKINDEX
+                LDA STACKPTRINIT
+                STA STACKPTR
+
+                 / > for loop CalcMain
+                CLA
+                STA TEMPCALCINDEX
+                _XFOR1CalcMain,
+                 / for (
+                    LDA BUFINDEX
+                    CMA
+                    INC
+                    ADD TEMPCALCINDEX
+                    CIL
+                    CLA
+                    CIL
+                SZA
+                BUN _XFOR2CalcMain
+                BUN _XFOR3CalcMain
+                 / ) {
+                _XFOR2CalcMain,
+                    LDA BUFPTRINIT
+                    ADD TEMPCALCINDEX
+                    STA RPNITRTOKEN
+                    LDA BUFTYPEPTRINIT
+                    ADD TEMPCALCINDEX
+                    STA RPNITRTYPE
+
+                     / if (
+                        LDA RPNITRTYPE I
+                    SZA
+                    BUN _XIF1_XAUTO20
+                    BUN _XIF2_XAUTO20
+                     / ) {
+                    _XIF1_XAUTO20,
+                            LDA RPNITRTOKEN I
+                            STA STACKPTR I
+                            LDA STACKPTR
+                            INC
+                            STA STACKPTR
+                            LDA STACKINDEX
+                            INC
+                            STA STACKINDEX
+                    BUN _XIF3_XAUTO20
+                     / } else {  // 
+                    _XIF2_XAUTO20,
+                            LDA STACKPTR
+                            CMA
+                            INC
+                            CMA
+                            STA STACKPTR
+                            LDA STACKINDEX
+                            CMA
+                            INC
+                            CMA
+                            STA STACKINDEX
+                            LDA STACKPTR I
+                        STA TEMPCALC2
+                            LDA STACKPTR
+                            CMA
+                            INC
+                            CMA
+                            STA STACKPTR
+                            LDA STACKINDEX
+                            CMA
+                            INC
+                            CMA
+                            STA STACKINDEX
+                            LDA STACKPTR I
+                        STA TEMPCALC1
+
+                         / if (
+                            LDA ASCIIPLUS
+                            CMA
+                            INC
+                            ADD RPNITRTOKEN I
+                        SZA
+                        BUN _XIF2_XAUTO21
+                        BUN _XIF1_XAUTO21
+                         / ) {
+                        _XIF1_XAUTO21,
+                            LDA TEMPCALC1
+                            ADD TEMPCALC2
+                            STA TEMPCALC1
+                         / }
+                        _XIF2_XAUTO21,
+
+
+                         / if (
+                            LDA ASCIIMINUS
+                            CMA
+                            INC
+                            ADD RPNITRTOKEN I
+                        SZA
+                        BUN _XIF2_XAUTO22
+                        BUN _XIF1_XAUTO22
+                         / ) {
+                        _XIF1_XAUTO22,
+                            LDA TEMPCALC2
+                            CMA
+                            INC
+                            ADD TEMPCALC1
+                            STA TEMPCALC1
+                         / }
+                        _XIF2_XAUTO22,
+
+
+                         / if (
+                            LDA ASCIIAST
+                            CMA
+                            INC
+                            ADD RPNITRTOKEN I
+                        SZA
+                        BUN _XIF2_XAUTO23
+                        BUN _XIF1_XAUTO23
+                         / ) {
+                        _XIF1_XAUTO23,
+                            LDA TEMPCALC1
+                            STA TEMP2
+                            CLA
+                            STA TEMPCALC1
+
+                            CLA
+                            STA TEMP1
+                            _XFOR1_XAUTO24,
+                             / for (
+                                LDA TEMPCALC2
+                                CMA
+                                INC
+                                ADD TEMP1
+                                CIL
+                                CLA
+                                CIL
+                            SZA
+                            BUN _XFOR2_XAUTO24
+                            BUN _XFOR3_XAUTO24
+                             / ) {
+                            _XFOR2_XAUTO24,
+                                LDA TEMP2
+                                ADD TEMPCALC1
+                                STA TEMPCALC1
+                            LDA TEMP1
+                            INC
+                            STA TEMP1
+                            BUN _XFOR1_XAUTO24
+                             / }
+                            _XFOR3_XAUTO24,
+
+                         / }
+                        _XIF2_XAUTO23,
+
+
+                         / if (
+                            LDA ASCIISLU
+                            CMA
+                            INC
+                            ADD RPNITRTOKEN I
+                        SZA
+                        BUN _XIF2_XAUTO25
+                        BUN _XIF1_XAUTO25
+                         / ) {
+                        _XIF1_XAUTO25,
+                         / }
+                        _XIF2_XAUTO25,
+
+                            LDA TEMPCALC1
+                            STA STACKPTR I
+                            LDA STACKPTR
+                            INC
+                            STA STACKPTR
+                            LDA STACKINDEX
+                            INC
+                            STA STACKINDEX
+                     / }
+                    _XIF3_XAUTO20,
+
+                LDA TEMPCALCINDEX
+                INC
+                STA TEMPCALCINDEX
+                BUN _XFOR1CalcMain
+                 / }
+                _XFOR3CalcMain,
+                 / < end of for loop CalcMain
+
+                    LDA STACKPTR
+                    CMA
+                    INC
+                    CMA
+                    STA STACKPTR
+                    LDA STACKINDEX
+                    CMA
+                    INC
+                    CMA
+                    STA STACKINDEX
+                    LDA STACKPTR I
+            STA TEMPRESULT
+            LDA TEMPRESULT
+            STA TEMPDEBUG
             _M_, HLT
          / }
-        _XIF2_XAUTO21,
+        _XIF2_XAUTO27,
 
      / < end of Output
 
@@ -791,8 +990,11 @@ INT_MAIN,
     TEMPCTOI2, DEC 0
     TEMPPRI1, DEC 0
     TEMPPRI2, DEC 0
+    TEMPCALCINDEX, DEC 0
     TEMPCALC1, DEC 0
     TEMPCALC2, DEC 0
+    TEMPCALC3, DEC 0
+    TEMPRESULT, DEC 0
     STACKDATA, DEC 0
         DEC 0
         DEC 0
@@ -980,5 +1182,6 @@ INT_MAIN,
     RAWSTRPTR, SYM RAWSTRDATA
     RAWSTRPTRINIT, SYM RAWSTRDATA
     BEFORETYPE, DEC 0
+    TEMPDEBUG, DEC 0
 END
 

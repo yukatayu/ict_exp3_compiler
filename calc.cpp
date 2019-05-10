@@ -39,8 +39,11 @@ int main(){
 	Data t_ctoi_2(INT, "TEMPCTOI2", 0);
 	Data t_priority_1(INT, "TEMPPRI1", 0);
 	Data t_priority_2(INT, "TEMPPRI2", 0);
+	Data t_calc_index(INT, "TEMPCALCINDEX", 0);
 	Data t_calc_1(INT, "TEMPCALC1", 0);
 	Data t_calc_2(INT, "TEMPCALC2", 0);
+	Data t_calc_3(INT, "TEMPCALC3", 0);
+	Data t_result(INT, "TEMPRESULT", 0);
 	//Data Q(INT, "QVAL", 0);
 	//Data R(INT, "RVAL", 0);
 	//Data X(INT, "XVAL", 0);
@@ -99,6 +102,8 @@ int main(){
 	Data raw_str_ptr_init(PTR, "RAWSTRPTRINIT", raw_str_data);
 
 	Data before_num(INT, "BEFORETYPE", 0);  // init: (not number)
+
+	Data t_debug(INT, "TEMPDEBUG", 0);  // TODO: remove
 
 	StatementList resetTokenStack = {
 		stack_index
@@ -249,10 +254,7 @@ int main(){
 	};
 
 	StatementList RPN = {
-		For({{ RPN_i = Zero }, {
-			-token_index + RPN_i,
-			GetNegative
-		}, { ++RPN_i }}, {
+		For({{ RPN_i = Zero }, { -token_index + RPN_i, GetNegative }, { ++RPN_i }}, {
 			RPN_token = token_ptr_init + RPN_i,
 			RPN_type = token_type_ptr_init + RPN_i,
 			If("RPNTokenNum", { +*RPN_type }, {  // 数字だったらbufferへ
@@ -319,9 +321,39 @@ int main(){
 
 	// Calculate
 	StatementList calc = {
-		// TODO: implement
-		For("CalcMain", {{ t_calc_1 = Zero }, { -buffer_index + t_calc_1, GetNegative }, { ++t_calc_1 }}, {
-		})
+		// reset stack
+		stack_index = Zero,
+		stack_ptr = +stack_ptr_init,
+		For("CalcMain", {{ t_calc_index = Zero }, {
+			-buffer_index + t_calc_index, GetNegative
+		}, { ++t_calc_index }}, {
+			RPN_token = buffer_ptr_init + t_calc_index,
+			RPN_type = buffer_type_ptr_init + t_calc_index,
+			If({ +*RPN_type }, {  // number
+				push(*RPN_token)
+			}, Else, {  // Ops
+				t_calc_2 = pop(),  // reverse order
+				t_calc_1 = pop(),
+				If({ -ascii_plus + *RPN_token }, {
+					t_calc_1 = t_calc_1 + t_calc_2
+				}, true),
+				If({ -ascii_minus + *RPN_token }, {
+					t_calc_1 = -t_calc_2 + t_calc_1
+				}, true),
+				If({ -ascii_ast + *RPN_token }, {
+					t2 = +t_calc_1,
+					t_calc_1 = Zero,
+					For({{t1=Zero}, {-t_calc_2 + t1, GetNegative}, {++t1}}, {
+						t_calc_1 = t2 + t_calc_1
+					}),
+				}, true),
+				If({ -ascii_slush + *RPN_token }, {
+					// TODO: implement
+				}, true),
+				push(t_calc_1),
+			}),
+		}),
+		pop()  // TODO: エラー処理
 	};
 
 	// Input a char
@@ -353,6 +385,8 @@ int main(){
 		If({ +out_trigger }, {
 			tokenize_and_reset_str(),
 			RPN(),
+			t_result = calc(),
+			t_debug = +t_result,
 			halt
 		})
 	};
