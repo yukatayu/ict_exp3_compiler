@@ -20,8 +20,6 @@ int main(){
 	Data mask_sout(INT, "MASKSOUT", 4);
 
 	Data IN_tmp(INT, "INTmp", 0);
-	//Data N(INT, "N", 0);
-	//Data N_num(INT, "NNUM", 0);  // Nの桁数
 
 	Data ascii_0(INT, "ASCII0", 48);
 	//Data ascii_A(INT, "ASCIIA", 65);
@@ -75,11 +73,9 @@ int main(){
 	Data ProgName ## _ptr_init (PTR, AsmName "PtrInit", ProgName);
 	// Data ProgName ## _ptr (PTR, AsmName "Ptr", ProgName, MaybeUnused);
 
-	helper_ConstString_Safe(result_pre_str, "ResultPrefix", " result > ");
-	helper_ConstString_Safe(result_fail_color, "ResultFailCol", "\033[91m");
-	helper_ConstString_Safe(result_success_color, "ResultSucCol", "\033[92m");
+	helper_ConstString_Safe(result_pre_str, "ResultPrefix", " result > \033[92m");
 	helper_ConstString_Safe(result_post_str, "ResultPostfix", "\033[0m");
-	helper_ConstString_Safe(error_overflow_str, "ErrMsgOverFlow", "InternalError: OverFlow");
+	helper_ConstString_Safe(error_overflow_str, "ErrMsgOverFlow", "\033[91mInternalError: OverFlow");
 
 	// Display Buffer
 	Data queue_data(INT, "QUEDATA", 0);
@@ -471,12 +467,10 @@ int main(){
 			t_result = calc(),
 			If({+stat_err}, {
 				printStr(result_pre_str_ptr_init, t1),
-				printStr(result_success_color_ptr_init, t1),
 				printNum(t_result),
 			}, true),
 			Goto("proc_success"),
 			"proc_overflow,"_asm,
-			printStr(result_fail_color_ptr_init, t1),
 			printStr(error_overflow_str_ptr_init, t1),
 			"proc_success,"_asm,
 			printStr(result_post_str_ptr_init, t1),

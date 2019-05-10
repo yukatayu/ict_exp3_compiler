@@ -97,10 +97,10 @@ INT_MAIN,
                         INC
                         ADD INTmp
                     SZA
-                    BUN _XIF1_XAUTO46
-                    BUN _XIF2_XAUTO46
+                    BUN _XIF1_XAUTO44
+                    BUN _XIF2_XAUTO44
                      / ) {
-                    _XIF1_XAUTO46,
+                    _XIF1_XAUTO44,
                         LDA INTmp
                         STA RAWSTRPTR I
                         LDA RAWSTRPTR
@@ -109,7 +109,7 @@ INT_MAIN,
                         CLA
                         STA RAWSTRPTR I
                      / }
-                    _XIF2_XAUTO46,
+                    _XIF2_XAUTO44,
 
                  / }
                 _XIF3CheckCharCtrlD,
@@ -135,10 +135,10 @@ INT_MAIN,
          / if (
             LDA DECLTRIG
         SZA
-        BUN _XIF1_XAUTO47
-        BUN _XIF2_XAUTO47
+        BUN _XIF1_XAUTO45
+        BUN _XIF2_XAUTO45
          / ) {
-        _XIF1_XAUTO47,
+        _XIF1_XAUTO45,
             CLA
             STA ERRSTAT
             STA DECLTRIG
@@ -1077,21 +1077,21 @@ INT_MAIN,
              / if (
                 LDA ERRSTAT
             SZA
-            BUN _XIF2_XAUTO48
-            BUN _XIF1_XAUTO48
+            BUN _XIF2_XAUTO46
+            BUN _XIF1_XAUTO46
              / ) {
-            _XIF1_XAUTO48,
+            _XIF1_XAUTO46,
 
                 LDA ResultPrefixPtrInit
                 STA TEMP1
-                _XFOR1_XAUTO49,
+                _XFOR1_XAUTO47,
                  / for (
                     LDA TEMP1 I
                 SZA
-                BUN _XFOR2_XAUTO49
-                BUN _XFOR3_XAUTO49
+                BUN _XFOR2_XAUTO47
+                BUN _XFOR3_XAUTO47
                  / ) {
-                _XFOR2_XAUTO49,
+                _XFOR2_XAUTO47,
                         LDA TEMP1 I
                         STA QUEPTR I
                         LDA QUEPTR
@@ -1119,51 +1119,9 @@ INT_MAIN,
                 LDA TEMP1
                 INC
                 STA TEMP1
-                BUN _XFOR1_XAUTO49
+                BUN _XFOR1_XAUTO47
                  / }
-                _XFOR3_XAUTO49,
-
-
-                LDA ResultSucColPtrInit
-                STA TEMP1
-                _XFOR1_XAUTO50,
-                 / for (
-                    LDA TEMP1 I
-                SZA
-                BUN _XFOR2_XAUTO50
-                BUN _XFOR3_XAUTO50
-                 / ) {
-                _XFOR2_XAUTO50,
-                        LDA TEMP1 I
-                        STA QUEPTR I
-                        LDA QUEPTR
-                        INC
-                        STA QUEPTR
-
-                         / if (
-                            LDA QUEPTR
-                            CMA
-                            INC
-                            ADD QUEPTRINITEND
-                        SZA
-                        BUN _XIF2_XAUTO34
-                        BUN _XIF1_XAUTO34
-                         / ) {
-                        _XIF1_XAUTO34,
-                            LDA QUEPTRINIT
-                            STA QUEPTR
-                         / }
-                        _XIF2_XAUTO34,
-
-                        LDA QUEREMAIN
-                        INC
-                        STA QUEREMAIN
-                LDA TEMP1
-                INC
-                STA TEMP1
-                BUN _XFOR1_XAUTO50
-                 / }
-                _XFOR3_XAUTO50,
+                _XFOR3_XAUTO47,
 
                         CLA
                         STA STACKINDEX
@@ -1173,21 +1131,21 @@ INT_MAIN,
                      / if (
                         LDA TEMPRESULT
                     SZA
-                    BUN _XIF1_XAUTO38
-                    BUN _XIF2_XAUTO38
+                    BUN _XIF1_XAUTO37
+                    BUN _XIF2_XAUTO37
                      / ) {
-                    _XIF1_XAUTO38,
+                    _XIF1_XAUTO37,
                         LDA TEMPRESULT
                         STA TEMPPRINT2
 
-                        _XWH1_XAUTO39,
+                        _XWH1_XAUTO38,
                          / while (
                             LDA TEMPPRINT2
                         SZA
-                        BUN _XWH2_XAUTO39
-                        BUN _XWH3_XAUTO39
+                        BUN _XWH2_XAUTO38
+                        BUN _XWH3_XAUTO38
                          / ) {
-                        _XWH2_XAUTO39,
+                        _XWH2_XAUTO38,
                             LDA TEMPPRINT2
                             STA AVAL
                             CLA
@@ -1199,7 +1157,7 @@ INT_MAIN,
                             CMA
                             STA QVAL
 
-                            _XWH1_XAUTO40,
+                            _XWH1_XAUTO39,
                              / while (
                                 LDA MIDECVAL
                                 CLE
@@ -1217,10 +1175,10 @@ INT_MAIN,
                                 CIL
                                 ADD TEMPPRINT4
                             SZA
-                            BUN _XWH3_XAUTO40
-                            BUN _XWH2_XAUTO40
+                            BUN _XWH3_XAUTO39
+                            BUN _XWH2_XAUTO39
                              / ) {
-                            _XWH2_XAUTO40,
+                            _XWH2_XAUTO39,
                                 LDA AVAL
                                 ADD ASCII0
                                 STA TEMPPRINT3
@@ -1230,9 +1188,9 @@ INT_MAIN,
                                 LDA AVAL
                                 ADD MIDECVAL
                                 STA AVAL
-                            BUN _XWH1_XAUTO40
+                            BUN _XWH1_XAUTO39
                              / }
-                            _XWH3_XAUTO40,
+                            _XWH3_XAUTO39,
 
                             LDA QVAL
                             STA TEMPPRINT2
@@ -1243,13 +1201,13 @@ INT_MAIN,
                                     INC
                                     ADD STACKPTRINITEND
                                 SZA
-                                BUN _XIF2_XAUTO36
-                                BUN _XIF1_XAUTO36
+                                BUN _XIF2_XAUTO35
+                                BUN _XIF1_XAUTO35
                                  / ) {
-                                _XIF1_XAUTO36,
+                                _XIF1_XAUTO35,
                                     BUN proc_overflow
                                  / }
-                                _XIF2_XAUTO36,
+                                _XIF2_XAUTO35,
 
                                 LDA TEMPPRINT3
                                 STA STACKPTR I
@@ -1259,13 +1217,13 @@ INT_MAIN,
                                 LDA STACKINDEX
                                 INC
                                 STA STACKINDEX
-                        BUN _XWH1_XAUTO39
+                        BUN _XWH1_XAUTO38
                          / }
-                        _XWH3_XAUTO39,
+                        _XWH3_XAUTO38,
 
-                    BUN _XIF3_XAUTO38
+                    BUN _XIF3_XAUTO37
                      / } else {  // 
-                    _XIF2_XAUTO38,
+                    _XIF2_XAUTO37,
 
                              / if (
                                 LDA STACKPTR
@@ -1273,13 +1231,13 @@ INT_MAIN,
                                 INC
                                 ADD STACKPTRINITEND
                             SZA
-                            BUN _XIF2_XAUTO35
-                            BUN _XIF1_XAUTO35
+                            BUN _XIF2_XAUTO34
+                            BUN _XIF1_XAUTO34
                              / ) {
-                            _XIF1_XAUTO35,
+                            _XIF1_XAUTO34,
                                 BUN proc_overflow
                              / }
-                            _XIF2_XAUTO35,
+                            _XIF2_XAUTO34,
 
                             LDA ASCII0
                             STA STACKPTR I
@@ -1290,17 +1248,17 @@ INT_MAIN,
                             INC
                             STA STACKINDEX
                      / }
-                    _XIF3_XAUTO38,
+                    _XIF3_XAUTO37,
 
 
-                    _XWH1_XAUTO41,
+                    _XWH1_XAUTO40,
                      / while (
                         LDA STACKINDEX
                     SZA
-                    BUN _XWH2_XAUTO41
-                    BUN _XWH3_XAUTO41
+                    BUN _XWH2_XAUTO40
+                    BUN _XWH3_XAUTO40
                      / ) {
-                    _XWH2_XAUTO41,
+                    _XWH2_XAUTO40,
                             LDA STACKPTR
                             CMA
                             INC
@@ -1325,38 +1283,81 @@ INT_MAIN,
                                 INC
                                 ADD QUEPTRINITEND
                             SZA
-                            BUN _XIF2_XAUTO37
-                            BUN _XIF1_XAUTO37
+                            BUN _XIF2_XAUTO36
+                            BUN _XIF1_XAUTO36
                              / ) {
-                            _XIF1_XAUTO37,
+                            _XIF1_XAUTO36,
                                 LDA QUEPTRINIT
                                 STA QUEPTR
                              / }
-                            _XIF2_XAUTO37,
+                            _XIF2_XAUTO36,
 
                             LDA QUEREMAIN
                             INC
                             STA QUEREMAIN
-                    BUN _XWH1_XAUTO41
+                    BUN _XWH1_XAUTO40
                      / }
-                    _XWH3_XAUTO41,
+                    _XWH3_XAUTO40,
 
              / }
-            _XIF2_XAUTO48,
+            _XIF2_XAUTO46,
 
             BUN proc_success
             proc_overflow,
 
-            LDA ResultFailColPtrInit
+            LDA ErrMsgOverFlowPtrInit
             STA TEMP1
-            _XFOR1_XAUTO51,
+            _XFOR1_XAUTO48,
              / for (
                 LDA TEMP1 I
             SZA
-            BUN _XFOR2_XAUTO51
-            BUN _XFOR3_XAUTO51
+            BUN _XFOR2_XAUTO48
+            BUN _XFOR3_XAUTO48
              / ) {
-            _XFOR2_XAUTO51,
+            _XFOR2_XAUTO48,
+                    LDA TEMP1 I
+                    STA QUEPTR I
+                    LDA QUEPTR
+                    INC
+                    STA QUEPTR
+
+                     / if (
+                        LDA QUEPTR
+                        CMA
+                        INC
+                        ADD QUEPTRINITEND
+                    SZA
+                    BUN _XIF2_XAUTO41
+                    BUN _XIF1_XAUTO41
+                     / ) {
+                    _XIF1_XAUTO41,
+                        LDA QUEPTRINIT
+                        STA QUEPTR
+                     / }
+                    _XIF2_XAUTO41,
+
+                    LDA QUEREMAIN
+                    INC
+                    STA QUEREMAIN
+            LDA TEMP1
+            INC
+            STA TEMP1
+            BUN _XFOR1_XAUTO48
+             / }
+            _XFOR3_XAUTO48,
+
+            proc_success,
+
+            LDA ResultPostfixPtrInit
+            STA TEMP1
+            _XFOR1_XAUTO49,
+             / for (
+                LDA TEMP1 I
+            SZA
+            BUN _XFOR2_XAUTO49
+            BUN _XFOR3_XAUTO49
+             / ) {
+            _XFOR2_XAUTO49,
                     LDA TEMP1 I
                     STA QUEPTR I
                     LDA QUEPTR
@@ -1384,94 +1385,9 @@ INT_MAIN,
             LDA TEMP1
             INC
             STA TEMP1
-            BUN _XFOR1_XAUTO51
+            BUN _XFOR1_XAUTO49
              / }
-            _XFOR3_XAUTO51,
-
-
-            LDA ErrMsgOverFlowPtrInit
-            STA TEMP1
-            _XFOR1_XAUTO52,
-             / for (
-                LDA TEMP1 I
-            SZA
-            BUN _XFOR2_XAUTO52
-            BUN _XFOR3_XAUTO52
-             / ) {
-            _XFOR2_XAUTO52,
-                    LDA TEMP1 I
-                    STA QUEPTR I
-                    LDA QUEPTR
-                    INC
-                    STA QUEPTR
-
-                     / if (
-                        LDA QUEPTR
-                        CMA
-                        INC
-                        ADD QUEPTRINITEND
-                    SZA
-                    BUN _XIF2_XAUTO43
-                    BUN _XIF1_XAUTO43
-                     / ) {
-                    _XIF1_XAUTO43,
-                        LDA QUEPTRINIT
-                        STA QUEPTR
-                     / }
-                    _XIF2_XAUTO43,
-
-                    LDA QUEREMAIN
-                    INC
-                    STA QUEREMAIN
-            LDA TEMP1
-            INC
-            STA TEMP1
-            BUN _XFOR1_XAUTO52
-             / }
-            _XFOR3_XAUTO52,
-
-            proc_success,
-
-            LDA ResultPostfixPtrInit
-            STA TEMP1
-            _XFOR1_XAUTO53,
-             / for (
-                LDA TEMP1 I
-            SZA
-            BUN _XFOR2_XAUTO53
-            BUN _XFOR3_XAUTO53
-             / ) {
-            _XFOR2_XAUTO53,
-                    LDA TEMP1 I
-                    STA QUEPTR I
-                    LDA QUEPTR
-                    INC
-                    STA QUEPTR
-
-                     / if (
-                        LDA QUEPTR
-                        CMA
-                        INC
-                        ADD QUEPTRINITEND
-                    SZA
-                    BUN _XIF2_XAUTO44
-                    BUN _XIF1_XAUTO44
-                     / ) {
-                    _XIF1_XAUTO44,
-                        LDA QUEPTRINIT
-                        STA QUEPTR
-                     / }
-                    _XIF2_XAUTO44,
-
-                    LDA QUEREMAIN
-                    INC
-                    STA QUEREMAIN
-            LDA TEMP1
-            INC
-            STA TEMP1
-            BUN _XFOR1_XAUTO53
-             / }
-            _XFOR3_XAUTO53,
+            _XFOR3_XAUTO49,
 
                 LDA ASCIIENTER
                 STA QUEPTR I
@@ -1485,20 +1401,20 @@ INT_MAIN,
                     INC
                     ADD QUEPTRINITEND
                 SZA
-                BUN _XIF2_XAUTO45
-                BUN _XIF1_XAUTO45
+                BUN _XIF2_XAUTO43
+                BUN _XIF1_XAUTO43
                  / ) {
-                _XIF1_XAUTO45,
+                _XIF1_XAUTO43,
                     LDA QUEPTRINIT
                     STA QUEPTR
                  / }
-                _XIF2_XAUTO45,
+                _XIF2_XAUTO43,
 
                 LDA QUEREMAIN
                 INC
                 STA QUEREMAIN
          / }
-        _XIF2_XAUTO47,
+        _XIF2_XAUTO45,
 
      / < end of Output
 
@@ -1518,10 +1434,10 @@ INT_MAIN,
          / if (
             LDA QUEREMAIN
         SZA
-        BUN _XIF1_XAUTO55
-        BUN _XIF2_XAUTO55
+        BUN _XIF1_XAUTO51
+        BUN _XIF2_XAUTO51
          / ) {
-        _XIF1_XAUTO55,
+        _XIF1_XAUTO51,
                 LDA QUEREADPTR I
                 STA TEMPQUEUE1
                 LDA QUEREADPTR
@@ -1534,14 +1450,14 @@ INT_MAIN,
                     INC
                     ADD QUEPTRINITEND
                 SZA
-                BUN _XIF2_XAUTO54
-                BUN _XIF1_XAUTO54
+                BUN _XIF2_XAUTO50
+                BUN _XIF1_XAUTO50
                  / ) {
-                _XIF1_XAUTO54,
+                _XIF1_XAUTO50,
                     LDA QUEPTRINIT
                     STA QUEREADPTR
                  / }
-                _XIF2_XAUTO54,
+                _XIF2_XAUTO50,
 
                 LDA QUEREMAIN
                 CMA
@@ -1550,13 +1466,13 @@ INT_MAIN,
                 STA QUEREMAIN
                 LDA TEMPQUEUE1
             OUT
-        BUN _XIF3_XAUTO55
+        BUN _XIF3_XAUTO51
          / } else {  // 
-        _XIF2_XAUTO55,
+        _XIF2_XAUTO51,
             LDA MASKSIN
             IMK
          / }
-        _XIF3_XAUTO55,
+        _XIF3_XAUTO51,
 
      / }
     _XIF2OutputAvailable,
@@ -1711,25 +1627,14 @@ INT_MAIN,
         DEC 32
         DEC 62
         DEC 32
-        DEC 0
-        DEC 0
-    ResultPrefixPtrInit, SYM ResultPrefix
-    ResultFailCol, DEC 27
-        DEC 91
-        DEC 57
-        DEC 49
-        DEC 109
-        DEC 0
-        DEC 0
-    ResultFailColPtrInit, SYM ResultFailCol
-    ResultSucCol, DEC 27
+        DEC 27
         DEC 91
         DEC 57
         DEC 50
         DEC 109
         DEC 0
         DEC 0
-    ResultSucColPtrInit, SYM ResultSucCol
+    ResultPrefixPtrInit, SYM ResultPrefix
     ResultPostfix, DEC 27
         DEC 91
         DEC 48
@@ -1737,7 +1642,12 @@ INT_MAIN,
         DEC 0
         DEC 0
     ResultPostfixPtrInit, SYM ResultPostfix
-    ErrMsgOverFlow, DEC 73
+    ErrMsgOverFlow, DEC 27
+        DEC 91
+        DEC 57
+        DEC 49
+        DEC 109
+        DEC 73
         DEC 110
         DEC 116
         DEC 101
