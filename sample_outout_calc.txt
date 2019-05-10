@@ -90,13 +90,27 @@ INT_MAIN,
                 BUN _XIF3CheckCharCtrlD
                  / } else {  // CheckCharCtrlD
                 _XIF2CheckCharCtrlD,
-                    LDA INTmp
-                    STA RAWSTRPTR I
-                    LDA RAWSTRPTR
-                    INC
-                    STA RAWSTRPTR
-                    CLA
-                    STA RAWSTRPTR I
+
+                     / if (
+                        LDA ASCIISPACE
+                        CMA
+                        INC
+                        ADD INTmp
+                    SZA
+                    BUN _XIF1_XAUTO20
+                    BUN _XIF2_XAUTO20
+                     / ) {
+                    _XIF1_XAUTO20,
+                        LDA INTmp
+                        STA RAWSTRPTR I
+                        LDA RAWSTRPTR
+                        INC
+                        STA RAWSTRPTR
+                        CLA
+                        STA RAWSTRPTR I
+                     / }
+                    _XIF2_XAUTO20,
+
                  / }
                 _XIF3CheckCharCtrlD,
                  / < end of if CheckCharCtrlD
@@ -121,10 +135,10 @@ INT_MAIN,
          / if (
             LDA DECLTRIG
         SZA
-        BUN _XIF1_XAUTO20
-        BUN _XIF2_XAUTO20
+        BUN _XIF1_XAUTO21
+        BUN _XIF2_XAUTO21
          / ) {
-        _XIF1_XAUTO20,
+        _XIF1_XAUTO21,
                     LDA ASCIIPAREND
                     STA RAWSTRPTR I
                     LDA RAWSTRPTR
@@ -144,6 +158,8 @@ INT_MAIN,
                     STA BUFPTR
                     LDA TOKENTYPEPTRINIT
                     STA TOKENTYPEPTR
+                    LDA BUFTYPEPTRINIT
+                    STA BUFTYPEPTR
                     CLA
                     STA BEFORETYPE
                     STA TOKENNUMTMP
@@ -336,6 +352,12 @@ INT_MAIN,
                         LDA BUFPTR
                         INC
                         STA BUFPTR
+                        CLA
+                        INC
+                        STA BUFTYPEPTR I
+                        LDA BUFTYPEPTR
+                        INC
+                        STA BUFTYPEPTR
                         LDA BUFINDEX
                         INC
                         STA BUFINDEX
@@ -436,6 +458,11 @@ INT_MAIN,
                                     LDA BUFPTR
                                     INC
                                     STA BUFPTR
+                                    CLA
+                                    STA BUFTYPEPTR I
+                                    LDA BUFTYPEPTR
+                                    INC
+                                    STA BUFTYPEPTR
                                     LDA BUFINDEX
                                     INC
                                     STA BUFINDEX
@@ -656,6 +683,11 @@ INT_MAIN,
                                             LDA BUFPTR
                                             INC
                                             STA BUFPTR
+                                            CLA
+                                            STA BUFTYPEPTR I
+                                            LDA BUFTYPEPTR
+                                            INC
+                                            STA BUFTYPEPTR
                                             LDA BUFINDEX
                                             INC
                                             STA BUFINDEX
@@ -701,7 +733,7 @@ INT_MAIN,
 
             _M_, HLT
          / }
-        _XIF2_XAUTO20,
+        _XIF2_XAUTO21,
 
      / < end of Output
 
@@ -736,17 +768,15 @@ INT_MAIN,
  / Data Segment
     ACCBAK, DEC 0
     EBAK, DEC 0
-    ShowIParam, DEC 0
     DECLTRIG, DEC 0
     HaltFlag, DEC 0
     MASKSIN, DEC 8
     MASKSOUT, DEC 4
     INTmp, DEC 0
-    N, DEC 0
-    NNUM, DEC 0
     ASCII0, DEC 48
     ASCIIA, DEC 65
     ASCIIENTER, DEC 10
+    ASCIISPACE, DEC 32
     ASCIICTRLD, DEC 4
     ASCIIPARBEG, DEC 40
     ASCIIPAREND, DEC 41
@@ -761,6 +791,8 @@ INT_MAIN,
     TEMPCTOI2, DEC 0
     TEMPPRI1, DEC 0
     TEMPPRI2, DEC 0
+    TEMPCALC1, DEC 0
+    TEMPCALC2, DEC 0
     STACKDATA, DEC 0
         DEC 0
         DEC 0
@@ -810,9 +842,32 @@ INT_MAIN,
         DEC 0
         DEC 0
         DEC 0
+    BUFTYPEDATA, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
     BUFINDEX, DEC 0
     BUFPTR, SYM BUFDATA
     BUFPTRINIT, SYM BUFDATA
+    BUFTYPEPTR, SYM BUFTYPEDATA
+    BUFTYPEPTRINIT, SYM BUFTYPEDATA
     TOKENDATA, DEC 0
         DEC 0
         DEC 0

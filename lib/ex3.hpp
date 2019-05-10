@@ -284,6 +284,14 @@ namespace EX3{
 			)
 		};
 
+		static Statement GetNegative{
+			new Const_impl(
+				"CIL\n"
+				"CLA\n"
+				"CIL\n"
+			)
+		};
+
 		static Statement GetE{
 			new Const_impl(
 				"CLA\n"

@@ -22,6 +22,7 @@ int main(){
 	Data ascii_0(INT, "ASCII0", 48);
 	Data ascii_A(INT, "ASCIIA", 65);
 	Data ascii_ent(INT, "ASCIIENTER", 10);
+	Data ascii_sp(INT, "ASCIISPACE", 32);
 	Data ascii_ctrl_D(INT, "ASCIICTRLD", 4);
 	Data ascii_paren_begin(INT, "ASCIIPARBEG", 40);
 	Data ascii_paren_end(INT, "ASCIIPAREND", 41);
@@ -38,6 +39,8 @@ int main(){
 	Data t_ctoi_2(INT, "TEMPCTOI2", 0);
 	Data t_priority_1(INT, "TEMPPRI1", 0);
 	Data t_priority_2(INT, "TEMPPRI2", 0);
+	Data t_calc_1(INT, "TEMPCALC1", 0);
+	Data t_calc_2(INT, "TEMPCALC2", 0);
 	//Data Q(INT, "QVAL", 0);
 	//Data R(INT, "RVAL", 0);
 	//Data X(INT, "XVAL", 0);
@@ -59,9 +62,13 @@ int main(){
 	// Buffer
 	Data buffer_data(INT, "BUFDATA", 0);
 	for(int i = STACK_MAX; i --> 0;) Data(INT, "", 0);
+	Data buffer_type_data(INT, "BUFTYPEDATA", 0);
+	for(int i = STACK_MAX; i --> 0;) Data(INT, "", 0);
 	Data buffer_index(INT, "BUFINDEX", 0);
 	Data buffer_ptr(PTR, "BUFPTR", buffer_data);
 	Data buffer_ptr_init(PTR, "BUFPTRINIT", buffer_data);
+	Data buffer_type_ptr(PTR, "BUFTYPEPTR", buffer_type_data);
+	Data buffer_type_ptr_init(PTR, "BUFTYPEPTRINIT", buffer_type_data);
 
 	// Heap
 	/*Data heap_data(INT, "HEAPDATA", 0);
@@ -103,6 +110,7 @@ int main(){
 		token_ptr = +token_ptr_init,
 		buffer_ptr = +buffer_ptr_init,
 		token_type_ptr = +token_type_ptr_init,
+		buffer_type_ptr = +buffer_type_ptr_init,
 
 		token_num_tmp = before_num = Zero,
 	};
@@ -128,9 +136,7 @@ int main(){
 			If({ Negative(t_ctoi_1) }, {
 				If({
 					-dec + t_ctoi_1,
-					"CIL"_asm,
-					"CLA"_asm,
-					"CIL"_asm,
+					GetNegative
 				}, {
 					t_ctoi_2 = Zero
 				})
@@ -152,9 +158,7 @@ int main(){
 			If({ Negative(t_ctoi_1) }, {
 				If({
 					-dec + t_ctoi_1,
-					"CIL"_asm,
-					"CLA"_asm,
-					"CIL"_asm,
+					GetNegative
 				}, {
 					t_ctoi_2 = Zero
 				})
@@ -237,7 +241,6 @@ int main(){
 	StatementList peek = {
 		stack_tmp = One,
 		stack_tmp = -stack_tmp + stack_ptr,
-		//stack_tmp =
 		+*stack_tmp,
 	};
 
@@ -248,15 +251,15 @@ int main(){
 	StatementList RPN = {
 		For({{ RPN_i = Zero }, {
 			-token_index + RPN_i,
-			"CIL"_asm,
-			"CLA"_asm,
-			"CIL"_asm,
+			GetNegative
 		}, { ++RPN_i }}, {
 			RPN_token = token_ptr_init + RPN_i,
 			RPN_type = token_type_ptr_init + RPN_i,
 			If("RPNTokenNum", { +*RPN_type }, {  // 数字だったらbufferへ
 				*buffer_ptr = +*RPN_token,
 				++buffer_ptr,
+				*buffer_type_ptr = One,
+				++buffer_type_ptr,
 				++buffer_index,
 			}, Else, {  // 演算子や ( ) の場合
 				If({ -*RPN_token + ascii_paren_begin }, {  // `(`
@@ -272,6 +275,8 @@ int main(){
 						}, {
 							*buffer_ptr = +t2,
 							++buffer_ptr,
+							*buffer_type_ptr = Zero,
+							++buffer_type_ptr,
 							++buffer_index,
 						}),
 						// TODO: 括弧の対応エラーを受けるならここ
@@ -286,12 +291,12 @@ int main(){
 								t2 = priority(),
 								If({
 									-t1 + t2,
-									"CIL"_asm,
-									"CLA"_asm,
-									"CIL"_asm,
+									GetNegative
 								}, {
 									*buffer_ptr = pop(),
 									++buffer_ptr,
+									*buffer_type_ptr = Zero,
+									++buffer_type_ptr,
 									++buffer_index,
 								}, Else, {
 									push(*RPN_token),
@@ -309,7 +314,14 @@ int main(){
 
 		}),
 		// この時点で一番外側の ( ) によってバッファは全てフラッシュされているはず
-		// (さもなくばエラー)
+		// (TODO: さもなくばエラー)
+	};
+
+	// Calculate
+	StatementList calc = {
+		// TODO: implement
+		For("CalcMain", {{ t_calc_1 = Zero }, { -buffer_index + t_calc_1, GetNegative }, { ++t_calc_1 }}, {
+		})
 	};
 
 	// Input a char
@@ -324,10 +336,13 @@ int main(){
 			If("CheckCharCtrlD", { -ascii_ctrl_D + IN_tmp }, {
 				halt_trigger = One,
 			}, Else, {
-				// [0-9+-*/()] -> str
-				*raw_str_ptr = +IN_tmp,
-				++raw_str_ptr,
-				*raw_str_ptr = Zero,
+				// ignore space
+				If({ -ascii_sp + IN_tmp }, {
+					// [0-9+-*/()] -> str
+					*raw_str_ptr = +IN_tmp,
+					++raw_str_ptr,
+					*raw_str_ptr = Zero,
+				})
 			}, true),
 		}, true),
 		t1 = -ascii_0 + IN_tmp,
