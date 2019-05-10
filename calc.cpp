@@ -24,7 +24,7 @@ int main(){
 	//Data N_num(INT, "NNUM", 0);  // Nの桁数
 
 	Data ascii_0(INT, "ASCII0", 48);
-	Data ascii_A(INT, "ASCIIA", 65);
+	//Data ascii_A(INT, "ASCIIA", 65);
 	Data ascii_ent(INT, "ASCIIENTER", 10);
 	Data ascii_sp(INT, "ASCIISPACE", 32);
 	Data ascii_ctrl_D(INT, "ASCIICTRLD", 4);
@@ -48,7 +48,6 @@ int main(){
 	Data t_queue_1(INT, "TEMPQUEUE1", 0);
 	Data t_calc_1(INT, "TEMPCALC1", 0);
 	Data t_calc_2(INT, "TEMPCALC2", 0);
-	Data t_calc_3(INT, "TEMPCALC3", 0);
 	Data t_result(INT, "TEMPRESULT", 0);
 	Data t_print_1(INT, "TEMPPRINT1", 0);
 	Data t_print_2(INT, "TEMPPRINT2", 0);
@@ -56,8 +55,6 @@ int main(){
 	Data t_print_4(INT, "TEMPPRINT4", 0);
 	Data A(INT, "AVAL", 0);
 	Data Q(INT, "QVAL", 0);
-	//Data R(INT, "RVAL", 0);
-	//Data X(INT, "XVAL", 0);
 
 	// String
 	Data raw_str_data(INT, "RAWSTRDATA", 0);
@@ -66,8 +63,6 @@ int main(){
 	Data raw_str_ptr_init(PTR, "RAWSTRPTRINIT", raw_str_data);
 
 	Data before_num(INT, "BEFORETYPE", 0);  // init: (not number)
-
-	Data t_debug(INT, "TEMPDEBUG", 0);  // TODO: remove
 
 	// エスケープシーケンスを安全に扱うために、文字列を整数に変換して扱う
 	// 文字列リテラルは末尾に '\0' が入るのでヌル文字の追加は不要
@@ -90,14 +85,11 @@ int main(){
 	Data queue_data(INT, "QUEDATA", 0);
 	for(int i = QUEUE_MAX; i --> 0;) Data(INT, "", 0);
 	Data queue_data_end_anchor(INT, "QUEDATENDA", 0);
-	Data queue_index(INT, "QUEINDEX", 0);
 	Data queue_remain(INT, "QUEREMAIN", 0);
 	Data queue_ptr(PTR, "QUEPTR", queue_data);
 	Data queue_read_ptr(PTR, "QUEREADPTR", queue_data);
 	Data queue_ptr_init(PTR, "QUEPTRINIT", queue_data);
 	Data queue_ptr_end(PTR, "QUEPTRINITEND", queue_data_end_anchor);
-
-	Data queue_tmp(INT, "QUERETMP", 0);
 
 	// Queue Util
 	auto que_push = [&](Data d){
@@ -272,18 +264,7 @@ int main(){
 						A = A + minus_dec, 
 					}, true),
 					t_print_2 = +Q,
-					//
-					/*" / Show Q"_asm,
-					"CLE"_asm, // do nothing
-					"_B_,"_asm,
-					+t_print_3,
-					" / Show R"_asm,
-					"CLE"_asm, // do nothing
-					"_B_,"_asm,
-					*/
-					//
 					push(t_print_3),
-					//"_B_,"_asm,
 				}),
 			}, Else, {
 				push(ascii_0)
@@ -293,32 +274,6 @@ int main(){
 				print(t_print_1),
 			})
 		}.stat();
-	};
-
-	// TODO: remove
-	auto cToi_dec = [&](Data c){
-		return StatementList {
-			t_ctoi_2 = One,  // error
-			t_ctoi_1 = -ascii_0 + c,
-			If({ Negative(t_ctoi_1) }, {
-				If({
-					-dec + t_ctoi_1,
-					GetNegative
-				}, {
-					t_ctoi_2 = Zero
-				})
-			}, true),
-			// E <- t2
-			"CLE"_asm,
-			+t_ctoi_2,
-			"SZA"_asm,
-			"CME"_asm,
-			+t_ctoi_1
-		}.stat();
-	};
-
-	StatementList error = {
-		// TODO: implement
 	};
 
 	// Operator Precedence
@@ -371,7 +326,7 @@ int main(){
 			}, true),
 			If({-token_ptr + token_ptr_end, GetNegative}, {
 				Goto("proc_overflow"),
-			}, true),
+			}),
 		}),
 		resetInputString()
 	};
@@ -467,7 +422,15 @@ int main(){
 					}),
 				}, true),
 				If({ -ascii_slush + *RPN_token }, {
-					// TODO: implement
+					t1 = -t_calc_2,
+					A = +t_calc_1,
+					Q = Zero,
+					--Q,
+					While({ MoreEq(A, t1, t2) }, {
+						++Q,
+						A = A + t1,
+					}, true),
+					t_calc_1 = +Q,
 				}, true),
 				push(t_calc_1),
 			}),
