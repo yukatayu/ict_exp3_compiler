@@ -5,12 +5,16 @@ int main(){
 	using namespace EX3;
 	using namespace helper;
 
+	const int STACK_MAX = 30;
+	const int QUEUE_MAX = 50;
+
 	Data AccBak(INT, "ACCBAK", 0);
 	Data EBak(INT, "EBAK", 0);
 	//Data show_i(INT, "ShowIParam", 0);
 
 	Data out_trigger(INT, "DECLTRIG", 0);
 	Data halt_trigger(INT, "HaltFlag", 0);
+	Data stat_err(INT, "ERRSTAT", 0);
 
 	Data mask_sin(INT, "MASKSIN", 8);
 	Data mask_sout(INT, "MASKSOUT", 4);
@@ -55,8 +59,34 @@ int main(){
 	//Data R(INT, "RVAL", 0);
 	//Data X(INT, "XVAL", 0);
 
+	// String
+	Data raw_str_data(INT, "RAWSTRDATA", 0);
+	for(int i = (STACK_MAX/2+1) * 4 + 5; i --> 0;) Data(INT, "", 0);
+	Data raw_str_ptr(PTR, "RAWSTRPTR", raw_str_data);
+	Data raw_str_ptr_init(PTR, "RAWSTRPTRINIT", raw_str_data);
+
+	Data before_num(INT, "BEFORETYPE", 0);  // init: (not number)
+
+	Data t_debug(INT, "TEMPDEBUG", 0);  // TODO: remove
+
+	// エスケープシーケンスを安全に扱うために、文字列を整数に変換して扱う
+	// 文字列リテラルは末尾に '\0' が入るのでヌル文字の追加は不要
+	// Ptr は MaybeUnused
+#define helper_ConstString_Safe(ProgName, AsmName, Str) \
+	Data ProgName(INT, AsmName, static_cast<unsigned char>(Str[0])); \
+	for(int i=1; i<(sizeof(Str)/sizeof(*Str)); ++i) \
+		Data(INT, "", static_cast<unsigned char>(Str[i])); \
+	Data(INT, "", 0); \
+	Data ProgName ## _ptr_init (PTR, AsmName "PtrInit", ProgName);
+	// Data ProgName ## _ptr (PTR, AsmName "Ptr", ProgName, MaybeUnused);
+
+	helper_ConstString_Safe(result_pre_str, "ResultPrefix", " result > ");
+	helper_ConstString_Safe(result_fail_color, "ResultFailCol", "\033[91m");
+	helper_ConstString_Safe(result_success_color, "ResultSucCol", "\033[92m");
+	helper_ConstString_Safe(result_post_str, "ResultPostfix", "\033[0m");
+	helper_ConstString_Safe(error_overflow_str, "ErrMsgOverFlow", "InternalError: OverFlow");
+
 	// Display Buffer
-	const int QUEUE_MAX = 50;
 	Data queue_data(INT, "QUEDATA", 0);
 	for(int i = QUEUE_MAX; i --> 0;) Data(INT, "", 0);
 	Data queue_data_end_anchor(INT, "QUEDATENDA", 0);
@@ -92,7 +122,6 @@ int main(){
 		++queue_read_ptr,
 		// 終端に達していたら戻る
 		// Trivial: que_popのstatの度にStatementListが新規生成される
-		// TODO: 要検証
 		If({-queue_read_ptr + queue_ptr_end}, {
 			queue_read_ptr = +queue_ptr_init,
 		}, true),
@@ -100,19 +129,20 @@ int main(){
 		+t_queue_1
 	};
 
-	auto print_str = [&](Data from_ptr_init, Data tmp){
+	auto printStr = [&](Data from_ptr_init, Data tmp){
 		return For({ { tmp = +from_ptr_init }, { +*tmp }, { ++tmp } }, {
 			print(*tmp)
 		});
 	};
 
 	// Stack
-	const int STACK_MAX = 30;
 	Data stack_data(INT, "STACKDATA", 0);
 	for(int i = STACK_MAX; i --> 0;) Data(INT, "", 0);
+	Data stack_data_end_anchor(INT, "STACKDATAENDA", 0);
 	Data stack_index(INT, "STACKINDEX", 0);
 	Data stack_ptr(PTR, "STACKPTR", stack_data);
 	Data stack_ptr_init(PTR, "STACKPTRINIT", stack_data);
+	Data stack_ptr_end(PTR, "STACKPTRINITEND", stack_data_end_anchor);
 
 	Data stack_tmp(INT, "STACKTMPVAL", 0);
 	Data RPN_i(INT, "RPNITR", 0);
@@ -122,7 +152,9 @@ int main(){
 	// Stack Util
 	auto push = [&](Data i){
 		return StatementList{
-			// TODO: border check
+			If({-stack_ptr + stack_ptr_end}, {
+				Goto("proc_overflow"),
+			}, true),
 			*stack_ptr = +i,
 			++stack_ptr,
 			++stack_index,
@@ -156,6 +188,7 @@ int main(){
 	// Note: [Type] Num: 1, Op: 0
 	Data token_data(INT, "TOKENDATA", 0);
 	for(int i = STACK_MAX; i --> 0;) Data(INT, "", 0);
+	Data token_data_end_anchor(INT, "TOKENDATAENDA", 0);
 	Data token_type_data(INT, "TOKENTYPEDATA", 0);
 	for(int i = STACK_MAX; i --> 0;) Data(INT, "", 0);
 	Data token_index(INT, "TOKENINDEX", 0);
@@ -163,33 +196,9 @@ int main(){
 	Data token_ptr_init(PTR, "TOKENPTRINIT", token_data);
 	Data token_type_ptr(PTR, "TOKENTYPEPTR", token_type_data);
 	Data token_type_ptr_init(PTR, "TOKENTYPEPTRINIT", token_type_data);
+	Data token_ptr_end(PTR, "TOKENPTRINITEND", token_data_end_anchor);
 
 	Data token_num_tmp(INT, "TOKENNUMTMP", 0);
-
-	// String
-	Data raw_str_data(INT, "RAWSTRDATA", 0);
-	for(int i = (STACK_MAX/2+1) * 5 + 5; i --> 0;) Data(INT, "", 0);
-	Data raw_str_ptr(PTR, "RAWSTRPTR", raw_str_data);
-	Data raw_str_ptr_init(PTR, "RAWSTRPTRINIT", raw_str_data);
-
-	Data before_num(INT, "BEFORETYPE", 0);  // init: (not number)
-
-	Data t_debug(INT, "TEMPDEBUG", 0);  // TODO: remove
-
-	// エスケープシーケンスを安全に扱うために、文字列を整数に変換して扱う
-	// 文字列リテラルは末尾に '\0' が入るのでヌル文字の追加は不要
-	// Ptr は MaybeUnused
-#define helper_ConstString_Safe(ProgName, AsmName, Str) \
-	Data ProgName(INT, AsmName, static_cast<unsigned char>(Str[0])); \
-	for(int i=1; i<(sizeof(Str)/sizeof(*Str)); ++i) \
-		Data(INT, "", static_cast<unsigned char>(Str[i])); \
-	Data(INT, "", 0); \
-	Data ProgName ## _ptr_init (PTR, AsmName "PtrInit", ProgName);
-	// Data ProgName ## _ptr (PTR, AsmName "Ptr", ProgName, MaybeUnused);
-
-	// TODO
-	//helper_ConstString_Safe(disp_count_postfix, "DispCountPostfix", "/100");
-	//helper_ConstString_Safe(prompt_text, "PromptText", " > ");
 
 	// Initialization
 	StatementList resetStack = {
@@ -359,7 +368,10 @@ int main(){
 				*token_type_ptr = Zero,
 				++token_type_ptr,
 				++token_index,
-			}, true)
+			}, true),
+			If({-token_ptr + token_ptr_end, GetNegative}, {
+				Goto("proc_overflow"),
+			}, true),
 		}),
 		resetInputString()
 	};
@@ -490,17 +502,22 @@ int main(){
 	// Process Trigger
 	StatementList digitOutput = {
 		If({ +out_trigger }, {
-			out_trigger = Zero,
+			out_trigger = stat_err = Zero,
 			tokenize_and_reset_str(),
 			RPN(),
 			t_result = calc(),
-			"_B_,"_asm,
-			printNum(t_result),
-			t_debug = +t_result,
-			//halt
-			// TODO: v  allow input v
-			+mask_sin,
-			"IMK"_asm,
+			If({+stat_err}, {
+				printStr(result_pre_str_ptr_init, t1),
+				printStr(result_success_color_ptr_init, t1),
+				printNum(t_result),
+			}, true),
+			Goto("proc_success"),
+			"proc_overflow,"_asm,
+			printStr(result_fail_color_ptr_init, t1),
+			printStr(error_overflow_str_ptr_init, t1),
+			"proc_success,"_asm,
+			printStr(result_post_str_ptr_init, t1),
+			print(ascii_ent),
 		})
 	};
 
@@ -524,6 +541,22 @@ int main(){
 
 		// Process Triggers
 		digitOutput.stat("Output"),
+
+		// Output
+		If("OutputAvailable", {
+			One,
+			"SKO"_asm,
+			"CLA"_asm
+		}, {
+			If({ +queue_remain }, {
+				que_pop(),
+				"OUT"_asm,
+			}, Else, {
+				// allow input
+				+mask_sin,
+				"IMK"_asm,
+			}),
+		}),
 
 		// Return
 		If("HaltTrigger", { +halt_trigger },{
