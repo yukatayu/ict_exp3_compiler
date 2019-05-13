@@ -129,9 +129,6 @@ INT_MAIN,
      / < end of if InputAvailable
 
 
-     / > beginning of Output
-    Output,
-
          / if (
             LDA DECLTRIG
         SZA
@@ -1406,8 +1403,6 @@ INT_MAIN,
          / }
         _XIF2_XAUTO45,
 
-     / < end of Output
-
 
      / > if OutputAvailable
      / if (
@@ -1487,8 +1482,6 @@ INT_MAIN,
      / < end of if HaltTrigger
 
     LDA EBAK
-    CLE
-    CIR
     CLE
     CIR
     LDA ACCBAK

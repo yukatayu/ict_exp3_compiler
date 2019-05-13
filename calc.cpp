@@ -522,7 +522,7 @@ int main(){
 		}),
 
 		// Load Acc, E
-		EBak >> 2,
+		EBak >> 1,
 		+AccBak,
 		"ION"_asm,
 		Return("INT_RET")
