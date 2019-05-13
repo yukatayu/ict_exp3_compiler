@@ -50,7 +50,7 @@ int main(){
 	Data min_primep1(INT, "MINIMUMPRIMEP1", 3);
 
 	// CPRet <- `N` is prime?
-	StatementList checkPrime = {
+	Subroutine checkPrime = {
 		i = +i_init,
 		mi = -i_init,
 		i2 = +i2_init,
@@ -94,7 +94,7 @@ int main(){
 	};
 
 	// Input a char
-	StatementList checkChar = {
+	Subroutine checkChar = {
 		// Enter -> Start output
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
 			out_trigger = One,
@@ -116,7 +116,7 @@ int main(){
 	};
 
 	// Process Trigger
-	StatementList prepareOutput = {
+	Subroutine prepareOutput = {
 		If("PrimeDeclTrigger", { +out_trigger }, {
 			// Decrement to Prime Number
 			out_trigger = Zero,
@@ -147,7 +147,7 @@ int main(){
 	};
 
 	// Get Next Digit
-	StatementList getDigitOne = {
+	Subroutine getDigitOne = {
 		i_shift = One,
 		i = +show_i,
 		Q = +N,
@@ -199,7 +199,7 @@ int main(){
 	};
 
 	// Interrupt Routine
-	StatementList interruptMain = {
+	Subroutine interruptMain = {
 		// Save Acc, E
 		AccBak = Const(),
 		EBak = GetE,
@@ -248,7 +248,7 @@ int main(){
 	};
 
 	// Main Program
-	StatementList program = {
+	Subroutine program = {
 		begin_interrupt("INT_MAIN", "INT_RET"),
 		begin,
 

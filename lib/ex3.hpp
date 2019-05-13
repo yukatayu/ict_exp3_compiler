@@ -101,6 +101,8 @@ namespace EX3{
 		Statement operator()();
 	};
 
+	using Subroutine = StatementList;
+
 	class Const_impl : public Statement_impl {
 	private:
 		std::string stat_;

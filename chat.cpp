@@ -100,7 +100,7 @@ int main(){
 	Data status_unread(INT, "STATUREAD", 0);
 
 	// テキストのレンダリング
-	StatementList renderText = {
+	Subroutine renderText = {
 		disp_buf_ptr = +disp_buf_ptr_init,
 
 		strCpy(clear_line_ptr_init, disp_buf_ptr, t1),
@@ -166,7 +166,7 @@ int main(){
 	};
 
 	// Input a char
-	StatementList inputChar = {
+	Subroutine inputChar = {
 		// ^D -> halt
 		If("CheckCharCtrlD", { -ascii_ctrl_D + IN_tmp }, {
 			halt_trigger = One,
@@ -209,7 +209,7 @@ int main(){
 		"IMK"_asm,
 	};
 
-	StatementList inputCharParallel = {
+	Subroutine inputCharParallel = {
 		If("CheckCharBSPara", { -ascii_del + IN_tmp }, {
 			// do nothing
 		}, Else, {
@@ -224,7 +224,7 @@ int main(){
 	};
 
 	// Process Trigger
-	StatementList prepareOutput = {
+	Subroutine prepareOutput = {
 		If({ +out_trigger }, {
 			out_trigger = Zero,
 			renderText.stat("RenderText")
@@ -232,7 +232,7 @@ int main(){
 	};
 
 	// Get Next Output Char
-	StatementList getOutput = {
+	Subroutine getOutput = {
 		If("StepDispText", { t1 = +*disp_buf_ptr }, {
 			++disp_buf_ptr
 		}, Else, {
@@ -245,7 +245,7 @@ int main(){
 	};
 
 	// Get Next Output (Parallel)
-	StatementList getOutputParallel = {
+	Subroutine getOutputParallel = {
 		If("StepOutputText", { t1 = +*send_buf_ptr }, {
 			++send_buf_ptr
 		}),
@@ -253,7 +253,7 @@ int main(){
 	};
 
 	// Interrupt Routine
-	StatementList interruptMain = {
+	Subroutine interruptMain = {
 		// Save Acc, E
 		AccBak = Const(),
 		EBak = GetE,
@@ -346,7 +346,7 @@ int main(){
 	};
 
 	// Main Program
-	StatementList program = {
+	Subroutine program = {
 		begin_interrupt("INT_MAIN", "INT_RET"),
 		begin,
 

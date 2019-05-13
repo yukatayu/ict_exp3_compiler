@@ -89,11 +89,11 @@ int main(){
 	// Queue Util
 	auto que_push = [&](Data d){
 		// enqueue
-		return StatementList{
+		return Subroutine{
 			*queue_ptr = +d,
 			++queue_ptr,
 			// 終端に達していたら戻る
-			// Trivial: que_push呼び出しの度にStatementListが新規生成されるので
+			// Trivial: que_push呼び出しの度にSubroutineが新規生成されるので
 			//          ラベル名の「焼き付き」は起こらない
 			If({-queue_ptr + queue_ptr_end}, {
 				queue_ptr = +queue_ptr_init,
@@ -104,11 +104,11 @@ int main(){
 
 	auto print = que_push;
 
-	StatementList que_pop = {
+	Subroutine que_pop = {
 		t_queue_1 = +*queue_read_ptr,
 		++queue_read_ptr,
 		// 終端に達していたら戻る
-		// Trivial: que_popのstatの度にStatementListが新規生成される
+		// Trivial: que_popのstatの度にSubroutineが新規生成される
 		If({-queue_read_ptr + queue_ptr_end}, {
 			queue_read_ptr = +queue_ptr_init,
 		}, true),
@@ -138,7 +138,7 @@ int main(){
 
 	// Stack Util
 	auto push = [&](Data i){
-		return StatementList{
+		return Subroutine{
 			If({-stack_ptr + stack_ptr_end}, {
 				Goto("proc_overflow"),
 			}, true),
@@ -148,13 +148,13 @@ int main(){
 		}.stat();
 	};
 
-	StatementList pop = {
+	Subroutine pop = {
 		--stack_ptr,
 		--stack_index,
 		+*stack_ptr
 	};
 
-	StatementList peek = {
+	Subroutine peek = {
 		stack_tmp = One,
 		stack_tmp = -stack_tmp + stack_ptr,
 		+*stack_tmp,
@@ -188,11 +188,11 @@ int main(){
 	Data token_num_tmp(INT, "TOKENNUMTMP", 0);
 
 	// Initialization
-	StatementList resetStack = {
+	Subroutine resetStack = {
 		stack_index = Zero,
 		stack_ptr = +stack_ptr_init,
 	};
-	StatementList resetTokenStack = {
+	Subroutine resetTokenStack = {
 		resetStack(),
 		token_index
 		= buffer_index
@@ -206,14 +206,14 @@ int main(){
 		token_num_tmp = before_num = Zero,
 	};
 
-	StatementList resetInputString = {
+	Subroutine resetInputString = {
 		raw_str_ptr = +raw_str_ptr_init,
 		*raw_str_ptr = +ascii_paren_begin,
 		++raw_str_ptr,
 		*raw_str_ptr = Zero,
 	};
 
-	StatementList finishInputString = {
+	Subroutine finishInputString = {
 		*raw_str_ptr = +ascii_paren_end,
 		++raw_str_ptr,
 		*raw_str_ptr = Zero,
@@ -221,7 +221,7 @@ int main(){
 
 	// String Utilities
 	auto cToi = [&](Data c){
-		return StatementList {
+		return Subroutine {
 			t_ctoi_2 = One,  // error
 			t_ctoi_1 = -ascii_0 + c,
 			If({ Negative(t_ctoi_1) }, {
@@ -242,7 +242,7 @@ int main(){
 	};
 
 	auto printNum = [&](Data c){
-		return StatementList {
+		return Subroutine {
 			resetStack(),
 			If({+c}, {
 				t_print_2 = +c,
@@ -270,7 +270,7 @@ int main(){
 	};
 
 	// Operator Precedence
-	StatementList priority = {
+	Subroutine priority = {
 		t_priority_1 = Const(),
 		t_priority_2 = +ascii_0,  // 十分大きければ何でも良い
 
@@ -290,7 +290,7 @@ int main(){
 	};
 
 	// Step1: Tokenize
-	StatementList tokenize_and_reset_str = {
+	Subroutine tokenize_and_reset_str = {
 		finishInputString(),
 		resetTokenStack(),
 		For("TokenizeStr", {{raw_str_ptr = +raw_str_ptr_init}, {t1 = +*raw_str_ptr}, { ++raw_str_ptr }}, {
@@ -325,7 +325,7 @@ int main(){
 	};
 
 	// Step2: RPN
-	StatementList RPN = {
+	Subroutine RPN = {
 		For({{ RPN_i = Zero }, { -token_index + RPN_i, GetNegative }, { ++RPN_i }}, {
 			RPN_token = token_ptr_init + RPN_i,
 			RPN_type = token_type_ptr_init + RPN_i,
@@ -387,7 +387,7 @@ int main(){
 	};
 
 	// Step3: Calculate
-	StatementList calc = {
+	Subroutine calc = {
 		// reset stack
 		stack_index = Zero,
 		stack_ptr = +stack_ptr_init,
@@ -432,7 +432,7 @@ int main(){
 	};
 
 	// Input Subroutine
-	StatementList checkChar = {
+	Subroutine checkChar = {
 		// Enter -> Start output
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
 			out_trigger = One,
@@ -456,7 +456,7 @@ int main(){
 	};
 
 	// Process Trigger
-	StatementList digitOutput = {
+	Subroutine digitOutput = {
 		If({ +out_trigger }, {
 			out_trigger = Zero,
 			tokenize_and_reset_str(),
@@ -478,7 +478,7 @@ int main(){
 	};
 
 	// Interrupt Routine
-	StatementList interruptMain = {
+	Subroutine interruptMain = {
 		// Save Acc, E
 		AccBak = Const(),
 		EBak = GetE,
@@ -529,7 +529,7 @@ int main(){
 	};
 
 	// Main Program
-	StatementList program = {
+	Subroutine program = {
 		begin_interrupt("INT_MAIN", "INT_RET"),
 		begin,
 
