@@ -14,7 +14,6 @@ int main(){
 
 	Data out_trigger(INT, "DECLTRIG", 0);
 	Data halt_trigger(INT, "HaltFlag", 0);
-	Data stat_err(INT, "ERRSTAT", 0);
 
 	Data mask_sin(INT, "MASKSIN", 8);
 	Data mask_sout(INT, "MASKSOUT", 4);
@@ -461,14 +460,16 @@ int main(){
 	// Process Trigger
 	StatementList digitOutput = {
 		If({ +out_trigger }, {
-			out_trigger = stat_err = Zero,
+			out_trigger = Zero,
 			tokenize_and_reset_str(),
 			RPN(),
 			t_result = calc(),
-			If({+stat_err}, {
-				printStr(result_pre_str_ptr_init, t1),
-				printNum(t_result),
-			}, true),
+			// 7セグ表示
+			+t_result,
+			"SEG"_asm,
+			// シリアル表示
+			printStr(result_pre_str_ptr_init, t1),
+			printNum(t_result),
 			Goto("proc_success"),
 			"proc_overflow,"_asm,
 			printStr(error_overflow_str_ptr_init, t1),
