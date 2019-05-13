@@ -73,8 +73,7 @@ int main(){
 	// Data ProgName ## _ptr (PTR, AsmName "Ptr", ProgName, MaybeUnused);
 
 	helper_ConstString_Safe(result_pre_str, "ResultPrefix", " result > \033[92m");
-	helper_ConstString_Safe(result_post_str, "ResultPostfix", "\033[0m");
-	helper_ConstString_Safe(error_overflow_str, "ErrMsgOverFlow", "\033[91mInternalError: OverFlow");
+	helper_ConstString_Safe(result_post_str, "ResultPostfix", "\033[0m <");
 
 	// Display Buffer
 	Data queue_data(INT, "QUEDATA", 0);
@@ -139,9 +138,6 @@ int main(){
 	// Stack Util
 	auto push = [&](Data i){
 		return StatementList{
-			If({-stack_ptr + stack_ptr_end}, {
-				Goto("proc_overflow"),
-			}, true),
 			*stack_ptr = +i,
 			++stack_ptr,
 			++stack_index,
@@ -319,9 +315,6 @@ int main(){
 				++token_type_ptr,
 				++token_index,
 			}, true),
-			If({-token_ptr + token_ptr_end, GetNegative}, {
-				Goto("proc_overflow"),
-			}),
 		}),
 		resetInputString()
 	};
@@ -466,14 +459,10 @@ int main(){
 			t_result = calc(),
 			// 7セグ表示
 			+t_result,
-			"SEG"_asm,
+			//"SEG"_asm,
 			// シリアル表示
 			printStr(result_pre_str_ptr_init, t1),
 			printNum(t_result),
-			Goto("proc_success"),
-			"proc_overflow,"_asm,
-			printStr(error_overflow_str_ptr_init, t1),
-			"proc_success,"_asm,
 			printStr(result_post_str_ptr_init, t1),
 			print(ascii_ent),
 		})
