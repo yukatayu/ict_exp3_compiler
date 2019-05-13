@@ -456,7 +456,7 @@ int main(){
 	};
 
 	// Process Trigger
-	Subroutine digitOutput = {
+	Subroutine processTrigger = {
 		If({ +out_trigger }, {
 			out_trigger = Zero,
 			tokenize_and_reset_str(),
@@ -496,7 +496,7 @@ int main(){
 		}),
 
 		// Process Triggers
-		digitOutput.stat("Output"),
+		processTrigger(),
 
 		// Output
 		If("OutputAvailable", {
