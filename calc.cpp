@@ -220,7 +220,6 @@ int main(){
 	};
 
 	// String Utilities
-	// TODO: to HEX
 	auto cToi = [&](Data c){
 		return StatementList {
 			t_ctoi_2 = One,  // error
@@ -242,7 +241,6 @@ int main(){
 		}.stat();
 	};
 
-	// TODO: toHex
 	auto printNum = [&](Data c){
 		return StatementList {
 			resetStack(),
