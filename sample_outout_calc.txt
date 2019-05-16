@@ -1069,8 +1069,6 @@ INT_MAIN,
                     STA STACKINDEX
                     LDA STACKPTR I
             STA TEMPRESULT
-            LDA TEMPRESULT
-            SEG
 
             LDA ResultPrefixPtrInit
             STA TEMP1
@@ -1400,6 +1398,9 @@ INT_MAIN,
                 LDA QUEREMAIN
                 INC
                 STA QUEREMAIN
+            ShowSeg,
+            LDA TEMPRESULT
+            BUN ShowSeg,
          / }
         _XIF2_XAUTO45,
 

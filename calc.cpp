@@ -462,9 +462,6 @@ int main(){
 			tokenize_and_reset_str(),
 			RPN(),
 			t_result = calc(),
-			// 7セグ表示
-			+t_result,
-			"SEG"_asm,
 			// シリアル表示
 			printStr(result_pre_str_ptr_init, t1),
 			printNum(t_result),
@@ -474,6 +471,10 @@ int main(){
 			"proc_success,"_asm,
 			printStr(result_post_str_ptr_init, t1),
 			print(ascii_ent),
+			// 7セグ表示
+			"ShowSeg,"_asm,
+			+t_result,
+			Goto("ShowSeg,"),
 		})
 	};
 
