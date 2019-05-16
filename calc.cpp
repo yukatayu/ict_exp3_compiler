@@ -473,7 +473,7 @@ int main(){
 			print(ascii_ent),
 			// 7セグ表示
 			+t_result,
-			halt,
+			"SEG"_asm,
 		})
 	};
 
