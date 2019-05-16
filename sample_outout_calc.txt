@@ -1398,9 +1398,8 @@ INT_MAIN,
                 LDA QUEREMAIN
                 INC
                 STA QUEREMAIN
-            ShowSeg,
             LDA TEMPRESULT
-            BUN ShowSeg,
+            _M_, HLT
          / }
         _XIF2_XAUTO45,
 

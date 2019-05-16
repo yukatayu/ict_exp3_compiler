@@ -472,9 +472,8 @@ int main(){
 			printStr(result_post_str_ptr_init, t1),
 			print(ascii_ent),
 			// 7セグ表示
-			"ShowSeg,"_asm,
 			+t_result,
-			Goto("ShowSeg,"),
+			halt,
 		})
 	};
 
