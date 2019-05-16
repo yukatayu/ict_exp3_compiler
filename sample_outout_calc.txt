@@ -1399,7 +1399,7 @@ INT_MAIN,
                 INC
                 STA QUEREMAIN
             LDA TEMPRESULT
-            _M_, HLT
+            SEG
          / }
         _XIF2_XAUTO45,
 
