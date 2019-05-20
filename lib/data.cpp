@@ -124,6 +124,14 @@ namespace EX3{
 		);
 	}
 
+	Statement Data::operator^(Data d){
+		use();
+		return Const(
+			"LDA " + name_ + "\n"
+			"XOR " + d.name() + "\n"
+		);
+	}
+
 	Statement operator+(Statement st, Data d){
 		d.use();
 		return Const(

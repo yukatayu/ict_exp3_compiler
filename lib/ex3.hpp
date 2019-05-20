@@ -72,6 +72,7 @@ namespace EX3{
 		Statement load();
 		Data operator*();
 		Statement operator+(Data d);
+		Statement operator^(Data d); // ANDを削除してXORを実装した
 		Statement operator+();
 		Statement operator++();	// 前置
 		Statement operator--();	// 前置
