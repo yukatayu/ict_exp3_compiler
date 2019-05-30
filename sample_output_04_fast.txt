@@ -8,17 +8,17 @@ SIO
 ION
 
  / > while loop MainLoop
-_XWH1MainLoop,
+_XLP1MainLoop,
  / while (
     LDA HaltFlag
 SZA
-BUN _XWH3MainLoop
-BUN _XWH2MainLoop
+BUN _XLP3MainLoop
+BUN _XLP2MainLoop
  / ) {
-_XWH2MainLoop,
-BUN _XWH1MainLoop
+_XLP2MainLoop,
+BUN _XLP1MainLoop
  / }
-_XWH3MainLoop,
+_XLP3MainLoop,
  / < end of while loop MainLoop
 
 _M_, HLT
@@ -163,14 +163,14 @@ INT_MAIN,
             STA DECLTRIG
 
              / > while loop PrimeSearchLoop
-            _XWH1PrimeSearchLoop,
+            _XLP1PrimeSearchLoop,
              / while (
                 LDA N
             SZA
-            BUN _XWH2PrimeSearchLoop
-            BUN _XWH3PrimeSearchLoop
+            BUN _XLP2PrimeSearchLoop
+            BUN _XLP3PrimeSearchLoop
              / ) {
-            _XWH2PrimeSearchLoop,
+            _XLP2PrimeSearchLoop,
 
                  / > beginning of CP
                 CP,
@@ -186,7 +186,7 @@ INT_MAIN,
                     STA CPRET
 
                      / > while loop CPLoop
-                    _XWH1CPLoop,
+                    _XLP1CPLoop,
                      / while (
                         LDA I2
                         CLE
@@ -204,10 +204,10 @@ INT_MAIN,
                         CIL
                         ADD TEMP1
                     SZA
-                    BUN _XWH2CPLoop
-                    BUN _XWH3CPLoop
+                    BUN _XLP2CPLoop
+                    BUN _XLP3CPLoop
                      / ) {
-                    _XWH2CPLoop,
+                    _XLP2CPLoop,
                         LDA I
                         STA ISH
                         LDA N
@@ -236,29 +236,29 @@ INT_MAIN,
 
 
                          / > while loop CPPre
-                        _XWH1CPPre,
+                        _XLP1CPPre,
                          / while (
                             LDA ISH
                             CIL
                             CLA
                             CIL
                         SZA
-                        BUN _XWH3CPPre
-                        BUN _XWH2CPPre
+                        BUN _XLP3CPPre
+                        BUN _XLP2CPPre
                          / ) {
-                        _XWH2CPPre,
+                        _XLP2CPPre,
                             LDA ISH
                             CLE
                             CIL
                             STA ISH
-                        BUN _XWH1CPPre
+                        BUN _XLP1CPPre
                          / }
-                        _XWH3CPPre,
+                        _XLP3CPPre,
                          / < end of while loop CPPre
 
 
                          / > while loop CPMain
-                        _XWH1CPMain,
+                        _XLP1CPMain,
                          / while (
                             LDA I
                             CLE
@@ -276,10 +276,10 @@ INT_MAIN,
                             CIL
                             ADD TEMP1
                         SZA
-                        BUN _XWH2CPMain
-                        BUN _XWH3CPMain
+                        BUN _XLP2CPMain
+                        BUN _XLP3CPMain
                          / ) {
-                        _XWH2CPMain,
+                        _XLP2CPMain,
 
                              / > if DivCmp
                              / if (
@@ -316,9 +316,9 @@ INT_MAIN,
                             CLE
                             CIR
                             STA ISH
-                        BUN _XWH1CPMain
+                        BUN _XLP1CPMain
                          / }
-                        _XWH3CPMain,
+                        _XLP3CPMain,
                          / < end of while loop CPMain
 
 
@@ -352,9 +352,9 @@ INT_MAIN,
                         INC
                         CMA
                         STA MI
-                    BUN _XWH1CPLoop
+                    BUN _XLP1CPLoop
                      / }
-                    _XWH3CPLoop,
+                    _XLP3CPLoop,
                      / < end of while loop CPLoop
 
                     CLA
@@ -372,7 +372,7 @@ INT_MAIN,
                 BUN _XIF2BreakCPRet
                  / ) {
                 _XIF1BreakCPRet,
-                    BUN _XWH3PrimeSearchLoop
+                    BUN _XLP3PrimeSearchLoop
                  / }
                 _XIF2BreakCPRet,
                  / < end of if BreakCPRet
@@ -382,9 +382,9 @@ INT_MAIN,
                 INC
                 CMA
                 STA N
-            BUN _XWH1PrimeSearchLoop
+            BUN _XLP1PrimeSearchLoop
              / }
-            _XWH3PrimeSearchLoop,
+            _XLP3PrimeSearchLoop,
              / < end of while loop PrimeSearchLoop
 
             LDA N
@@ -395,14 +395,14 @@ INT_MAIN,
             STA QVAL
 
              / > while loop ShowSubDigit
-            _XWH1ShowSubDigit,
+            _XLP1ShowSubDigit,
              / while (
                 LDA QVAL
             SZA
-            BUN _XWH2ShowSubDigit
-            BUN _XWH3ShowSubDigit
+            BUN _XLP2ShowSubDigit
+            BUN _XLP3ShowSubDigit
              / ) {
-            _XWH2ShowSubDigit,
+            _XLP2ShowSubDigit,
                 LDA QVAL
                 STA RVAL
                 LDA DECVAL
@@ -414,7 +414,7 @@ INT_MAIN,
                 STA QVAL
 
                  / > while loop ShowSubSearch
-                _XWH1ShowSubSearch,
+                _XLP1ShowSubSearch,
                  / while (
                     LDA RVAL
                     CLE
@@ -432,10 +432,10 @@ INT_MAIN,
                     CIL
                     ADD TEMP1
                 SZA
-                BUN _XWH3ShowSubSearch
-                BUN _XWH2ShowSubSearch
+                BUN _XLP3ShowSubSearch
+                BUN _XLP2ShowSubSearch
                  / ) {
-                _XWH2ShowSubSearch,
+                _XLP2ShowSubSearch,
                     LDA XVAL
                     STA RVAL
                     LDA DECVAL
@@ -446,17 +446,17 @@ INT_MAIN,
                     LDA QVAL
                     INC
                     STA QVAL
-                BUN _XWH1ShowSubSearch
+                BUN _XLP1ShowSubSearch
                  / }
-                _XWH3ShowSubSearch,
+                _XLP3ShowSubSearch,
                  / < end of while loop ShowSubSearch
 
                 LDA ShowIParam
                 INC
                 STA ShowIParam
-            BUN _XWH1ShowSubDigit
+            BUN _XLP1ShowSubDigit
              / }
-            _XWH3ShowSubDigit,
+            _XLP3ShowSubDigit,
              / < end of while loop ShowSubDigit
 
          / }
@@ -565,7 +565,7 @@ INT_MAIN,
 
 
                  / > while loop DispIShift
-                _XWH1DispIShift,
+                _XLP1DispIShift,
                  / while (
                     LDA I
                     CMA
@@ -573,10 +573,10 @@ INT_MAIN,
                     CMA
                     STA I
                 SZA
-                BUN _XWH2DispIShift
-                BUN _XWH3DispIShift
+                BUN _XLP2DispIShift
+                BUN _XLP3DispIShift
                  / ) {
-                _XWH2DispIShift,
+                _XLP2DispIShift,
                     LDA ISH
                     CLE
                     CIL
@@ -588,9 +588,9 @@ INT_MAIN,
                     CIL
                     ADD ISH
                     STA ISH
-                BUN _XWH1DispIShift
+                BUN _XLP1DispIShift
                  / }
-                _XWH3DispIShift,
+                _XLP3DispIShift,
                  / < end of while loop DispIShift
 
                 LDA ISH
@@ -604,7 +604,7 @@ INT_MAIN,
                 STA RVAL
 
                  / > while loop ShowSub
-                _XWH1ShowSub,
+                _XLP1ShowSub,
                  / while (
                     LDA RVAL
                     CLE
@@ -622,10 +622,10 @@ INT_MAIN,
                     CIL
                     ADD TEMP1
                 SZA
-                BUN _XWH3ShowSub
-                BUN _XWH2ShowSub
+                BUN _XLP3ShowSub
+                BUN _XLP2ShowSub
                  / ) {
-                _XWH2ShowSub,
+                _XLP2ShowSub,
                     LDA XVAL
                     STA RVAL
                     LDA ISH
@@ -636,9 +636,9 @@ INT_MAIN,
                     LDA QVAL
                     INC
                     STA QVAL
-                BUN _XWH1ShowSub
+                BUN _XLP1ShowSub
                  / }
-                _XWH3ShowSub,
+                _XLP3ShowSub,
                  / < end of while loop ShowSub
 
                 LDA RVAL

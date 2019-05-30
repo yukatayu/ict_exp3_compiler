@@ -2,23 +2,75 @@ ORG 0 / Interrupt Entry Point
 INT_RET, HEX 0 / Interrupt Return Address
 BUN INT_MAIN
 ORG 10 / Entry Point
+CLA
+STA MakeNodeStrLen
+CLA
+STA MakeStringLen
+BSA MakeString
+LDA AllocNew
+STA MakeNodeStr
+    LDA NodeSize
+    STA AllocLen
+    BSA Alloc
+    LDA AllocNew
+    STA NodePtr
+    STA TempMakeNode
+     // [Debug] New Node!! Created at: 
+    CLE
+    _B_,
+    LDA GlobalNo
+    STA TempMakeNode I
+     // [Debug] ID: 
+    LDA TempMakeNode I
+    _B_,
+    LDA TempMakeNode
+    INC
+    STA TempMakeNode
+    LDA MakeNodeStr
+    STA TempMakeNode I
+     // [Debug] string: 
+    LDA TempMakeNode I
+    _B_,
+    LDA TempMakeNode
+    INC
+    STA TempMakeNode
+    BSA MakeMap
+    LDA AllocNew
+    STA TempMakeNode I
+     // [Debug] map: 
+    LDA TempMakeNode I
+    _B_,
+    LDA TempMakeNode
+    INC
+    STA TempMakeNode
+    LDA MakeNodeStrLen
+    STA TempMakeNode I
+     // [Debug] len: 
+    LDA TempMakeNode I
+    _B_,
+    LDA GlobalNo
+    INC
+    STA GlobalNo
+LDA NodePtr
+STA MainRoot
+STA MainPtr
 LDA MASKSIN
 IMK
 SIO
 ION
 
  / > while loop MainLoop
-_XWH1MainLoop,
+_XLP1MainLoop,
  / while (
     LDA HaltFlag
 SZA
-BUN _XWH3MainLoop
-BUN _XWH2MainLoop
+BUN _XLP3MainLoop
+BUN _XLP2MainLoop
  / ) {
-_XWH2MainLoop,
-BUN _XWH1MainLoop
+_XLP2MainLoop,
+BUN _XLP1MainLoop
  / }
-_XWH3MainLoop,
+_XLP3MainLoop,
  / < end of while loop MainLoop
 
 _M_, HLT
@@ -87,13 +139,307 @@ INT_MAIN,
             BUN _XIF3CheckCharEnt
              / } else {  // CheckCharEnt
             _XIF2CheckCharEnt,
+                LDA MainPtr
+                STA InsertNode
                 LDA INTmp
-                STA RawStrPtr I
-                LDA RawStrPtr
-                INC
-                STA RawStrPtr
+                STA InsertChar
+                    LDA InsertNode
+                    STA TempInsert
+                    LDA TempInsert
+                    INC
+                    STA TempInsert
+                    LDA TempInsert I
+                    STA TempInsertStr
+                    LDA TempInsert
+                    INC
+                    STA TempInsert
+                    LDA TempInsert I
+                    STA TempInsertMap
+                    LDA TempInsert
+                    INC
+                    STA TempInsert
+                    LDA TempInsert I
+                    STA TempInsertLen
+                    LDA TempInsertMap
+                    STA FindMapMap
+                    LDA InsertChar
+                    STA FindMapChar
+                        LDA FindMapMap
+                        STA TempFindMapPtr
+                        CLA
+                        STA MapFound
+                        LDA TempFindMapPtr
+                        INC
+                        STA TempFindMapPtr
+
+                         / > for loop FindMapLoop
+                        CLA
+                        STA TempFindMap
+                        _XLP1FindMapLoop,
+                         / for (
+                            LDA MapMaxLen
+                            CMA
+                            INC
+                            ADD TempFindMap
+                        SZA
+                        BUN _XLP2FindMapLoop
+                        BUN _XLP3FindMapLoop
+                         / ) {
+                        _XLP2FindMapLoop,
+                             // [Debug] Searching: 
+                            LDA TempFindMapPtr
+                            _B_,
+
+                             / if (
+                                LDA TempFindMapPtr I
+                                CMA
+                                INC
+                                ADD FindMapChar
+                            SZA
+                            BUN _XIF2_XAUTO1
+                            BUN _XIF1_XAUTO1
+                             / ) {
+                            _XIF1_XAUTO1,
+                                LDA TempFindMap
+                                STA MapResult
+                                LDA TempFindMapPtr
+                                INC
+                                STA TempFindMapPtr
+                                LDA TempFindMapPtr I
+                                STA MapResEntry
+                                CLA
+                                INC
+                                STA MapFound
+                                BUN _XLP3FindMapLoop
+                             / }
+                            _XIF2_XAUTO1,
+
+                            LDA TempFindMapPtr
+                            INC
+                            STA TempFindMapPtr
+                            LDA TempFindMapPtr
+                            INC
+                            STA TempFindMapPtr
+                        LDA TempFindMap
+                        INC
+                        STA TempFindMap
+                        BUN _XLP1FindMapLoop
+                         / }
+                        _XLP3FindMapLoop,
+                         / < end of for loop FindMapLoop
+
+                    LDA MapFound
+                    CMA
+                    INC
+                    STA InsertRes
+                    LDA InsertRes
+                    INC
+                    STA InsertRes
+
+                     / if (
+                        LDA MapFound
+                    SZA
+                    BUN _XIF2_XAUTO2
+                    BUN _XIF1_XAUTO2
+                     / ) {
+                    _XIF1_XAUTO2,
+                         // [Debug] Inserting
+                        CLE
+                        _B_,
+                        LDA TempInsertMap I
+                        STA TempInsert
+                        LDA TempInsertMap I
+                        INC
+                        STA TempInsertMap I
+                        LDA TempInsertMap
+                        INC
+                        STA TempInsertMap
+                        LDA TempInsert
+                        CLE
+                        CIL
+                        STA TempInsert
+                        LDA TempInsertMap
+                        ADD TempInsert
+                        STA TempInsertMap
+                        LDA TempInsertLen
+                        INC
+                        STA TempInsertLen
+                        STA MakeStringLen
+                        BSA MakeString
+                        LDA AllocNew
+                        STA TempInsertNewStr
+
+                        LDA TempInsertStr
+                        STA TempInsertPtrSrc
+                        LDA TempInsertNewStr
+                        _XLP1_XAUTO3,
+                         / for (
+                            LDA TempInsertPtrSrc I
+                        SZA
+                        BUN _XLP2_XAUTO3
+                        BUN _XLP3_XAUTO3
+                         / ) {
+                        _XLP2_XAUTO3,
+                            LDA TempInsertPtrSrc I
+                            STA TempInsertPtrDst I
+                             // [Debug] New Str: AC
+                            CLE
+                            _B_,
+                        LDA TempInsertPtrSrc
+                        INC
+                        STA TempInsertPtrSrc
+                        LDA TempInsertPtrDst
+                        INC
+                        STA TempInsertPtrDst
+                        BUN _XLP1_XAUTO3
+                         / }
+                        _XLP3_XAUTO3,
+
+                        LDA InsertChar
+                        STA TempInsertPtrDst I
+                        LDA TempInsertNewStr
+                        STA MakeNodeStr
+                        LDA MakeStringLen
+                        STA MakeNodeStrLen
+                            LDA NodeSize
+                            STA AllocLen
+                            BSA Alloc
+                            LDA AllocNew
+                            STA NodePtr
+                            STA TempMakeNode
+                             // [Debug] New Node!! Created at: 
+                            CLE
+                            _B_,
+                            LDA GlobalNo
+                            STA TempMakeNode I
+                             // [Debug] ID: 
+                            LDA TempMakeNode I
+                            _B_,
+                            LDA TempMakeNode
+                            INC
+                            STA TempMakeNode
+                            LDA MakeNodeStr
+                            STA TempMakeNode I
+                             // [Debug] string: 
+                            LDA TempMakeNode I
+                            _B_,
+                            LDA TempMakeNode
+                            INC
+                            STA TempMakeNode
+                            BSA MakeMap
+                            LDA AllocNew
+                            STA TempMakeNode I
+                             // [Debug] map: 
+                            LDA TempMakeNode I
+                            _B_,
+                            LDA TempMakeNode
+                            INC
+                            STA TempMakeNode
+                            LDA MakeNodeStrLen
+                            STA TempMakeNode I
+                             // [Debug] len: 
+                            LDA TempMakeNode I
+                            _B_,
+                            LDA GlobalNo
+                            INC
+                            STA GlobalNo
+                        LDA NodePtr
+                        STA NewChildren
+                        LDA InsertChar
+                        STA TempInsertMap I
+                        LDA TempInsertMap
+                        INC
+                        STA TempInsertMap
+                        LDA NewChildren
+                        STA TempInsertMap I
+                     / }
+                    _XIF2_XAUTO2,
+
                 CLA
-                STA RawStrPtr I
+
+                 / if (
+                    LDA InsertRes
+                SZA
+                BUN _XIF1_XAUTO6
+                BUN _XIF2_XAUTO6
+                 / ) {
+                _XIF1_XAUTO6,
+                     // [Debug] Inserted
+                    CLE
+                    _B_,
+                     // [Debug] Now Head is 
+                    LDA MainPtr
+                    _B_,
+                    LDA MainPtr I
+                    ADD ASCII0
+                    STA TEMP1
+                        LDA TEMP1
+                        STA QuePtr I
+                        LDA QuePtr
+                        INC
+                        STA QuePtr
+
+                         / if (
+                            LDA QuePtr
+                            CMA
+                            INC
+                            ADD QuePtrEnd
+                        SZA
+                        BUN _XIF2_XAUTO4
+                        BUN _XIF1_XAUTO4
+                         / ) {
+                        _XIF1_XAUTO4,
+                            LDA QuePtrInit
+                            STA QuePtr
+                         / }
+                        _XIF2_XAUTO4,
+
+                        LDA QueRemain
+                        INC
+                        STA QueRemain
+                        LDA INTmp
+                        STA QuePtr I
+                        LDA QuePtr
+                        INC
+                        STA QuePtr
+
+                         / if (
+                            LDA QuePtr
+                            CMA
+                            INC
+                            ADD QuePtrEnd
+                        SZA
+                        BUN _XIF2_XAUTO5
+                        BUN _XIF1_XAUTO5
+                         / ) {
+                        _XIF1_XAUTO5,
+                            LDA QuePtrInit
+                            STA QuePtr
+                         / }
+                        _XIF2_XAUTO5,
+
+                        LDA QueRemain
+                        INC
+                        STA QueRemain
+                    LDA MainRoot
+                    STA MainPtr
+                BUN _XIF3_XAUTO6
+                 / } else {  // 
+                _XIF2_XAUTO6,
+                     // [Debug] Found
+                    CLE
+                    _B_,
+                     // [Debug] Now Head is 
+                    LDA MainPtr
+                    _B_,
+                    LDA MapResEntry
+                    STA MainPtr
+                     // [Debug] Now Head is 
+                    LDA MapResEntry
+                    _B_,
+                 / }
+                _XIF3_XAUTO6,
+
              / }
             _XIF3CheckCharEnt,
              / < end of if CheckCharEnt
@@ -115,126 +461,6 @@ INT_MAIN,
         _XIF1_XAUTO7,
             CLA
             STA CALCTRIG
-                LDA TEMPDEBUG1
-                STA QuePtr I
-                LDA QuePtr
-                INC
-                STA QuePtr
-
-                 / if (
-                    LDA QuePtr
-                    CMA
-                    INC
-                    ADD QuePtrEnd
-                SZA
-                BUN _XIF2_XAUTO2
-                BUN _XIF1_XAUTO2
-                 / ) {
-                _XIF1_XAUTO2,
-                    LDA QuePtrInit
-                    STA QuePtr
-                 / }
-                _XIF2_XAUTO2,
-
-                LDA QueRemain
-                INC
-                STA QueRemain
-                LDA TEMPDEBUG2
-                STA QuePtr I
-                LDA QuePtr
-                INC
-                STA QuePtr
-
-                 / if (
-                    LDA QuePtr
-                    CMA
-                    INC
-                    ADD QuePtrEnd
-                SZA
-                BUN _XIF2_XAUTO3
-                BUN _XIF1_XAUTO3
-                 / ) {
-                _XIF1_XAUTO3,
-                    LDA QuePtrInit
-                    STA QuePtr
-                 / }
-                _XIF2_XAUTO3,
-
-                LDA QueRemain
-                INC
-                STA QueRemain
-                LDA TEMPDEBUG3
-                STA QuePtr I
-                LDA QuePtr
-                INC
-                STA QuePtr
-
-                 / if (
-                    LDA QuePtr
-                    CMA
-                    INC
-                    ADD QuePtrEnd
-                SZA
-                BUN _XIF2_XAUTO4
-                BUN _XIF1_XAUTO4
-                 / ) {
-                _XIF1_XAUTO4,
-                    LDA QuePtrInit
-                    STA QuePtr
-                 / }
-                _XIF2_XAUTO4,
-
-                LDA QueRemain
-                INC
-                STA QueRemain
-                LDA TEMPDEBUG4
-                STA QuePtr I
-                LDA QuePtr
-                INC
-                STA QuePtr
-
-                 / if (
-                    LDA QuePtr
-                    CMA
-                    INC
-                    ADD QuePtrEnd
-                SZA
-                BUN _XIF2_XAUTO5
-                BUN _XIF1_XAUTO5
-                 / ) {
-                _XIF1_XAUTO5,
-                    LDA QuePtrInit
-                    STA QuePtr
-                 / }
-                _XIF2_XAUTO5,
-
-                LDA QueRemain
-                INC
-                STA QueRemain
-                LDA TEMPDEBUG5
-                STA QuePtr I
-                LDA QuePtr
-                INC
-                STA QuePtr
-
-                 / if (
-                    LDA QuePtr
-                    CMA
-                    INC
-                    ADD QuePtrEnd
-                SZA
-                BUN _XIF2_XAUTO6
-                BUN _XIF1_XAUTO6
-                 / ) {
-                _XIF1_XAUTO6,
-                    LDA QuePtrInit
-                    STA QuePtr
-                 / }
-                _XIF2_XAUTO6,
-
-                LDA QueRemain
-                INC
-                STA QueRemain
             CLA
             INC
             STA OUTTRIG
@@ -353,6 +579,7 @@ INT_MAIN,
     MapMaxLen, DEC 10
     INTmp, DEC 0
     ASCIIENTER, DEC 10
+    ASCII0, CHR 0
     TEMP1, DEC 0
     TEMP2, DEC 0
     TEMPDEBUG1, CHR T
@@ -365,7 +592,6 @@ INT_MAIN,
     TEMPPRINT2, DEC 0
     TEMPPRINT3, DEC 0
     TEMPPRINT4, DEC 0
-    AVAL, DEC 0
     RawStrData, DEC 0
         DEC 0
         DEC 0
@@ -496,9 +722,14 @@ INT_MAIN,
     TempInsert, DEC 0
     TempInsertMap, DEC 0
     TempInsertStr, DEC 0
+    TempInsertNewStr, DEC 0
+    TempInsertPtrSrc, DEC 0
+    TempInsertPtrDst, DEC 0
     TempInsertLen, DEC 0
     InsertNode, DEC 0
     InsertChar, DEC 0
+    MainRoot, DEC 0
+    MainPtr, DEC 0
     AllocPtr, SYM AllocBuf
     AllocBuf, DEC 0
         DEC 0

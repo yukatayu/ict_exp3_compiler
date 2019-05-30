@@ -169,7 +169,7 @@ namespace EX3{
 	{ }
 
 	std::string Break_impl::make_impl(){
-		std::string wh3 = "_XWH3" + name_;
+		std::string wh3 = "_XLP3" + name_;
 		return "BUN " + wh3;
 	}
 	// Continue
@@ -178,7 +178,7 @@ namespace EX3{
 	{ }
 
 	std::string Continue_impl::make_impl(){
-		std::string wh1 = "_XWH1" + name_;
+		std::string wh1 = "_XLP1" + name_;
 		return "BUN " + wh1;
 	}
 
@@ -204,9 +204,9 @@ namespace EX3{
 		if(name_.empty())
 			name_label = Statement_impl::nextAutoLabel();
 		std::string res;
-		std::string wh1 = "_XWH1" + name_label;
-		std::string wh2 = "_XWH2" + name_label;
-		std::string wh3 = "_XWH3" + name_label;
+		std::string wh1 = "_XLP1" + name_label;
+		std::string wh2 = "_XLP2" + name_label;
+		std::string wh3 = "_XLP3" + name_label;
 		res += "\n";
 		if(!name_.empty())
 			res += " / > while loop " + name_ + "\n";
@@ -242,9 +242,9 @@ namespace EX3{
 		if(name_.empty())
 			name_label = Statement_impl::nextAutoLabel();
 		std::string res;
-		std::string wh1 = "_XFOR1" + name_label;
-		std::string wh2 = "_XFOR2" + name_label;
-		std::string wh3 = "_XFOR3" + name_label;
+		std::string wh1 = "_XLP1" + name_label;
+		std::string wh2 = "_XLP2" + name_label;
+		std::string wh3 = "_XLP3" + name_label;
 		res += "\n";
 		if(!name_.empty())
 			res += " / > for loop " + name_ + "\n";

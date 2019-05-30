@@ -17,17 +17,17 @@ SIO
 ION
 
  / > while loop MainLoop
-_XWH1MainLoop,
+_XLP1MainLoop,
  / while (
     LDA HaltFlag
 SZA
-BUN _XWH3MainLoop
-BUN _XWH2MainLoop
+BUN _XLP3MainLoop
+BUN _XLP2MainLoop
  / ) {
-_XWH2MainLoop,
-BUN _XWH1MainLoop
+_XLP2MainLoop,
+BUN _XLP1MainLoop
  / }
-_XWH3MainLoop,
+_XLP3MainLoop,
  / < end of while loop MainLoop
 
 _M_, HLT
@@ -167,15 +167,15 @@ INT_MAIN,
                  / > for loop TokenizeStr
                 LDA RAWSTRPTRINIT
                 STA RAWSTRPTR
-                _XFOR1TokenizeStr,
+                _XLP1TokenizeStr,
                  / for (
                     LDA RAWSTRPTR I
                     STA TEMP1
                 SZA
-                BUN _XFOR2TokenizeStr
-                BUN _XFOR3TokenizeStr
+                BUN _XLP2TokenizeStr
+                BUN _XLP3TokenizeStr
                  / ) {
-                _XFOR2TokenizeStr,
+                _XLP2TokenizeStr,
                         CLA
                         INC
                         STA TEMPCTOI2
@@ -319,9 +319,9 @@ INT_MAIN,
                 LDA RAWSTRPTR
                 INC
                 STA RAWSTRPTR
-                BUN _XFOR1TokenizeStr
+                BUN _XLP1TokenizeStr
                  / }
-                _XFOR3TokenizeStr,
+                _XLP3TokenizeStr,
                  / < end of for loop TokenizeStr
 
                     LDA RAWSTRPTRINIT
@@ -336,7 +336,7 @@ INT_MAIN,
 
                 CLA
                 STA RPNITR
-                _XFOR1_XAUTO18,
+                _XLP1_XAUTO18,
                  / for (
                     LDA TOKENINDEX
                     CMA
@@ -346,10 +346,10 @@ INT_MAIN,
                     CLA
                     CIL
                 SZA
-                BUN _XFOR2_XAUTO18
-                BUN _XFOR3_XAUTO18
+                BUN _XLP2_XAUTO18
+                BUN _XLP3_XAUTO18
                  / ) {
-                _XFOR2_XAUTO18,
+                _XLP2_XAUTO18,
                     LDA TOKENPTRINIT
                     ADD RPNITR
                     STA RPNITRTOKEN
@@ -431,7 +431,7 @@ INT_MAIN,
                              / ) {
                             _XIF1_XAUTO20,
 
-                                _XWH1_XAUTO21,
+                                _XLP1_XAUTO21,
                                  / while (
                                     CLA
                                     INC
@@ -482,10 +482,10 @@ INT_MAIN,
 
                                     LDA TEMP1
                                 SZA
-                                BUN _XWH2_XAUTO21
-                                BUN _XWH3_XAUTO21
+                                BUN _XLP2_XAUTO21
+                                BUN _XLP3_XAUTO21
                                  / ) {
-                                _XWH2_XAUTO21,
+                                _XLP2_XAUTO21,
                                     LDA TEMP2
                                     STA BUFPTR I
                                     LDA BUFPTR
@@ -499,9 +499,9 @@ INT_MAIN,
                                     LDA BUFINDEX
                                     INC
                                     STA BUFINDEX
-                                BUN _XWH1_XAUTO21
+                                BUN _XLP1_XAUTO21
                                  / }
-                                _XWH3_XAUTO21,
+                                _XLP3_XAUTO21,
 
                             BUN _XIF3_XAUTO20
                              / } else {  // 
@@ -542,14 +542,14 @@ INT_MAIN,
                                 _XIF2_XAUTO24,
 
                                      / > while loop CompareOps
-                                    _XWH1CompareOps,
+                                    _XLP1CompareOps,
                                      / while (
                                         LDA STACKINDEX
                                     SZA
-                                    BUN _XWH2CompareOps
-                                    BUN _XWH3CompareOps
+                                    BUN _XLP2CompareOps
+                                    BUN _XLP3CompareOps
                                      / ) {
-                                    _XWH2CompareOps,
+                                    _XLP2CompareOps,
                                         LDA RPNITRTOKEN I
                                             STA TEMPPRI1
                                             LDA ASCII0
@@ -765,13 +765,13 @@ INT_MAIN,
                                                 LDA STACKINDEX
                                                 INC
                                                 STA STACKINDEX
-                                            BUN _XWH3CompareOps
+                                            BUN _XLP3CompareOps
                                          / }
                                         _XIF3_XAUTO25,
 
-                                    BUN _XWH1CompareOps
+                                    BUN _XLP1CompareOps
                                      / }
-                                    _XWH3CompareOps,
+                                    _XLP3CompareOps,
                                      / < end of while loop CompareOps
 
                                  / }
@@ -790,9 +790,9 @@ INT_MAIN,
                 LDA RPNITR
                 INC
                 STA RPNITR
-                BUN _XFOR1_XAUTO18
+                BUN _XLP1_XAUTO18
                  / }
-                _XFOR3_XAUTO18,
+                _XLP3_XAUTO18,
 
                 CLA
                 STA STACKINDEX
@@ -802,7 +802,7 @@ INT_MAIN,
                  / > for loop CalcMain
                 CLA
                 STA TEMPCALCINDEX
-                _XFOR1CalcMain,
+                _XLP1CalcMain,
                  / for (
                     LDA BUFINDEX
                     CMA
@@ -812,10 +812,10 @@ INT_MAIN,
                     CLA
                     CIL
                 SZA
-                BUN _XFOR2CalcMain
-                BUN _XFOR3CalcMain
+                BUN _XLP2CalcMain
+                BUN _XLP3CalcMain
                  / ) {
-                _XFOR2CalcMain,
+                _XLP2CalcMain,
                     LDA BUFPTRINIT
                     ADD TEMPCALCINDEX
                     STA RPNITRTOKEN
@@ -934,7 +934,7 @@ INT_MAIN,
 
                             CLA
                             STA TEMP1
-                            _XFOR1_XAUTO30,
+                            _XLP1_XAUTO30,
                              / for (
                                 LDA TEMPCALC2
                                 CMA
@@ -944,19 +944,19 @@ INT_MAIN,
                                 CLA
                                 CIL
                             SZA
-                            BUN _XFOR2_XAUTO30
-                            BUN _XFOR3_XAUTO30
+                            BUN _XLP2_XAUTO30
+                            BUN _XLP3_XAUTO30
                              / ) {
-                            _XFOR2_XAUTO30,
+                            _XLP2_XAUTO30,
                                 LDA TEMP2
                                 ADD TEMPCALC1
                                 STA TEMPCALC1
                             LDA TEMP1
                             INC
                             STA TEMP1
-                            BUN _XFOR1_XAUTO30
+                            BUN _XLP1_XAUTO30
                              / }
-                            _XFOR3_XAUTO30,
+                            _XLP3_XAUTO30,
 
                          / }
                         _XIF2_XAUTO29,
@@ -986,7 +986,7 @@ INT_MAIN,
                             CMA
                             STA QVAL
 
-                            _XWH1_XAUTO32,
+                            _XLP1_XAUTO32,
                              / while (
                                 LDA TEMP1
                                 CLE
@@ -1004,19 +1004,19 @@ INT_MAIN,
                                 CIL
                                 ADD TEMP2
                             SZA
-                            BUN _XWH3_XAUTO32
-                            BUN _XWH2_XAUTO32
+                            BUN _XLP3_XAUTO32
+                            BUN _XLP2_XAUTO32
                              / ) {
-                            _XWH2_XAUTO32,
+                            _XLP2_XAUTO32,
                                 LDA QVAL
                                 INC
                                 STA QVAL
                                 LDA AVAL
                                 ADD TEMP1
                                 STA AVAL
-                            BUN _XWH1_XAUTO32
+                            BUN _XLP1_XAUTO32
                              / }
-                            _XWH3_XAUTO32,
+                            _XLP3_XAUTO32,
 
                             LDA QVAL
                             STA TEMPCALC1
@@ -1052,9 +1052,9 @@ INT_MAIN,
                 LDA TEMPCALCINDEX
                 INC
                 STA TEMPCALCINDEX
-                BUN _XFOR1CalcMain
+                BUN _XLP1CalcMain
                  / }
-                _XFOR3CalcMain,
+                _XLP3CalcMain,
                  / < end of for loop CalcMain
 
                     LDA STACKPTR
@@ -1072,14 +1072,14 @@ INT_MAIN,
 
             LDA ResultPrefixPtrInit
             STA TEMP1
-            _XFOR1_XAUTO46,
+            _XLP1_XAUTO46,
              / for (
                 LDA TEMP1 I
             SZA
-            BUN _XFOR2_XAUTO46
-            BUN _XFOR3_XAUTO46
+            BUN _XLP2_XAUTO46
+            BUN _XLP3_XAUTO46
              / ) {
-            _XFOR2_XAUTO46,
+            _XLP2_XAUTO46,
                     LDA TEMP1 I
                     STA QUEPTR I
                     LDA QUEPTR
@@ -1107,9 +1107,9 @@ INT_MAIN,
             LDA TEMP1
             INC
             STA TEMP1
-            BUN _XFOR1_XAUTO46
+            BUN _XLP1_XAUTO46
              / }
-            _XFOR3_XAUTO46,
+            _XLP3_XAUTO46,
 
                     CLA
                     STA STACKINDEX
@@ -1126,14 +1126,14 @@ INT_MAIN,
                     LDA TEMPRESULT
                     STA TEMPPRINT2
 
-                    _XWH1_XAUTO38,
+                    _XLP1_XAUTO38,
                      / while (
                         LDA TEMPPRINT2
                     SZA
-                    BUN _XWH2_XAUTO38
-                    BUN _XWH3_XAUTO38
+                    BUN _XLP2_XAUTO38
+                    BUN _XLP3_XAUTO38
                      / ) {
-                    _XWH2_XAUTO38,
+                    _XLP2_XAUTO38,
                         LDA TEMPPRINT2
                         STA AVAL
                         CLA
@@ -1145,7 +1145,7 @@ INT_MAIN,
                         CMA
                         STA QVAL
 
-                        _XWH1_XAUTO39,
+                        _XLP1_XAUTO39,
                          / while (
                             LDA MIDECVAL
                             CLE
@@ -1163,10 +1163,10 @@ INT_MAIN,
                             CIL
                             ADD TEMPPRINT4
                         SZA
-                        BUN _XWH3_XAUTO39
-                        BUN _XWH2_XAUTO39
+                        BUN _XLP3_XAUTO39
+                        BUN _XLP2_XAUTO39
                          / ) {
-                        _XWH2_XAUTO39,
+                        _XLP2_XAUTO39,
                             LDA AVAL
                             ADD ASCII0
                             STA TEMPPRINT3
@@ -1176,9 +1176,9 @@ INT_MAIN,
                             LDA AVAL
                             ADD MIDECVAL
                             STA AVAL
-                        BUN _XWH1_XAUTO39
+                        BUN _XLP1_XAUTO39
                          / }
-                        _XWH3_XAUTO39,
+                        _XLP3_XAUTO39,
 
                         LDA QVAL
                         STA TEMPPRINT2
@@ -1205,9 +1205,9 @@ INT_MAIN,
                             LDA STACKINDEX
                             INC
                             STA STACKINDEX
-                    BUN _XWH1_XAUTO38
+                    BUN _XLP1_XAUTO38
                      / }
-                    _XWH3_XAUTO38,
+                    _XLP3_XAUTO38,
 
                 BUN _XIF3_XAUTO37
                  / } else {  // 
@@ -1239,14 +1239,14 @@ INT_MAIN,
                 _XIF3_XAUTO37,
 
 
-                _XWH1_XAUTO40,
+                _XLP1_XAUTO40,
                  / while (
                     LDA STACKINDEX
                 SZA
-                BUN _XWH2_XAUTO40
-                BUN _XWH3_XAUTO40
+                BUN _XLP2_XAUTO40
+                BUN _XLP3_XAUTO40
                  / ) {
-                _XWH2_XAUTO40,
+                _XLP2_XAUTO40,
                         LDA STACKPTR
                         CMA
                         INC
@@ -1283,23 +1283,23 @@ INT_MAIN,
                         LDA QUEREMAIN
                         INC
                         STA QUEREMAIN
-                BUN _XWH1_XAUTO40
+                BUN _XLP1_XAUTO40
                  / }
-                _XWH3_XAUTO40,
+                _XLP3_XAUTO40,
 
             BUN proc_success
             proc_overflow,
 
             LDA ErrMsgOverFlowPtrInit
             STA TEMP1
-            _XFOR1_XAUTO47,
+            _XLP1_XAUTO47,
              / for (
                 LDA TEMP1 I
             SZA
-            BUN _XFOR2_XAUTO47
-            BUN _XFOR3_XAUTO47
+            BUN _XLP2_XAUTO47
+            BUN _XLP3_XAUTO47
              / ) {
-            _XFOR2_XAUTO47,
+            _XLP2_XAUTO47,
                     LDA TEMP1 I
                     STA QUEPTR I
                     LDA QUEPTR
@@ -1327,22 +1327,22 @@ INT_MAIN,
             LDA TEMP1
             INC
             STA TEMP1
-            BUN _XFOR1_XAUTO47
+            BUN _XLP1_XAUTO47
              / }
-            _XFOR3_XAUTO47,
+            _XLP3_XAUTO47,
 
             proc_success,
 
             LDA ResultPostfixPtrInit
             STA TEMP1
-            _XFOR1_XAUTO48,
+            _XLP1_XAUTO48,
              / for (
                 LDA TEMP1 I
             SZA
-            BUN _XFOR2_XAUTO48
-            BUN _XFOR3_XAUTO48
+            BUN _XLP2_XAUTO48
+            BUN _XLP3_XAUTO48
              / ) {
-            _XFOR2_XAUTO48,
+            _XLP2_XAUTO48,
                     LDA TEMP1 I
                     STA QUEPTR I
                     LDA QUEPTR
@@ -1370,9 +1370,9 @@ INT_MAIN,
             LDA TEMP1
             INC
             STA TEMP1
-            BUN _XFOR1_XAUTO48
+            BUN _XLP1_XAUTO48
              / }
-            _XFOR3_XAUTO48,
+            _XLP3_XAUTO48,
 
                 LDA ASCIIENTER
                 STA QUEPTR I
