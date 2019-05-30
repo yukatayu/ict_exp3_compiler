@@ -25,6 +25,11 @@ int main(){
 
 	Data t1(INT, "TEMP1", 0);
 	Data t2(INT, "TEMP2", 0);
+	Data t_debug1(CHAR, "TEMPDEBUG1", 'T');
+	Data t_debug2(CHAR, "TEMPDEBUG2", 'e');
+	Data t_debug3(CHAR, "TEMPDEBUG3", 's');
+	Data t_debug4(CHAR, "TEMPDEBUG4", 't');
+	Data t_debug5(CHAR, "TEMPDEBUG5", '!');
 
 	Data t_queue_1(INT, "TEMPQUEUE1", 0);
 	Data t_print_1(INT, "TEMPPRINT1", 0);
@@ -169,108 +174,29 @@ int main(){
 	// Stack
 	// Input a char
 	Subroutine checkChar = {
-		/*
 		// Enter -> Start output
 		If("CheckCharEnt", { -ascii_ent + IN_tmp }, {
-			out_trigger = One,
+			calc_trigger = One,
 			+mask_sout,
 			"IMK"_asm,
+		}, Else, {
+			*raw_str_ptr = +IN_tmp,
+			++raw_str_ptr,
+			*raw_str_ptr = Zero,
 		}, true),
-		// [0-9] -> accumulation
-		t1 = -ascii_0 + IN_tmp,
-		If("CheckCharNum", { MoreEq(dec, t1, t2) }, {
-			If("CheckCharNumPosi", { Negative(t1) }, {
-				N = N << 1,
-				N = (N<<2) + N + t1
-			}, true)
-		})
-		*/
 	};
 
 	// Process Trigger
 	Subroutine prepareOutput = {
-		If({ +out_trigger }, {
-			/*
-			// Decrement to Prime Number
-			out_trigger = Zero,
-			While("PrimeSearchLoop", { +N }, {
-				checkPrime.stat("CP"),
-				If("BreakCPRet", { +CPRet }, {
-					Break("PrimeSearchLoop")
-				}),
-				--N
-			}),
-			N_bak = +N,
-
-			// Prepare for Output (counting 10^i)
-			show_i = Zero,
-			Q = +N,
-			While("ShowSubDigit", { +Q }, {
-				R = +Q,
-				X = -dec + Q,
-				Q = Zero,
-				While("ShowSubSearch", { MoreEq(X, R, t1) }, {
-					R = +X,
-					X = -dec + X,
-					++Q
-				}, true),
-				++show_i,
-			}),
-			*/
+		If({ +calc_trigger }, {
+			calc_trigger = Zero,
+			print(t_debug1),
+			print(t_debug2),
+			print(t_debug3),
+			print(t_debug4),
+			print(t_debug5),
+			out_trigger = One,
 		})
-	};
-
-	// Get Next Digit
-	Subroutine getDigitOne = {
-	/*	i_shift = One,
-		i = +show_i,
-		Q = +N,
-		If("ReadyState", { +i }, {
-			If("AnythingToShow", { +sep_trigger }, {
-				sep_trigger = Zero,
-				If("DecrNeeded", { MoreEq(N_bak, min_primep1, t1) }, {
-					// Kick `--N` Trigger
-					N = --N_bak,
-					out_trigger = One
-				}, Else, {
-					+mask_sin,
-					"IMK"_asm,
-				}),
-				+ascii_ent,
-				Goto("GetDigitOutT_End")
-			}),
-			Zero,
-			Goto("GetDigitOutT_End")
-		}, true),
-
-		While("DispIShift", { --i }, {
-			// i_shift * 10
-			i_shift = i_shift << 1,
-			i_shift = (i_shift<<2) + i_shift,
-		}),
-
-		// (N, t2) <- div(N, i_shift)
-		X = -i_shift + N,
-		Q = Zero,
-		R = +N,
-		While("ShowSub", { MoreEq(X, R, t1) }, {
-			R = +X,
-			X = -i_shift + X,
-			++Q
-		}, true),
-		N = +R,
-		t2 = +Q,
-
-		--show_i,
-
-		// Kick "\n" Trigger
-		If("ReachedEnd", { +show_i }, {
-			sep_trigger = One,
-		}, true),
-
-		t2 + ascii_0,
-		"GetDigitOutT_End,"_asm
-		*/
 	};
 
 	// Interrupt Routine
@@ -301,9 +227,16 @@ int main(){
 			"SKO"_asm,
 			"CLA"_asm
 		}, {
-			// Output a digit (If any data remains)
-			If("ShowMain", { getDigitOne.stat("GetDigitOne") }, {
-				"OUT"_asm
+			If({ +out_trigger }, {
+				If({ +queue_remain }, {
+					que_pop(),
+					"OUT"_asm,
+				}, Else, {
+					// allow input
+					// +mask_sin,
+					// "IMK"_asm,
+					halt,  // shutdown
+				}),
 			}),
 		}),
 

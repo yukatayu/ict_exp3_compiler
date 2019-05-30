@@ -67,6 +67,37 @@ INT_MAIN,
     _XIF1InputAvailable,
         INP
         STA INTmp
+
+             / > if CheckCharEnt
+             / if (
+                LDA ASCIIENTER
+                CMA
+                INC
+                ADD INTmp
+            SZA
+            BUN _XIF2CheckCharEnt
+            BUN _XIF1CheckCharEnt
+             / ) {
+            _XIF1CheckCharEnt,
+                CLA
+                INC
+                STA CALCTRIG
+                LDA MASKSOUT
+                IMK
+            BUN _XIF3CheckCharEnt
+             / } else {  // CheckCharEnt
+            _XIF2CheckCharEnt,
+                LDA INTmp
+                STA RawStrPtr I
+                LDA RawStrPtr
+                INC
+                STA RawStrPtr
+                CLA
+                STA RawStrPtr I
+             / }
+            _XIF3CheckCharEnt,
+             / < end of if CheckCharEnt
+
      / }
     _XIF2InputAvailable,
      / < end of if InputAvailable
@@ -76,14 +107,139 @@ INT_MAIN,
     Prepare,
 
          / if (
-            LDA OUTTRIG
+            LDA CALCTRIG
         SZA
-        BUN _XIF1_XAUTO2
-        BUN _XIF2_XAUTO2
+        BUN _XIF1_XAUTO7
+        BUN _XIF2_XAUTO7
          / ) {
-        _XIF1_XAUTO2,
+        _XIF1_XAUTO7,
+            CLA
+            STA CALCTRIG
+                LDA TEMPDEBUG1
+                STA QuePtr I
+                LDA QuePtr
+                INC
+                STA QuePtr
+
+                 / if (
+                    LDA QuePtr
+                    CMA
+                    INC
+                    ADD QuePtrEnd
+                SZA
+                BUN _XIF2_XAUTO2
+                BUN _XIF1_XAUTO2
+                 / ) {
+                _XIF1_XAUTO2,
+                    LDA QuePtrInit
+                    STA QuePtr
+                 / }
+                _XIF2_XAUTO2,
+
+                LDA QueRemain
+                INC
+                STA QueRemain
+                LDA TEMPDEBUG2
+                STA QuePtr I
+                LDA QuePtr
+                INC
+                STA QuePtr
+
+                 / if (
+                    LDA QuePtr
+                    CMA
+                    INC
+                    ADD QuePtrEnd
+                SZA
+                BUN _XIF2_XAUTO3
+                BUN _XIF1_XAUTO3
+                 / ) {
+                _XIF1_XAUTO3,
+                    LDA QuePtrInit
+                    STA QuePtr
+                 / }
+                _XIF2_XAUTO3,
+
+                LDA QueRemain
+                INC
+                STA QueRemain
+                LDA TEMPDEBUG3
+                STA QuePtr I
+                LDA QuePtr
+                INC
+                STA QuePtr
+
+                 / if (
+                    LDA QuePtr
+                    CMA
+                    INC
+                    ADD QuePtrEnd
+                SZA
+                BUN _XIF2_XAUTO4
+                BUN _XIF1_XAUTO4
+                 / ) {
+                _XIF1_XAUTO4,
+                    LDA QuePtrInit
+                    STA QuePtr
+                 / }
+                _XIF2_XAUTO4,
+
+                LDA QueRemain
+                INC
+                STA QueRemain
+                LDA TEMPDEBUG4
+                STA QuePtr I
+                LDA QuePtr
+                INC
+                STA QuePtr
+
+                 / if (
+                    LDA QuePtr
+                    CMA
+                    INC
+                    ADD QuePtrEnd
+                SZA
+                BUN _XIF2_XAUTO5
+                BUN _XIF1_XAUTO5
+                 / ) {
+                _XIF1_XAUTO5,
+                    LDA QuePtrInit
+                    STA QuePtr
+                 / }
+                _XIF2_XAUTO5,
+
+                LDA QueRemain
+                INC
+                STA QueRemain
+                LDA TEMPDEBUG5
+                STA QuePtr I
+                LDA QuePtr
+                INC
+                STA QuePtr
+
+                 / if (
+                    LDA QuePtr
+                    CMA
+                    INC
+                    ADD QuePtrEnd
+                SZA
+                BUN _XIF2_XAUTO6
+                BUN _XIF1_XAUTO6
+                 / ) {
+                _XIF1_XAUTO6,
+                    LDA QuePtrInit
+                    STA QuePtr
+                 / }
+                _XIF2_XAUTO6,
+
+                LDA QueRemain
+                INC
+                STA QueRemain
+            CLA
+            INC
+            STA OUTTRIG
          / }
-        _XIF2_XAUTO2,
+        _XIF2_XAUTO7,
 
      / < end of Prepare
 
@@ -100,22 +256,58 @@ INT_MAIN,
      / ) {
     _XIF1OutputAvailable,
 
-         / > if ShowMain
          / if (
-
-             / > beginning of GetDigitOne
-            GetDigitOne,
-             / < end of GetDigitOne
-
+            LDA OUTTRIG
         SZA
-        BUN _XIF1ShowMain
-        BUN _XIF2ShowMain
+        BUN _XIF1_XAUTO9
+        BUN _XIF2_XAUTO9
          / ) {
-        _XIF1ShowMain,
-            OUT
+        _XIF1_XAUTO9,
+
+             / if (
+                LDA QueRemain
+            SZA
+            BUN _XIF1_XAUTO10
+            BUN _XIF2_XAUTO10
+             / ) {
+            _XIF1_XAUTO10,
+                    LDA QueReadPtr I
+                    STA TEMPQUEUE1
+                    LDA QueReadPtr
+                    INC
+                    STA QueReadPtr
+
+                     / if (
+                        LDA QueReadPtr
+                        CMA
+                        INC
+                        ADD QuePtrEnd
+                    SZA
+                    BUN _XIF2_XAUTO8
+                    BUN _XIF1_XAUTO8
+                     / ) {
+                    _XIF1_XAUTO8,
+                        LDA QuePtrInit
+                        STA QueReadPtr
+                     / }
+                    _XIF2_XAUTO8,
+
+                    LDA QueRemain
+                    CMA
+                    INC
+                    CMA
+                    STA QueRemain
+                    LDA TEMPQUEUE1
+                OUT
+            BUN _XIF3_XAUTO10
+             / } else {  // 
+            _XIF2_XAUTO10,
+                _M_, HLT
+             / }
+            _XIF3_XAUTO10,
+
          / }
-        _XIF2ShowMain,
-         / < end of if ShowMain
+        _XIF2_XAUTO9,
 
      / }
     _XIF2OutputAvailable,
@@ -163,6 +355,11 @@ INT_MAIN,
     ASCIIENTER, DEC 10
     TEMP1, DEC 0
     TEMP2, DEC 0
+    TEMPDEBUG1, CHR T
+    TEMPDEBUG2, CHR e
+    TEMPDEBUG3, CHR s
+    TEMPDEBUG4, CHR t
+    TEMPDEBUG5, CHR !
     TEMPQUEUE1, DEC 0
     TEMPPRINT1, DEC 0
     TEMPPRINT2, DEC 0
