@@ -58,6 +58,15 @@ namespace EX3{
 	{
 		stats_all_.push_back(stat());
 	}
+	Data::Data(DataType_Tag_PTR type, std::string name, std::string dataName, DataUsageCheck check)
+		: name_ { name }
+		, type_ { DataType::DataType_PTR }
+		, ref_ { dataName }
+		, used_ { false }
+		, check_ { check }
+	{
+		stats_all_.push_back(stat());
+	}
 
 	Data::Data(const Data& d){
 		type_ = d.type_;

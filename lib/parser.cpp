@@ -38,6 +38,14 @@ namespace EX3{
 		return "BUN " + target_name_ + "\n";
 	}
 
+	// Call
+	Call_impl::Call_impl(std::string label){
+		target_name_ = label;
+	}
+	std::string Call_impl::make_impl() {
+		return "BSA " + target_name_ + "\n";
+	}
+
 	// ACC = (target1 >= target2)
 	MoreEq_impl::MoreEq_impl(Data target1, Data target2, Data tmp)
 		: target1_(target1)

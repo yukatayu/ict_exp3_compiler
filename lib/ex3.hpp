@@ -68,6 +68,7 @@ namespace EX3{
 		Data(DataType_Tag_INT type, std::string name, int data, DataUsageCheck check = EnableCheck);
 		Data(DataType_Tag_CHAR type, std::string name, char data, DataUsageCheck check = EnableCheck);
 		Data(DataType_Tag_PTR type, std::string name, Data data, DataUsageCheck check = EnableCheck);
+		Data(DataType_Tag_PTR type, std::string name, std::string dataName, DataUsageCheck check = EnableCheck);
 		Statement stat();
 		Statement load();
 		Data operator*();
@@ -117,6 +118,14 @@ namespace EX3{
 		std::string target_name_;
 	public:
 		Goto_impl(std::string label);
+		std::string make_impl() override;
+	};
+
+	class Call_impl : public Statement_impl {
+	private:
+		std::string target_name_;
+	public:
+		Call_impl(std::string label);
 		std::string make_impl() override;
 	};
 
@@ -210,6 +219,7 @@ namespace EX3{
 	};
 	StatementGenerator(Const)
 	StatementGenerator(Goto)
+	StatementGenerator(Call)
 	StatementGenerator(MoreEq)
 	StatementGenerator(Continue)
 	StatementGenerator(Break)
