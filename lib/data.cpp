@@ -133,6 +133,22 @@ namespace EX3{
 		);
 	}
 
+	Statement Data::operator&(Data d){
+		use();
+		return Const(
+			"LDA " + name_ + "\n"
+			"AND " + d.name() + "\n"
+		);
+	}
+
+	Statement Data::operator*(Data d){
+		use();
+		return Const(
+			"LDA " + name_ + "\n"
+			"MUL " + d.name() + "\n"
+		);
+	}
+
 	Statement Data::operator^(Data d){
 		use();
 		return Const(
