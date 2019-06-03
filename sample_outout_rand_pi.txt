@@ -1,0 +1,706 @@
+ORG 0 / Interrupt Entry Point
+INT_RET, HEX 0 / Interrupt Return Address
+BUN INT_MAIN
+ORG 10 / Entry Point
+LDA MASKSIN
+IMK
+SIO
+ION
+
+ / > while loop MainLoop
+_XLP1MainLoop,
+ / while (
+    LDA HaltFlag
+SZA
+BUN _XLP3MainLoop
+BUN _XLP2MainLoop
+ / ) {
+_XLP2MainLoop,
+    LDA RandSeed
+    INC
+    STA RandSeed
+BUN _XLP1MainLoop
+ / }
+_XLP3MainLoop,
+ / < end of while loop MainLoop
+
+_M_, HLT
+
+ / > beginning of INT_MAIN
+INT_MAIN,
+    STA ACCBAK
+    CLA
+    CIL
+    STA EBAK
+
+     / > if InputAvailable
+     / if (
+        CLA
+        INC
+        SKI
+        CLA
+    SZA
+    BUN _XIF1InputAvailable
+    BUN _XIF2InputAvailable
+     / ) {
+    _XIF1InputAvailable,
+        INP
+        STA INTmp
+            CLA
+            INC
+            STA CALCTRIG
+            LDA MASKSOUT
+            IMK
+     / }
+    _XIF2InputAvailable,
+     / < end of if InputAvailable
+
+
+     / > beginning of Prepare
+    Prepare,
+
+         / if (
+            LDA CALCTRIG
+        SZA
+        BUN _XIF1_XAUTO5
+        BUN _XIF2_XAUTO5
+         / ) {
+        _XIF1_XAUTO5,
+            CLA
+            STA CALCTRIG
+
+            CLA
+            STA TempI
+            _XLP1_XAUTO6,
+             / for (
+                LDA TempI
+                XOR LoopN
+            SZA
+            BUN _XLP2_XAUTO6
+            BUN _XLP3_XAUTO6
+             / ) {
+            _XLP2_XAUTO6,
+                LDA CntSum
+                INC
+                STA CntSum
+
+                     / if (
+                        LDA Rand
+                    SZA
+                    BUN _XIF2_XAUTO1
+                    BUN _XIF1_XAUTO1
+                     / ) {
+                    _XIF1_XAUTO1,
+                        LDA RandSeed
+                        STA Rand
+                     / }
+                    _XIF2_XAUTO1,
+
+                    LDA Rand
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    STA TmpRandom
+                    LDA Rand
+                    XOR TmpRandom
+                    STA Rand
+                    LDA Rand
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    STA TmpRandom
+                    LDA Rand
+                    XOR TmpRandom
+                    STA Rand
+                    LDA Rand
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    STA TmpRandom
+                    LDA Rand
+                    XOR TmpRandom
+                    STA Rand
+                    LDA Rand
+                    AND RandMod
+                    STA Rand16
+                LDA Rand16
+                MUL Rand16
+                STA PosX
+
+                     / if (
+                        LDA Rand
+                    SZA
+                    BUN _XIF2_XAUTO2
+                    BUN _XIF1_XAUTO2
+                     / ) {
+                    _XIF1_XAUTO2,
+                        LDA RandSeed
+                        STA Rand
+                     / }
+                    _XIF2_XAUTO2,
+
+                    LDA Rand
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    STA TmpRandom
+                    LDA Rand
+                    XOR TmpRandom
+                    STA Rand
+                    LDA Rand
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    STA TmpRandom
+                    LDA Rand
+                    XOR TmpRandom
+                    STA Rand
+                    LDA Rand
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    CLE
+                    CIL
+                    STA TmpRandom
+                    LDA Rand
+                    XOR TmpRandom
+                    STA Rand
+                    LDA Rand
+                    AND RandMod
+                    STA Rand16
+                LDA Rand16
+                MUL Rand16
+                ADD PosX
+                STA PosY
+                CLE
+
+                 / > if InCircle
+                 / if (
+                    LDA PosY
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                    CLE
+                    CIR
+                SZA
+                BUN _XIF2InCircle
+                BUN _XIF1InCircle
+                 / ) {
+                _XIF1InCircle,
+                    LDA CntIn
+                    INC
+                    STA CntIn
+                 / }
+                _XIF2InCircle,
+                 / < end of if InCircle
+
+            LDA TempI
+            INC
+            STA TempI
+            BUN _XLP1_XAUTO6
+             / }
+            _XLP3_XAUTO6,
+
+            LDA CntIn
+            CLE
+            CIL
+            CLE
+            CIL
+            STA CntIn
+
+            _XLP1_XAUTO7,
+             / while (
+                LDA Keta
+            SZA
+            BUN _XLP2_XAUTO7
+            BUN _XLP3_XAUTO7
+             / ) {
+            _XLP2_XAUTO7,
+                LDA ASCII0
+                STA QVal
+
+                _XLP1_XAUTO8,
+                 / while (
+                    LDA CntSum
+                    CMA
+                    INC
+                    ADD CntIn
+                    CIL
+                    CLA
+                    CIL
+                SZA
+                BUN _XLP3_XAUTO8
+                BUN _XLP2_XAUTO8
+                 / ) {
+                _XLP2_XAUTO8,
+                    LDA QVal
+                    INC
+                    STA QVal
+                    LDA CntSum
+                    CMA
+                    INC
+                    ADD CntIn
+                    STA CntIn
+                BUN _XLP1_XAUTO8
+                 / }
+                _XLP3_XAUTO8,
+
+                    LDA QVal
+                    STA QuePtr I
+                    LDA QuePtr
+                    INC
+                    STA QuePtr
+
+                     / if (
+                        LDA QuePtr
+                        CMA
+                        INC
+                        ADD QuePtrEnd
+                    SZA
+                    BUN _XIF2_XAUTO3
+                    BUN _XIF1_XAUTO3
+                     / ) {
+                    _XIF1_XAUTO3,
+                        LDA QuePtrInit
+                        STA QuePtr
+                     / }
+                    _XIF2_XAUTO3,
+
+                    LDA QueRemain
+                    INC
+                    STA QueRemain
+                LDA CntIn
+                CLE
+                CIL
+                STA CntIn
+                LDA CntIn
+                CLE
+                CIL
+                CLE
+                CIL
+                ADD CntIn
+                STA CntIn
+
+                 / if (
+                    LDA PeriodFlag
+                SZA
+                BUN _XIF1_XAUTO9
+                BUN _XIF2_XAUTO9
+                 / ) {
+                _XIF1_XAUTO9,
+                        LDA ASCIIPeriod
+                        STA QuePtr I
+                        LDA QuePtr
+                        INC
+                        STA QuePtr
+
+                         / if (
+                            LDA QuePtr
+                            CMA
+                            INC
+                            ADD QuePtrEnd
+                        SZA
+                        BUN _XIF2_XAUTO4
+                        BUN _XIF1_XAUTO4
+                         / ) {
+                        _XIF1_XAUTO4,
+                            LDA QuePtrInit
+                            STA QuePtr
+                         / }
+                        _XIF2_XAUTO4,
+
+                        LDA QueRemain
+                        INC
+                        STA QueRemain
+                    CLA
+                    STA PeriodFlag
+                 / }
+                _XIF2_XAUTO9,
+
+                LDA Keta
+                CMA
+                INC
+                CMA
+                STA Keta
+            BUN _XLP1_XAUTO7
+             / }
+            _XLP3_XAUTO7,
+
+            CLA
+            INC
+            STA OUTTRIG
+         / }
+        _XIF2_XAUTO5,
+
+     / < end of Prepare
+
+
+     / > if OutputAvailable
+     / if (
+        CLA
+        INC
+        SKO
+        CLA
+    SZA
+    BUN _XIF1OutputAvailable
+    BUN _XIF2OutputAvailable
+     / ) {
+    _XIF1OutputAvailable,
+
+         / if (
+            LDA OUTTRIG
+        SZA
+        BUN _XIF1_XAUTO11
+        BUN _XIF2_XAUTO11
+         / ) {
+        _XIF1_XAUTO11,
+
+             / if (
+                LDA QueRemain
+            SZA
+            BUN _XIF1_XAUTO12
+            BUN _XIF2_XAUTO12
+             / ) {
+            _XIF1_XAUTO12,
+                    LDA QueReadPtr I
+                    STA TEMPQUEUE1
+                    LDA QueReadPtr
+                    INC
+                    STA QueReadPtr
+
+                     / if (
+                        LDA QueReadPtr
+                        CMA
+                        INC
+                        ADD QuePtrEnd
+                    SZA
+                    BUN _XIF2_XAUTO10
+                    BUN _XIF1_XAUTO10
+                     / ) {
+                    _XIF1_XAUTO10,
+                        LDA QuePtrInit
+                        STA QueReadPtr
+                     / }
+                    _XIF2_XAUTO10,
+
+                    LDA QueRemain
+                    CMA
+                    INC
+                    CMA
+                    STA QueRemain
+                    LDA TEMPQUEUE1
+                OUT
+            BUN _XIF3_XAUTO12
+             / } else {  // 
+            _XIF2_XAUTO12,
+                _M_, HLT
+             / }
+            _XIF3_XAUTO12,
+
+         / }
+        _XIF2_XAUTO11,
+
+     / }
+    _XIF2OutputAvailable,
+     / < end of if OutputAvailable
+
+    InterruptReturn,
+
+     / > if HaltTrigger
+     / if (
+        LDA HaltFlag
+    SZA
+    BUN _XIF1HaltTrigger
+    BUN _XIF2HaltTrigger
+     / ) {
+    _XIF1HaltTrigger,
+        LDA EBAK
+        CLE
+        CIR
+        LDA ACCBAK
+        BUN INT_RET I
+     / }
+    _XIF2HaltTrigger,
+     / < end of if HaltTrigger
+
+    LDA EBAK
+    CLE
+    CIR
+    LDA ACCBAK
+    ION
+    BUN INT_RET I
+ / < end of INT_MAIN
+
+ / Data Segment
+    ACCBAK, DEC 0
+    EBAK, DEC 0
+    OUTTRIG, DEC 0
+    CALCTRIG, DEC 0
+    HaltFlag, DEC 0
+    PeriodFlag, DEC 1
+    MASKSIN, DEC 8
+    MASKSOUT, DEC 4
+    INTmp, DEC 1
+    ASCII0, CHR 0
+    ASCIIPeriod, CHR .
+    TEMP1, DEC 0
+    TEMP2, DEC 0
+    TempI, DEC 0
+    TEMPQUEUE1, DEC 0
+    DebugNum, DEC 28671
+    QueData, DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+        DEC 0
+    QueDataEndA, DEC 0
+    QueRemain, DEC 0
+    QuePtr, SYM QueData
+    QueReadPtr, SYM QueData
+    QuePtrInit, SYM QueData
+    QuePtrEnd, SYM QueDataEndA
+    RandSeed, DEC 1
+    LoopN, DEC 30000
+    CntSum, DEC 0
+    CntIn, DEC 0
+    PosX, DEC 0
+    PosY, DEC 0
+    Keta, DEC 6
+    QVal, DEC 0
+    Rand, DEC 0
+    Rand16, DEC 0
+    TmpRandom, DEC 0
+    RandMod, DEC 32767
+END
+
