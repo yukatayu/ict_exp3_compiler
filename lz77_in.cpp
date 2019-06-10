@@ -165,21 +165,12 @@ int main(){
 	Data insert_char(INT, "InsertChar", 0);
 	Subroutine insert = {
 		tmp_insert = +insert_node,
-	//" // tmp_insert = +insert_node,"_asm, +tmp_insert,
-	//"_B_,"_asm,
-	// Debug1 " // node no = AC,"_asm, +*tmp_insert, "_B_,"_asm,
 		++tmp_insert,
 		tmp_insert_str = +*tmp_insert,
-	//" // tmp_insert_str = +*tmp_insert,"_asm, +tmp_insert_str,
-	//"_B_,"_asm,
 		++tmp_insert,
 		tmp_insert_map = +*tmp_insert,
-	//" // tmp_insert_map = +*tmp_insert,"_asm, +tmp_insert_map,
-	//"_B_,"_asm,
 		++tmp_insert,
 		tmp_insert_len = +*tmp_insert,
-	//" // tmp_insert_len = +*tmp_insert,"_asm, +tmp_insert_len,
-	//"_B_,"_asm,
 		find_map_map = +tmp_insert_map,
 		find_map_char = +insert_char,
 		findMap(),
@@ -187,16 +178,11 @@ int main(){
 		++insert_res,
 		If({ +map_found }, {
 				" // [Debug] Inserting"_asm, "CLE"_asm, "_B_,"_asm,
-				//tmp_insert = +*find_map_map << 1,
 				tmp_insert = +*tmp_insert_map,
 				++*tmp_insert_map,
 				++tmp_insert_map,
 				tmp_insert = tmp_insert << 1,
 				tmp_insert_map = tmp_insert_map + tmp_insert,
-				//++*find_map_map,
-				//++find_map_map,
-				//find_map_map = find_map_map + tmp_insert,
-				//make_string_len = ++tmp_insert_len,
 				make_string_len = ++tmp_insert_len,
 				Call("MakeString"),
 				tmp_insert_new_str = +_alloc_new,
@@ -230,15 +216,9 @@ int main(){
 			+mask_sout,
 			"IMK"_asm,
 		}, Else, {
-			//*raw_str_ptr = +IN_tmp,
-			//++raw_str_ptr,
-			//*raw_str_ptr = Zero,
-
 			insert_node = +main_p,
 			insert_char = +IN_tmp,
 			insert(),
-			//"_B_,"_asm,
-			Zero,
 			If({+insert_res}, {
 				" // [Debug] Inserted"_asm, "CLE"_asm, "_B_,"_asm,
 				" // [Debug] Now Head is "_asm, +main_p, "_B_,"_asm,
@@ -327,9 +307,6 @@ int main(){
 
 	Subroutine _call_alloc = {
 		"Alloc, HEX 0"_asm,
-		//"_B_,"_asm,
-	//" // [Debug] Allocated: bytes:  "_asm, +alloc_len, "_B_,"_asm,
-	//" // [Debug] Allocated: to   :  "_asm, +_alloc_ptr, "_B_,"_asm,
 		_alloc_new = +_alloc_ptr,
 		_alloc_ptr = _alloc_ptr + alloc_len,
 		Return("Alloc")
